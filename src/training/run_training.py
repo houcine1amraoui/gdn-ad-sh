@@ -1,8 +1,5 @@
 import torch
-import torch.optim as optim
-import matplotlib.pyplot as plt
 
-from src.dataset.truncate import truncate_dataset
 from src.dataset.load_data import load_data
 from src.dataset.splits import split_actor_periods
 from src.dataset.preprocessing import normalize
@@ -10,14 +7,9 @@ from src.dataset.TimeSeriesDataset import TimeSeriesDataset
 from torch.utils.data import DataLoader
 from src.models.gdn import GDN
 from src.training.trainer import train
-from src.evaluation.anomaly import compute_errors
-from src.evaluation.load_checkpoint import load_checkpoint
-# 0. Truncate Data
-# truncate_dataset("data/raw/BREMaster.csv", "data/sample/BREMaster-sample2.csv")
 
 # 1. Load Dataset
 df, sensor_columns = load_data("data/sample/BREMaster-sample2.csv")
-print("Number of sensors:", len(sensor_columns))  # should be 94
 
 # 2. Split Actor 1 and Actor 2
 actor1_df, actor2_df = split_actor_periods(df)
@@ -45,21 +37,5 @@ model = GDN(
 ).to(device)
 
 # 6. Training Loop
-# train(model, train_loader, device)
-
-# Load Chackpoint
-optimizer = optim.Adam(model.parameters(), lr=1e-3)
-model, optimizer, start_epoch = load_checkpoint(model, "gdn_checkpoint50.pth", optimizer)
-
-# 7. Compute Anomaly Scores
-test_errors = compute_errors(model, test_loader, device)
-
-# 8. Visualization
-
-
-plt.figure(figsize=(15,5))
-plt.plot(test_errors, label="Actor 1 (Normal)")
-# plt.plot(score_actor2, label="Actor 2 (Test)")
-plt.legend()
-plt.title("Anomaly Scores")
-plt.show()
+if __name__ == "main":
+    train(model, train_loader, device)
