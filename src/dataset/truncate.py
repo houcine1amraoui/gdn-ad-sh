@@ -3,9 +3,13 @@ from tqdm import tqdm
 
 def truncate_dataset(path, save_path):
     """
-    Actor 1: Oct 18 → Nov 7 and Nov 11 → Nov 17
-    Actor 2: Nov 08 → Nov 10
+    Actor 1: 
+    2022-10-18 00:00:00 → 2022-11-07 23:59:59
+    2022-11-11 00:00:00 → 2022-11-17 21:59:46
+    Actor 2: 
+    2022-11-08 00:00:00 → 2022-11-10 23:59:59
     """
+
     # Load CSV
     df = pd.read_csv(path)
 
@@ -13,10 +17,10 @@ def truncate_dataset(path, save_path):
     df["Timestamp"] = pd.to_datetime(df["Timestamp"])
 
     # Define ranges to remove (inclusive)
+    # 2 days actor 1, 1 day actor 2
     ranges = [
-        ("2022-10-19 00:00:00", "2022-11-07 23:59:59"),
-        ("2022-11-09 00:00:00", "2022-11-17 23:59:59")
-    ]
+        ("2022-10-20 00:00:00", "2022-11-07 23:59:59"),
+        ("2022-11-09 00:00:00", "2022-11-17 23:59:59")]
 
     # Build mask
     mask = pd.Series(False, index=df.index)
