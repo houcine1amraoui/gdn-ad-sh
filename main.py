@@ -1,66 +1,62 @@
-import torch
 import torch.optim as optim
-import matplotlib.pyplot as plt
+import yaml
 
-from src.dataset.truncate import truncate_dataset
-from src.dataset.load_data import load_data
-from src.dataset.splits import split_actor_periods
-from src.dataset.preprocessing import normalize
-from src.dataset.TimeSeriesDataset import TimeSeriesDataset
-from torch.utils.data import DataLoader
-from src.models.gdn import GDN
+from src.dataset.preprocessing import prepare_data, create_dataloaders
+from src.models.builders import build_gdn_model
 from src.training.trainer import train
-from src.evaluation.anomaly import compute_errors
+from src.utils.seed import set_seed
+from src.utils.device import get_device
 from src.evaluation.load_checkpoint import load_checkpoint
+from src.evaluation.anomaly import compute_errors
+from src.visualization.plot_scores import plot_scores
+from src.utils.experiment import create_experiment_folder
+from src.utils.io import save_scores
 
-# 0. Truncate Data
-# truncate_dataset("data/raw/BREMaster.csv", "data/sample/BREMaster-sample2.csv")
+def main():
+    # 1. Load config
+    with open("configs/config.yaml") as f:
+        config = yaml.safe_load(f)
 
-# 1. Load Dataset
-df, sensor_columns = load_data("data/sample/BREMaster-sample2.csv")
-print("Number of sensors:", len(sensor_columns))  # should be 94
+    # 2. Set seed
+    set_seed(config["seed"])
 
-# 2. Split Actor 1 and Actor 2
-actor1_df, actor2_df = split_actor_periods(df)
-print(actor1_df.shape, actor2_df.shape)
+    device = get_device()
+    # 
+    exp_dir = create_experiment_folder(config)
 
-# 3. Normalization (CRITICAL)
-train_array, test_array = normalize(actor1_df, actor2_df)
+    # 1. Data Preparation
+    data_path = config["dataset"]["path"]
+    train_array, test_array_actor1, test_array_actor2, sensor_columns = prepare_data(data_path)
+  
+    # 2. Dataset/DataLoader creation
+    window_size = config["dataset"]["window_size"]
+    train_loader, test_loader_actor1, test_loader_actor2 = create_dataloaders(
+        train_array, test_array_actor1, test_array_actor2, window_size)
 
-# 4. Create Data Loaders
-window_size = 10
-train_dataset = TimeSeriesDataset(train_array, window_size)
-test_dataset = TimeSeriesDataset(test_array, window_size)
+    # 3. Model Initialization
+    model = build_gdn_model(len(sensor_columns), config, device)
 
-train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
+    # 4. Train or load checkpoint
+    optimizer = optim.Adam(model.parameters(), lr=config["training"]["lr"])
+    if config["training"]["train"]:
+        train(model, train_loader, optimizer, config["training"]["epochs"], exp_dir, device)
+    else:
+        model, optimizer, _ = load_checkpoint(
+            model,
+            config["checkpoint"]["path"],
+            optimizer
+        )
 
-# 5. Initialize GDN
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = GDN(
-    number_nodes=94,
-    in_dim=window_size,
-    hid_dim=64,
-    topk=15,
-    heads=1
-).to(device)
+    # 5. Evaluation
+    test_errors_actor1 = compute_errors(model, test_loader_actor1, device)
+    test_errors_actor2 = compute_errors(model, test_loader_actor2, device)
+    save_scores(test_errors_actor1, exp_dir)
+    save_scores(test_errors_actor2, exp_dir)
 
-# 6. Training Loop
-# train(model, train_loader, device)
-
-# Load Chackpoint
-optimizer = optim.Adam(model.parameters(), lr=1e-3)
-model, optimizer, start_epoch = load_checkpoint(model, "gdn_checkpoint50.pth", optimizer)
-
-# 7. Compute Anomaly Scores
-test_errors = compute_errors(model, test_loader, device)
-
-# 8. Visualization
+    # 6. Visualization
+    plot_scores(test_errors_actor1, exp_dir)
+    # plot_scores(test_errors_actor1, test_errors_actor2, exp_dir)
 
 
-plt.figure(figsize=(15,5))
-plt.plot(test_errors, label="Actor 1 (Normal)")
-# plt.plot(score_actor2, label="Actor 2 (Test)")
-plt.legend()
-plt.title("Anomaly Scores")
-plt.show()
+if __name__ == "__main__":
+    main()

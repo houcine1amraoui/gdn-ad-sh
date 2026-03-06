@@ -1,0 +1,19 @@
+seed: 42
+
+dataset:
+  path: data/sample/BREMaster-sample2.csv
+  window_size: 10
+
+training:
+  batch_size: 64
+  epochs: 1
+  lr: 0.001
+  train: false
+
+model:
+  hidden_dim: 64
+  topk: 15
+  heads: 1
+
+checkpoint:
+  path: gdn_checkpoint50.pth
