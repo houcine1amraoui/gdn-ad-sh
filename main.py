@@ -12,6 +12,7 @@ from src.models.gdn import GDN
 from src.training.trainer import train
 from src.evaluation.anomaly import compute_errors
 from src.evaluation.load_checkpoint import load_checkpoint
+
 # 0. Truncate Data
 # truncate_dataset("data/raw/BREMaster.csv", "data/sample/BREMaster-sample2.csv")
 
