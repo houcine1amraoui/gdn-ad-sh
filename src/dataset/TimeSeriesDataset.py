@@ -2,6 +2,14 @@ import torch
 from torch.utils.data import Dataset
 
 class TimeSeriesDataset(Dataset):
+    """
+    This dataset converts the time series 
+    into training samples using sliding windows.
+    Each sample is:
+        Input  : past window of readings
+        Target : next timestamp 
+    This is self-supervised learning.
+    """
     def __init__(self, data, window_size):
         self.data = data
         self.window_size = window_size

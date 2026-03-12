@@ -1,6 +1,5 @@
 import torch
 from tqdm import tqdm
-import os
 
 def train(model, train_loader, optimizer, epochs, exp_dir, device="cpu"):
     for epoch in tqdm(range(epochs)):
@@ -22,10 +21,8 @@ def train(model, train_loader, optimizer, epochs, exp_dir, device="cpu"):
         
         print(f"Epoch {epoch+1}, Loss: {total_loss/len(train_loader):.6f}")
     
-    torch.save(model.state_dict(), os.path.join(exp_dir, "checkpoint.pth"))
-    
     torch.save({
         'epoch': epoch,
         'model_state_dict': model.state_dict(),
         'optimizer_state_dict': optimizer.state_dict(),
-    }, "gdn_checkpoint50.pth")
+    }, f"{exp_dir}/gdn_checkpoint{epoch+1}.pth")

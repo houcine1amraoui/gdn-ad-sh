@@ -1,7 +1,8 @@
 import pandas as pd
-from src.dataset.splits import split_actor_periods
 import matplotlib.pyplot as plt
-from exploration.exploration import average_sensor_activation_per_day, corr_heatmap
+
+from src.dataset.preprocessing import split_actor_periods
+from src.exploration.exploration import average_sensor_activation_per_day, corr_heatmap
 
 # 1. Load Dataset
 df = pd.read_csv("data/sample/BREMaster-sample2.csv")
