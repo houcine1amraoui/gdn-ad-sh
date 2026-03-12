@@ -24,7 +24,7 @@ def main_train():
     window_size = config["dataset"]["window_size"]
 
     # 2. Dataset/DataLoader creation
-    train_array = np.load("data/processed/train.npy")
+    train_array = np.load("data/processed/train_array.npy")
     dataset = TimeSeriesDataset(train_array, window_size)
     loader = DataLoader(dataset, batch_size=64, shuffle=True)
     

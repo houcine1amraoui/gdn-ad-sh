@@ -8,12 +8,12 @@ def main_preprocess():
         config = yaml.safe_load(f)
 
     data_path = config["dataset"]["path"]
-    train_array, test_actor1, test_actor2, scaler, sensors = data_preprocessing(data_path)
+    train_array, test_array_actor1, test_array_actor2, scaler, sensors = data_preprocessing(data_path)
 
     save_processed(
         train_array,
-        test_actor1,
-        test_actor2,
+        test_array_actor1,
+        test_array_actor2,
         scaler,
         sensors
     )
