@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from src.dataset.preprocessing import split_actor_periods
+from src.preprocessing.preprocessing import split_actor_periods
 from src.exploration.exploration import average_sensor_activation_per_day, corr_heatmap
 
 # 1. Load Dataset

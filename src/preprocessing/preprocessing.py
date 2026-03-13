@@ -1,12 +1,7 @@
 import pandas as pd
-import numpy as np
-import joblib
-import json
 
 from sklearn.preprocessing import StandardScaler
-from src.dataset.load_data import load_data
-from src.dataset.TimeSeriesDataset import TimeSeriesDataset
-from torch.utils.data import DataLoader
+from src.utils.load_data import load_data
 
 def split_actor_periods(df):
     """
@@ -47,25 +42,3 @@ def data_preprocessing(path):
         ❌ code changes break loading
         ❌ less portable
     """
-
-def create_dataloaders(window_size):
-    """
-    The dataset alone only describes how to access one sample.
-    A DataLoader is a PyTorch utility that:
-        - Reads data from a Dataset
-        - Groups samples into mini-batches
-        - Shuffles data if needed
-        - Loads data efficiently (parallel workers)
-    The DataLoader manages how samples are delivered during training.
-    """
-    train_array = np.load("data/processed/train.npy")
-    test_array_actor1 = np.load("data/processed/test_actor1.npy")
-    test_array_actor2 = np.load("data/processed/test_actor2.npy")
-    train_dataset = TimeSeriesDataset(train_array, window_size)
-    test_dataset_actor1 = TimeSeriesDataset(test_array_actor1, window_size)
-    test_dataset_actor2 = TimeSeriesDataset(test_array_actor2, window_size)
-    
-    train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-    test_loader_actor1 = DataLoader(test_dataset_actor1, batch_size=64, shuffle=False)
-    test_loader_actor2 = DataLoader(test_dataset_actor2, batch_size=64, shuffle=False)
-    return train_loader, test_loader_actor1, test_loader_actor2

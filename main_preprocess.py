@@ -1,4 +1,4 @@
-from src.dataset.preprocessing import data_preprocessing
+from src.preprocessing.preprocessing import data_preprocessing
 from src.utils.save_utils import save_processed
 import yaml
 

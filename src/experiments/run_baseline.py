@@ -1,8 +1,8 @@
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
-from src.dataset.graph_builder import fully_connected_graph
-from src.dataset.preprocessing import create_sliding_windows, reshape_for_gdn
+from graph.graph_builder import fully_connected_graph
+from src.preprocessing.preprocessing import create_sliding_windows, reshape_for_gdn
 from src.models.gdn import GDN
 from src.training.trainer import train
 from src.utils.device import get_device

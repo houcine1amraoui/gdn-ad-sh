@@ -3,7 +3,7 @@ import yaml
 import json
 import torch.optim as optim
 
-from src.dataset.TimeSeriesDataset import TimeSeriesDataset
+from src.preprocessing.TimeSeriesDataset import TimeSeriesDataset
 from torch.utils.data import DataLoader
 from src.utils.seed import set_seed
 from src.utils.device import get_device

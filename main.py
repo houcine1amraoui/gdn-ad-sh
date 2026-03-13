@@ -4,7 +4,7 @@ import numpy as np
 import os
 import json
 
-from src.dataset.preprocessing import prepare_data, create_dataloaders
+from src.preprocessing.preprocessing import prepare_data, create_dataloaders
 from src.models.builders import build_gdn_model
 from src.training.trainer import train
 from src.utils.seed import set_seed
