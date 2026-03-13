@@ -3,6 +3,9 @@ import numpy as np
 from tqdm import tqdm
 
 def compute_errors(model, dataloader, device="cpu"):
+    """
+    Compute raw errors
+    """
     model.eval()
     errors = []
     
@@ -17,15 +20,22 @@ def compute_errors(model, dataloader, device="cpu"):
     
     return np.concatenate(errors, axis=0)  # [T, N]
 
-def compute_anomaly_scores(model, dataloader, device="cpu"):
-    model.eval()
-    scores = []
 
-    with torch.no_grad():
-        for batch in dataloader:
-            batch = batch.to(device)
-            output = model(batch)
-            error = torch.abs(output - batch.mean(dim=2))
-            scores.append(error.cpu())
+def anomaly_score(errors, median, iqr):
+    # Compute raw errors
+    normalized = (errors - median) / iqr
+    score = np.max(normalized, axis=1)
+    return score
 
-    return torch.cat(scores)
+# def compute_anomaly_scores(model, dataloader, device="cpu"):
+#     model.eval()
+#     scores = []
+
+#     with torch.no_grad():
+#         for batch in dataloader:
+#             batch = batch.to(device)
+#             output = model(batch)
+#             error = torch.abs(output - batch.mean(dim=2))
+#             scores.append(error.cpu())
+
+#     return torch.cat(scores)
