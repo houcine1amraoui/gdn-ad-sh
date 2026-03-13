@@ -1,7 +1,7 @@
 import pandas as pd
 from tqdm import tqdm
 
-def truncate_dataset(path, save_path):
+def data_sampling(path, save_path):
     """
     Actor 1: 
     2022-10-18 00:00:00 → 2022-11-07 23:59:59

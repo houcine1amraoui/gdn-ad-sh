@@ -13,10 +13,6 @@ def plot_scores(scores, exp_dir):
 
     plt.close()
 
-import matplotlib.pyplot as plt
-import os
-
-
 def plot_actor_comparison(errors1, errors2, threshold, exp_dir):
 
     plt.figure(figsize=(15,5))
