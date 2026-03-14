@@ -10,7 +10,7 @@ from src.training.trainer import train
 from src.utils.seed import set_seed
 from src.utils.device import get_device
 from src.evaluation.load_checkpoint import load_checkpoint
-from src.evaluation.anomaly import compute_errors
+from src.evaluation.pipeline import compute_errors
 from src.visualization.plot_scores import plot_scores
 from src.utils.experiment import create_experiment_folder
 from src.utils.io import save_scores
