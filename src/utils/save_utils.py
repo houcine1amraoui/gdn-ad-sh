@@ -10,13 +10,13 @@ def save_processed(train_array, test_array_actor1, test_array_actor2, scaler, se
         config = yaml.safe_load(f)
 
     processed_data_path = config["dataset"]["processed_folder"]
-    print(processed_data_path)
+    print("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh", processed_data_path)
 
     np.save(f"{processed_data_path}/train_array.npy", train_array)
     np.save(f"{processed_data_path}/test_array_actor1.npy", test_array_actor1)
     np.save(f"{processed_data_path}/test_array_actor2.npy", test_array_actor2)
 
-    joblib.dump(scaler, f"{processed_data_path}scaler.pkl")
+    joblib.dump(scaler, f"{processed_data_path}/scaler.pkl")
 
     with open(f"{processed_data_path}/sensors.json", "w") as f:
         json.dump(sensor_columns, f)
