@@ -19,12 +19,12 @@ def main_train():
     set_seed(config["seed"])
     device = get_device()
     exp_dir = create_experiment_folder(config)
-    with open("data/processed/sensors.json") as f:
+    with open(f"{config["dataset"]["processed_folder"]}/sensors.json") as f:
         sensors = json.load(f)
     window_size = config["dataset"]["window_size"]
 
     # 2. Dataset/DataLoader creation
-    train_array = np.load("data/processed/train_array.npy")
+    train_array = np.load(f"{config["dataset"]["processed_folder"]}/train_array.npy")
     dataset = TimeSeriesDataset(train_array, window_size)
     loader = DataLoader(dataset, batch_size=64, shuffle=True)
     
