@@ -10,12 +10,28 @@ from src.utils.device import get_device
 from src.utils.experiment import create_experiment_folder
 from src.models.builders import build_gdn_model
 from src.training.trainer import train
+import argparse
 
 
 def main_train():
     # 1. Set configuration
     with open("configs/config.yaml") as f:
         config = yaml.safe_load(f)
+
+    # parse CLI args
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--data_path", type=str)
+    parser.add_argument("--processed_folder", type=str)
+    args = parser.parse_args()
+
+    # override dataset path
+    if args.data_path:
+        config["dataset"]["path"] = args.data_path
+
+    # override processed data folder path
+    if args.processed_folder:
+        config["dataset"]["processed_folder"] = args.processed_folder
+        
     set_seed(config["seed"])
     device = get_device()
     exp_dir = create_experiment_folder(config)
