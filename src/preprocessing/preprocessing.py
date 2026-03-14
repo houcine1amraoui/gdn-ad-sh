@@ -28,9 +28,10 @@ def normalize(actor1_df, actor2_df, sensors):
     return train_array, test_array_actor1, test_array_actor2, scaler
 
 def data_preprocessing(path):
-    print("hhhhhhhhhh", path)
     # 1. Load data
     df, sensors = load_data(path)
+    print("hhhhhhhhhh", len(df))
+
     # 2. Split actors
     actor1_df, actor2_df = split_actor_periods(df)
     # 3. Normalization
