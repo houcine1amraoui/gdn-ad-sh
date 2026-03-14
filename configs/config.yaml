@@ -2,7 +2,7 @@ seed: 42
 
 dataset:
   path: data/sample/BREMaster-sample2.csv
-  processed: data/processed
+  processed_folder: data/processed
   window_size: 10
 
 training:

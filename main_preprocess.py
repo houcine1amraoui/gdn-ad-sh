@@ -11,11 +11,16 @@ def main_preprocess():
     # parse CLI args
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_path", type=str)
+    parser.add_argument("--processed_folder", type=str)
     args = parser.parse_args()
 
     # override dataset path
     if args.data_path:
         config["dataset"]["path"] = args.data_path
+
+    # override processed data folder path
+    if args.data_path:
+        config["dataset"]["processed_folder"] = args.processed_folder
         
     data_path = config["dataset"]["path"]
     train_array, test_array_actor1, test_array_actor2, scaler, sensors = data_preprocessing(data_path)
