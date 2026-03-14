@@ -2,7 +2,7 @@ seed: 42
 
 dataset:
   path: data/sample/BREMaster-sample2.csv
-  processed_folder: /content/drive/MyDrive/02_research/dyg_home/data/processed
+  processed_folder: data/processed
   window_size: 10
 
 training:

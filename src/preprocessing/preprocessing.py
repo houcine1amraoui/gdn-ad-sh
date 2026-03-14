@@ -30,7 +30,6 @@ def normalize(actor1_df, actor2_df, sensors):
 def data_preprocessing(path):
     # 1. Load data
     df, sensors = load_data(path)
-    print("hhhhhhhhhh", len(df))
 
     # 2. Split actors
     actor1_df, actor2_df = split_actor_periods(df)

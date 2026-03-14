@@ -10,7 +10,6 @@ def save_processed(train_array, test_array_actor1, test_array_actor2, scaler, se
         config = yaml.safe_load(f)
 
     processed_data_path = config["dataset"]["processed_folder"]
-    print("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh", processed_data_path)
 
     np.save(f"{processed_data_path}/train_array.npy", train_array)
     np.save(f"{processed_data_path}/test_array_actor1.npy", test_array_actor1)
