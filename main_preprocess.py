@@ -19,7 +19,7 @@ def main_preprocess():
         config["dataset"]["path"] = args.data_path
 
     # override processed data folder path
-    if args.data_path:
+    if args.processed_folder:
         config["dataset"]["processed_folder"] = args.processed_folder
         
     data_path = config["dataset"]["path"]
