@@ -3,12 +3,7 @@ import joblib
 import json
 import yaml
 
-def save_processed(train_array, test_array_actor1, test_array_actor2, scaler, sensor_columns):
-
-    # 1. Set configuration
-    with open("configs/config.yaml") as f:
-        config = yaml.safe_load(f)
-
+def save_processed(train_array, test_array_actor1, test_array_actor2, scaler, sensor_columns, config):
     processed_data_path = config["dataset"]["processed_folder"]
     print("hhhhhhhhhhhhhhhhhhhhhhhhhh", processed_data_path)
     np.save(f"{processed_data_path}/train_array.npy", train_array)

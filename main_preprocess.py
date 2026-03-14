@@ -30,7 +30,8 @@ def main_preprocess():
         test_array_actor1,
         test_array_actor2,
         scaler,
-        sensors
+        sensors,
+        config
     )
     print("Preprocessing Done.")
 
