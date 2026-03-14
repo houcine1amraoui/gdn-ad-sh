@@ -6,7 +6,7 @@ def train(model, train_loader, optimizer, epochs, exp_dir, device="cpu"):
         model.train()
         total_loss = 0
         
-        for x, y in tqdm(train_loader):
+        for x, y in train_loader:
             x = x.to(device)
             y = y.to(device)
             
