@@ -22,6 +22,7 @@ def main_train():
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_path", type=str)
     parser.add_argument("--processed_folder", type=str)
+    parser.add_argument("--exp_dir", type=str)
     args = parser.parse_args()
 
     # override dataset path
@@ -31,7 +32,11 @@ def main_train():
     # override processed data folder path
     if args.processed_folder:
         config["dataset"]["processed_folder"] = args.processed_folder
-        
+
+    # override processed data folder path
+    if args.processed_folder:
+        config["dataset"]["exp_dir"] = args.exp_dir
+
     set_seed(config["seed"])
     device = get_device()
     exp_dir = create_experiment_folder(config)
