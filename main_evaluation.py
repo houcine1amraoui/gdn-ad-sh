@@ -49,7 +49,7 @@ def main_evaluation():
     # train_errors = compute_errors(model, dataloader=train_loader)
     # test_errors_actor2 = compute_errors(model, dataloader=test_loader_actor2)
 
-    # # computer normalized anomaly score
+    # # Compute normalized anomaly score
     # median = np.median(train_errors, axis=0)
     # iqr = np.percentile(train_errors, 75, axis=0) - np.percentile(train_errors, 25, axis=0)
     # iqr[iqr == 0] = 1e-6  # avoid division by zero

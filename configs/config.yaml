@@ -1,3 +1,17 @@
+# ACTOR1_END    = "2022-11-07"
+# ACTOR2_START  = "2022-11-08"
+# ACTOR2_END    = "2022-11-10"
+# ACTOR1_RETURN = "2022-11-11"
+# RESAMPLE_FREQ = "3s"
+
+# window_slide          = 60
+# in_dim                = window_slide - 1
+# correlation_threshold = 0.5
+# nbr_sensors           = 94
+# NUM_SENSORS           = nbr_sensors
+# WINDOW                = window_slide
+# ALPHA                 = 0.5
+
 seed: 42
 
 dataset:

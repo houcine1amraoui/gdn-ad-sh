@@ -17,9 +17,9 @@ def data_sampling(path, save_path):
     df["Timestamp"] = pd.to_datetime(df["Timestamp"])
 
     # Define ranges to remove (inclusive)
-    # 2 days actor 1, 1 day actor 2
+    # 1 day actor 1, 1 day actor 2
     ranges = [
-        ("2022-10-20 00:00:00", "2022-11-07 23:59:59"),
+        ("2022-10-19 00:00:00", "2022-11-07 23:59:59"),
         ("2022-11-09 00:00:00", "2022-11-17 23:59:59")]
 
     # Build mask

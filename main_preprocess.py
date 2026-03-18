@@ -4,6 +4,11 @@ import yaml
 import argparse
 
 def main_preprocess():
+    """
+    Typical preprocessing pipeline:
+    1s-raw data -> actors split -> noise filtering -> 5s-downsampling 
+    -> normalization -> sliding windows
+    """
     # 1. Load config
     with open("configs/config.yaml") as f:
         config = yaml.safe_load(f)

@@ -1,6 +1,26 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
+import pandas as pd
+
+def rank_sensor_noise(df, timestamp_col="Timestamp"):
+    """
+    Rank sensors by noise level using variance of first differences.
+    """
+    if timestamp_col in df.columns:
+        df = df.drop(columns=[timestamp_col])
+    noise_scores = {}
+    for col in df.columns:
+        # compute first difference
+        diff = df[col].diff()
+        # noise score
+        noise_scores[col] = diff.var()
+    noise_df = (
+        pd.DataFrame.from_dict(noise_scores, orient="index", columns=["noise_score"])
+        .sort_values("noise_score", ascending=False)
+    )
+    return noise_df
+
 def average_sensor_activation_per_day(df):
     """
     Average sensor activation per day

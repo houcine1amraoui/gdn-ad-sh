@@ -33,6 +33,7 @@ def data_preprocessing(path):
 
     # 2. Split actors
     actor1_df, actor2_df = split_actor_periods(df)
+    
     # 3. Normalization
     train_array, test_array_actor1, test_array_actor2, scaler = normalize(actor1_df, 
                                                                           actor2_df, sensors)
