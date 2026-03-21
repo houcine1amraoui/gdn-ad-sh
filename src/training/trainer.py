@@ -11,9 +11,7 @@ def train(model, train_loader, val_loader, optimizer, epochs, exp_dir,
     patience_counter = 0
 
     for epoch in tqdm(range(epochs)):
-        # ------------------
         # Training
-        # ------------------
         model.train()
         train_loss = 0
 
@@ -32,9 +30,7 @@ def train(model, train_loader, val_loader, optimizer, epochs, exp_dir,
 
         train_loss /= len(train_loader)
 
-        # ------------------
         # Validation
-        # ------------------
         model.eval()
         val_loss = 0
 
@@ -52,9 +48,7 @@ def train(model, train_loader, val_loader, optimizer, epochs, exp_dir,
 
         print(f"Epoch {epoch+1} | Train Loss: {train_loss:.6f} | Val Loss: {val_loss:.6f}")
 
-        # ------------------
         # Save BEST model
-        # ------------------
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             patience_counter = 0
@@ -69,22 +63,18 @@ def train(model, train_loader, val_loader, optimizer, epochs, exp_dir,
         else:
             patience_counter += 1
 
-        # ------------------
         # Early stopping
-        # ------------------
         if patience_counter >= patience:
             print(f"Early stopping at epoch {epoch+1}")
             break
 
-    # ------------------
     # Save LAST model (optional)
-    # ------------------
     torch.save({
         'epoch': epoch,
         'model_state_dict': model.state_dict(),
         'optimizer_state_dict': optimizer.state_dict(),
     }, f"{exp_dir}/last_model.pth")
-    
+
 # import torch
 # from tqdm import tqdm
 

@@ -57,14 +57,17 @@ def normalize(actor1_train_df, actor1_val_df, actor2_test_df, sensors):
 def data_preprocessing(path):
     # 1. Load data
     df, sensors = load_data(path)
+    print("Data loding done.")
 
     # 2. Split actors
     actor1_train_df, actor1_val_df, actor2_df = split_actor_periods(df)
+    print("Actors split done.")
     
     # 3. Normalization
     train_array, test_array_actor1, test_array_actor2, scaler = (
         normalize(actor1_train_df, actor1_val_df, actor2_df, sensors)
     )
+    print("Normalization done.")
     return train_array, test_array_actor1, test_array_actor2, scaler, sensors
     """
     It is not recommended to save dataset/loader:    
