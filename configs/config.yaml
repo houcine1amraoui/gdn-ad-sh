@@ -15,7 +15,7 @@
 seed: 42
 
 dataset:
-  path: data/sample/BREMaster-sample2.csv
+  path: data/sample/BREMaster-sample3.csv
   processed_folder: data/processed
   window_size: 10
 

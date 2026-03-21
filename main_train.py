@@ -40,19 +40,20 @@ def main_train():
     set_seed(config["seed"])
     device = get_device()
     exp_dir = create_experiment_folder(config)
-    with open(f"{config["dataset"]["processed_folder"]}/sensors.json") as f:
+    processed_data_folder = config["dataset"]["processed_folder"]
+    with open(f"{processed_data_folder}/sensors.json") as f:
         sensors = json.load(f)
     window_size = config["dataset"]["window_size"]
 
     # 2. Dataset/DataLoader creation
-    train_array = np.load(f"{config["dataset"]["processed_folder"]}/train_array.npy")
-    val_array = np.load(f"{config["dataset"]["processed_folder"]}/val_array.npy")
+    train_array = np.load(f"{processed_data_folder}/train_array.npy")
+    val_array = np.load(f"{processed_data_folder}/val_array.npy")
 
     train_dataset = TimeSeriesDataset(train_array, window_size)
     train_loader = DataLoader(train_dataset)
     
-    # val_dataset = TimeSeriesDataset(val_array, window_size)
-    # val_loader = DataLoader(val_dataset)
+    val_dataset = TimeSeriesDataset(val_array, window_size)
+    val_loader = DataLoader(val_dataset)
     
     # 3. Model Initialization
     model = build_gdn_model(len(sensors), config, device)
@@ -60,8 +61,8 @@ def main_train():
     # 4. Train
     optimizer = optim.Adam(model.parameters(), lr=config["training"]["lr"])
     epochs = config["training"]["epochs"]
-    # train(model, train_loader, val_loader, optimizer, epochs, exp_dir, device)
-    train(model, train_loader, optimizer, epochs, exp_dir, device)
+    train(model, train_loader, val_loader, optimizer, epochs, exp_dir, device)
+    # train(model, train_loader, optimizer, epochs, exp_dir, device)
   
 if __name__ == "__main__":
     main_train()
