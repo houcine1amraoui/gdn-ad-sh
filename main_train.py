@@ -46,15 +46,21 @@ def main_train():
 
     # 2. Dataset/DataLoader creation
     train_array = np.load(f"{config["dataset"]["processed_folder"]}/train_array.npy")
-    dataset = TimeSeriesDataset(train_array, window_size)
-    loader = DataLoader(dataset, batch_size=64, shuffle=True)
+    val_array = np.load(f"{config["dataset"]["processed_folder"]}/val_array.npy")
+
+    train_dataset = TimeSeriesDataset(train_array, window_size)
+    train_loader = DataLoader(train_dataset)
+    
+    val_dataset = TimeSeriesDataset(train_array, window_size)
+    val_loader = DataLoader(val_dataset)
     
     # 3. Model Initialization
     model = build_gdn_model(len(sensors), config, device)
 
     # 4. Train
     optimizer = optim.Adam(model.parameters(), lr=config["training"]["lr"])
-    train(model, loader, optimizer, config["training"]["epochs"], exp_dir, device)
+    epochs = config["training"]["epochs"]
+    train(model, train_loader, val_loader, optimizer, epochs, exp_dir, device)
   
 if __name__ == "__main__":
     main_train()
