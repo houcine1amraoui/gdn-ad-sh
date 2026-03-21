@@ -28,12 +28,13 @@ def main_preprocess():
         config["dataset"]["processed_folder"] = args.processed_folder
         
     data_path = config["dataset"]["path"]
-    train_array, test_array_actor1, test_array_actor2, scaler, sensors = data_preprocessing(data_path)
+    
+    train_array, val_array, test_array, scaler, sensors = data_preprocessing(data_path)
 
     save_processed(
         train_array,
-        test_array_actor1,
-        test_array_actor2,
+        val_array,
+        test_array,
         scaler,
         sensors,
         config
