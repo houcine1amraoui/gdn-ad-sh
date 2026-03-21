@@ -60,7 +60,8 @@ def main_train():
     # 4. Train
     optimizer = optim.Adam(model.parameters(), lr=config["training"]["lr"])
     epochs = config["training"]["epochs"]
-    train(model, train_loader, val_loader, optimizer, epochs, exp_dir, device)
+    # train(model, train_loader, val_loader, optimizer, epochs, exp_dir, device)
+    train(model, train_loader, optimizer, epochs, exp_dir, device)
   
 if __name__ == "__main__":
     main_train()
