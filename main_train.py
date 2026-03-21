@@ -51,7 +51,7 @@ def main_train():
     train_dataset = TimeSeriesDataset(train_array, window_size)
     train_loader = DataLoader(train_dataset)
     
-    val_dataset = TimeSeriesDataset(train_array, window_size)
+    val_dataset = TimeSeriesDataset(val_array, window_size)
     val_loader = DataLoader(val_dataset)
     
     # 3. Model Initialization
