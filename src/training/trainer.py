@@ -42,9 +42,7 @@ def train(model, train_loader, val_loader, optimizer, epochs, exp_dir,
         model.train()
         train_loss = 0
 
-        for i, (x, y) in enumerate(train_loader):
-            print("Batch:", i)
-
+        for x, y in train_loader:
             x = x.to(device)
             y = y.to(device)
 
@@ -58,7 +56,7 @@ def train(model, train_loader, val_loader, optimizer, epochs, exp_dir,
             train_loss += loss.item()
 
         train_loss /= len(train_loader)
-        print("hhhh:  ", train_loss)
+        
         # Validation
         model.eval()
         val_loss = 0
