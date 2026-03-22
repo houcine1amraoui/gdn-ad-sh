@@ -2,6 +2,18 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from src.utils.load_data import load_data
 
+def clean_data(df):
+    """
+    clean data 
+    CU dataset has the column "light.philips_hue_lightstrip_pid_146 " 
+    with white sapce at the end
+    CU dataset has the column "light.philips_hue_lightstrip_pid_146 " with all NaN
+    By default, df.dropna() removes any row that has at least one NaN. (we dont want that)
+    """
+    df.columns = df.columns.str.strip()
+    df = df.dropna(axis=1)  # or use fillna()
+    return df
+
 def split_actor_periods(df, val_ratio=0.2):
     """
     Split dataset into:
@@ -59,10 +71,8 @@ def data_preprocessing(path):
     df, sensors = load_data(path)
     print("Data loding done.")
 
-    # clean data (CU dataset has the column "light.philips_hue_lightstrip_pid_146 "
-    # with NaN values
-    # By default, df.dropna() removes any row that has at least one NaN. (we dont want that)
-    df = df.dropna(axis=1)  # or use fillna()
+    # Data Cleaning
+    df = clean_data(df)
 
     # 2. Split actors
     actor1_train_df, actor1_val_df, actor2_df = split_actor_periods(df)
