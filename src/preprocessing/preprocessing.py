@@ -1,6 +1,5 @@
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
-from src.utils.load_data import load_data
 
 def clean_data(df):
     """
