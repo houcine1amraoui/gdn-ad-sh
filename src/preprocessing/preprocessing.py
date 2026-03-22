@@ -73,6 +73,7 @@ def data_preprocessing(path):
 
     # Data Cleaning
     df = clean_data(df)
+    print("Data cleaning done.")
 
     # 2. Split actors
     actor1_train_df, actor1_val_df, actor2_df = split_actor_periods(df)
