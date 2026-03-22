@@ -59,6 +59,10 @@ def data_preprocessing(path):
     df, sensors = load_data(path)
     print("Data loding done.")
 
+    # clean data (CU dataset has the column ""light.philips_hue_lightstrip_pid_146 "
+    # with NaN values)
+    df = df.dropna()  # or use fillna()
+
     # 2. Split actors
     actor1_train_df, actor1_val_df, actor2_df = split_actor_periods(df)
     print("Actors split done.")
