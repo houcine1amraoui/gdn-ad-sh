@@ -30,5 +30,4 @@ model:
   topk: 15
   heads: 1
 
-checkpoint:
-  path: gdn_checkpoint50.pth
+experiments_folder: experiments

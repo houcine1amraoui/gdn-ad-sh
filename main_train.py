@@ -33,14 +33,17 @@ def main_train():
     if args.processed_folder:
         config["dataset"]["processed_folder"] = args.processed_folder
 
-    # override processed data folder path
-    if args.processed_folder:
-        config["dataset"]["exp_dir"] = args.exp_dir
+    # override experiments_folder
+    if args.experiments_folder:
+        config["experiments_folder"] = args.experiments_folder
 
     set_seed(config["seed"])
     device = get_device()
-    exp_dir = create_experiment_folder(config)
+    
     processed_data_folder = config["dataset"]["processed_folder"]
+    experiments_folder = config["experiments_folder"]
+    exp_dir = create_experiment_folder(config, experiments_folder)
+
     with open(f"{processed_data_folder}/devices.json") as f:
         devices = json.load(f)
     window_size = config["dataset"]["window_size"]
