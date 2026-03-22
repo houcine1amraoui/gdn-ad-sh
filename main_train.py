@@ -50,11 +50,14 @@ def main_train():
     val_array = np.load(f"{processed_data_folder}/val_array.npy")
 
     train_dataset = TimeSeriesDataset(train_array, window_size)
-    train_loader = DataLoader(train_dataset)
+    # train_loader = DataLoader(train_dataset)
     
     val_dataset = TimeSeriesDataset(val_array, window_size)
-    val_loader = DataLoader(val_dataset)
+    # val_loader = DataLoader(val_dataset)
     
+    train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True, num_workers=0)
+    val_loader   = DataLoader(val_dataset, batch_size=64, shuffle=False, num_workers=0)
+
     # 3. Model Initialization
     model = build_gdn_model(len(sensors), config, device)
 
