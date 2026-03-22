@@ -69,12 +69,15 @@ def normalize(actor1_train_df, actor1_val_df, actor2_test_df, sensors):
 
 def data_preprocessing(path):
     # 1. Load data
-    df, sensors = load_data(path)
+    df = pd.read_csv(path)
     print("Data loding done.")
 
     # Data Cleaning
     df = clean_data(df)
     print("Data cleaning done.")
+
+    # Get the list devices
+    sensors = [c for c in df.columns if c != "Timestamp"]
 
     # 2. Split actors
     actor1_train_df, actor1_val_df, actor2_df = split_actor_periods(df)
