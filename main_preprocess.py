@@ -29,14 +29,14 @@ def main_preprocess():
         
     data_path = config["dataset"]["path"]
     
-    train_array, val_array, test_array, scaler, sensors = data_preprocessing(data_path)
+    train_array, val_array, test_array, scaler, devices = data_preprocessing(data_path)
     print(len(train_array), len(val_array), len(test_array))
     save_processed(
         train_array,
         val_array,
         test_array,
         scaler,
-        sensors,
+        devices,
         config
     )
     print("Preprocessing Done.")

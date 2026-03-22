@@ -41,8 +41,8 @@ def main_train():
     device = get_device()
     exp_dir = create_experiment_folder(config)
     processed_data_folder = config["dataset"]["processed_folder"]
-    with open(f"{processed_data_folder}/sensors.json") as f:
-        sensors = json.load(f)
+    with open(f"{processed_data_folder}/devices.json") as f:
+        devices = json.load(f)
     window_size = config["dataset"]["window_size"]
 
     # 2. Dataset/DataLoader creation
@@ -59,7 +59,7 @@ def main_train():
     val_loader   = DataLoader(val_dataset, batch_size=64, shuffle=False, num_workers=0)
 
     # 3. Model Initialization
-    model = build_gdn_model(len(sensors), config, device)
+    model = build_gdn_model(len(devices), config, device)
 
     # 4. Train
     optimizer = optim.Adam(model.parameters(), lr=config["training"]["lr"])

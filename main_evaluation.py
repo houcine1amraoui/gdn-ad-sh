@@ -19,12 +19,12 @@ def main_evaluation():
     set_seed(config["seed"])
     device = get_device()
     exp_dir = create_experiment_folder(config)
-    with open("data/processed/sensors.json") as f:
-        sensors = json.load(f)
+    with open("data/processed/devices.json") as f:
+        devices = json.load(f)
     window_size = config["dataset"]["window_size"]
 
     # 2. Model Initialization
-    model_arch = build_gdn_model(len(sensors), config, device)
+    model_arch = build_gdn_model(len(devices), config, device)
 
     # 3. load checkpoint
     optimizer = optim.Adam(model_arch.parameters(), lr=config["training"]["lr"])

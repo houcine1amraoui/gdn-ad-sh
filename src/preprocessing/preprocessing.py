@@ -75,8 +75,8 @@ def data_preprocessing(path):
     df = clean_data(df)
     print("Data cleaning done.")
 
-    # Get the list devices
-    sensors = [c for c in df.columns if c != "Timestamp"]
+    # Get the list of devices
+    devices = [c for c in df.columns if c != "Timestamp"]
 
     # 2. Split actors
     actor1_train_df, actor1_val_df, actor2_df = split_actor_periods(df)
@@ -84,10 +84,10 @@ def data_preprocessing(path):
     
     # 3. Normalization
     train_array, test_array_actor1, test_array_actor2, scaler = (
-        normalize(actor1_train_df, actor1_val_df, actor2_df, sensors)
+        normalize(actor1_train_df, actor1_val_df, actor2_df, devices)
     )
     print("Normalization done.")
-    return train_array, test_array_actor1, test_array_actor2, scaler, sensors
+    return train_array, test_array_actor1, test_array_actor2, scaler, devices
     """
     It is not recommended to save dataset/loader:    
         ❌ class path must be identical
