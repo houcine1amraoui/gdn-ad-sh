@@ -22,7 +22,7 @@ def main_train():
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_path", type=str)
     parser.add_argument("--processed_folder", type=str)
-    parser.add_argument("--exp_dir", type=str)
+    parser.add_argument("--experiments_folder", type=str)
     args = parser.parse_args()
 
     # override dataset path
