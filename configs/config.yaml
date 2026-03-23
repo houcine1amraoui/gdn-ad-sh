@@ -18,7 +18,7 @@ dataset:
   # path: data/sample/BREMaster-3.csv
   path: data/raw/CUMaster.csv
   processed_folder: data/processed
-  window_size: 30
+  window_size: 60
 
 training:
   batch_size: 64
