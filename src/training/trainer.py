@@ -30,7 +30,7 @@ import os
 
 
 def train(model, train_loader, val_loader, optimizer, epochs, exp_dir,
-          device="cpu", patience=10):
+          device="cpu", patience=20):
     
     os.makedirs(exp_dir, exist_ok=True)
 
