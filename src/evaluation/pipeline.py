@@ -34,7 +34,7 @@ def anomaly_score(errors, median, iqr):
 def evaluate_pipeline(model, train_loader, test_loader):
     # 1. Compute raw errors
     train_errors = compute_errors(model, dataloader=train_loader)
-    test_errors_actor2 = compute_errors(model, dataloader=test_loader)
+    test_errors = compute_errors(model, dataloader=test_loader)
 
     # 2. Compute normalized anomaly score
     median = np.median(train_errors, axis=0)
@@ -43,7 +43,7 @@ def evaluate_pipeline(model, train_loader, test_loader):
 
     # 3. Compute global anomaly scores per timestamp
     train_scores = anomaly_score(train_errors, median, iqr)
-    test_scores_actor2 = anomaly_score(test_errors_actor2, median, iqr)
+    test_scores = anomaly_score(test_errors, median, iqr)
 
     # 4. Estimate threshold from normal data (Method 1)
     # threshold = np.percentile(train_scores, 99)
@@ -57,23 +57,24 @@ def evaluate_pipeline(model, train_loader, test_loader):
 
     # # 5. Detect anomalies
     train_anomaly_flags = train_scores > threshold
-    test_anomaly_flags = test_scores_actor2 > threshold
+    test_anomaly_flags = test_scores > threshold
 
     # Extract Detected Anomaly Points
     train_anomaly_indices = np.where(train_scores > threshold)[0]
-    test_anomaly_indices = np.where(test_scores_actor2 > threshold)[0]
-    print(len(train_anomaly_indices))
-    print(len(test_anomaly_indices))
+    test_anomaly_indices = np.where(test_scores > threshold)[0]
+    print("Anomalies in train", len(train_anomaly_indices)/len(train_scores)*100, "%")
+    print("Anomalies in train",len(test_anomaly_indices)/len(test_scores)*100, "%")
 
     # Combine With Sensor Attribution
     timestep = 0
-    sensor_scores = test_scores_actor2[timestep]
-    top_sensor = np.argmax(sensor_scores)
-    print(top_sensor)
+    devices_scores = test_scores[timestep]
+    top_device = np.argmax(devices_scores)
+    print("Top device: ", top_device)
 
     # Visualize Threshold on the Score Plot
     plt.figure(figsize=(15,5))
-    plt.plot(test_scores_actor2, label="Anomaly Score")
+    plt.plot(train_scores, label="Train Score")
+    plt.plot(test_scores, label="Anomaly Score")
     plt.axhline(threshold, color='r', linestyle='--', label="Threshold")
     plt.legend()
     plt.title("Anomaly Detection")
@@ -81,7 +82,7 @@ def evaluate_pipeline(model, train_loader, test_loader):
 
     return {
         "errors_actor1": train_errors,
-        "errors_actor2": test_errors_actor2,
+        "errors_actor2": test_errors,
         "threshold": threshold,
         "anomalies": test_anomaly_flags
     }

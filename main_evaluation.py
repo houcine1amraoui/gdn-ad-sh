@@ -18,11 +18,16 @@ def main_evaluation():
         config = yaml.safe_load(f)
     set_seed(config["seed"])
     device = get_device()
-    exp_dir = create_experiment_folder(config)
+    
+
     with open("data/processed/devices.json") as f:
         devices = json.load(f)
     window_size = config["dataset"]["window_size"]
 
+    processed_data_folder = config["dataset"]["processed_folder"]
+    # experiments_folder = config["experiments_folder"]
+    # exp_dir = create_experiment_folder(config)
+    
     # 2. Model Initialization
     model_arch = build_gdn_model(len(devices), config, device)
 
@@ -30,21 +35,21 @@ def main_evaluation():
     optimizer = optim.Adam(model_arch.parameters(), lr=config["training"]["lr"])
     model, optimizer, _ = load_checkpoint(
         model_arch,
-        config["checkpoint"]["path"],
+        "best_model.pth",
         optimizer
     )
 
     # 4. Dataset/Loaders Create
-    train_array = np.load("data/processed/train_array.npy")
-    test_array_actor2 = np.load("data/processed/test_array_actor2.npy")
+    train_array = np.load(f"{processed_data_folder}/train_array.npy")
+    test_array_actor2 = np.load(f"{processed_data_folder}/test_array.npy")
     train_dataset = TimeSeriesDataset(train_array, window_size)
-    test_dataset_actor2 = TimeSeriesDataset(test_array_actor2, window_size)
+    test_dataset = TimeSeriesDataset(test_array_actor2, window_size)
     train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-    test_loader_actor2 = DataLoader(test_dataset_actor2, batch_size=64, shuffle=True)
+    test_loader = DataLoader(test_dataset, batch_size=64, shuffle=True)
 
 
     # Evaluation Pipeline
-    evaluate_pipeline(model, train_loader=train_loader, test_loader=test_loader_actor2)
+    evaluate_pipeline(model, train_loader, test_loader)
     # # Compute raw errors
     # train_errors = compute_errors(model, dataloader=train_loader)
     # test_errors_actor2 = compute_errors(model, dataloader=test_loader_actor2)
