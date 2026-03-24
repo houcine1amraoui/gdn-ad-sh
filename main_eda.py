@@ -1,10 +1,10 @@
+import pandas as pd
 import matplotlib.pyplot as plt
 
-from src.utils.load_data import load_data
 from exploration.exploration import rank_sensor_noise
 def eda():
     # Noise level ranking
-    df, _ = load_data("data/sample/BREMaster-sample2.csv")
+    df= pd.read_csv("data/sample/BREMaster-sample2.csv")
     noise_ranking = rank_sensor_noise(df)
     print(noise_ranking.head(10))
 
