@@ -13,7 +13,44 @@ def clean_data(df):
     df = df.dropna(axis=1)  # or use fillna()
     return df
 
+import pandas as pd
+
 def split_actor_periods(df, val_ratio=0.2):
+    """
+    Split dataset into:
+    - actor1_train (normal training from Actor 1 timeline 1 only)
+    - actor1_val (normal validation from Actor 1 timeline 1 only)
+    - actor2_test (test from Actor 2 timeline)
+
+    Actor 1 timeline 2 is EXCLUDED to avoid leakage.
+    """
+
+    df["Timestamp"] = pd.to_datetime(df["Timestamp"])
+
+    # --- Define periods ---
+    actor1_start = pd.Timestamp("2022-10-18 00:00:00")
+    actor1_end   = pd.Timestamp("2022-11-07 23:59:59")
+
+    actor2_start = pd.Timestamp("2022-11-08 00:00:00")
+    actor2_end   = pd.Timestamp("2022-11-10 23:59:59")
+
+    # --- Masks ---
+    actor1_mask = (df["Timestamp"] >= actor1_start) & (df["Timestamp"] <= actor1_end)
+    actor2_mask = (df["Timestamp"] >= actor2_start) & (df["Timestamp"] <= actor2_end)
+
+    # --- Filter ---
+    actor1_df = df[actor1_mask].copy().sort_values("Timestamp")
+    actor2_df = df[actor2_mask].copy().sort_values("Timestamp")
+
+    # --- Time-based split (no shuffle!) ---
+    split_idx = int(len(actor1_df) * (1 - val_ratio))
+
+    actor1_train_df = actor1_df.iloc[:split_idx].copy()
+    actor1_val_df   = actor1_df.iloc[split_idx:].copy()
+
+    return actor1_train_df, actor1_val_df, actor2_df
+
+def split_actor_periods_included(df, val_ratio=0.2):
     """
     Split dataset into:
     - actor1_train (normal training)
