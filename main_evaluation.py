@@ -39,7 +39,7 @@ def main_evaluation():
     optimizer = optim.Adam(model_arch.parameters(), lr=config["training"]["lr"])
     model, optimizer, _ = load_checkpoint(
         model_arch,
-        "best_model_w30.pth",
+        "best_model_minmax.pth",
         optimizer
     )
 
@@ -54,8 +54,6 @@ def main_evaluation():
     # 5. Compute raw prediction errors
     # train_errors = compute_prediction_errors(model, dataloader=train_loader)
     # test_errors = compute_prediction_errors(model, dataloader=test_loader)
-    # print(train_errors.shape) # [T, N]
-    # print(test_errors.shape) # [T, N]
     # np.save("train_errors.npy", train_errors)
     # np.save("test_errors.npy", test_errors)
 
@@ -63,33 +61,29 @@ def main_evaluation():
     train_errors = np.load("train_errors.npy")
     test_errors = np.load("test_errors.npy")
     train_scores, test_scores = compute_anomaly_score(train_errors, test_errors)
-    # test_scores = compute_anomaly_score(train_errors, test_errors=test_errors)
-    # print(train_scores.shape) # [T]
-    # print(test_scores.shape) # [T]
 
     # plt.figure(figsize=(8, 5))
-
     # plt.hist(train_scores, bins=100, alpha=0.6, label="Train", density=True)
     # plt.hist(test_scores, bins=100, alpha=0.6, label="Test", density=True)
-
     # plt.legend()
     # plt.title("Score Distribution (Train vs Test)")
     # plt.xlabel("Score")
     # plt.ylabel("Density")
-
     # plt.show()
-    print("Train mean:", train_scores.mean())
-    print("Test mean:", test_scores.mean())
 
-    print("Train 95th percentile:", np.percentile(train_scores, 95))
-    print("Test 95th percentile:", np.percentile(test_scores, 95))
+    # print("Train mean:", train_scores.mean())
+    # print("Test mean:", test_scores.mean())
+
+    # print("Train 95th percentile:", np.percentile(train_scores, 95))
+    # print("Test 95th percentile:", np.percentile(test_scores, 95))
+
     # # Visualizae scores distribution
-    # plt.figure(figsize=(15,5))
-    # plt.plot(train_scores, label="Actor 1 (Normal)")
-    # plt.plot(test_scores, label="Actor 2 (Test)")
-    # plt.legend()
-    # plt.title("Anomaly Scores")
-    # plt.show()
+    plt.figure(figsize=(15,5))
+    plt.plot(train_scores, label="Actor 1 (Normal)")
+    plt.plot(test_scores, label="Actor 2 (Test)")
+    plt.legend()
+    plt.title("Anomaly Scores")
+    plt.show()
 
     # 
     # stat, p = ks_2samp(train_scores, test_scores)
