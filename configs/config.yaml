@@ -27,7 +27,7 @@ training:
 
 model:
   hidden_dim: 64
-  topk: 15
+  topk: 5
   heads: 1
 
 experiments_folder: experiments
