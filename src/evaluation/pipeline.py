@@ -3,8 +3,9 @@ import torch
 from tqdm import tqdm
 import pandas as pd
 import matplotlib.pyplot as plt
+from sklearn.metrics import roc_auc_score
 
-def compute_errors(model, dataloader, device="cpu"):
+def compute_prediction_errors(model, dataloader, device="cpu"):
     """
     Compute raw errors
     """
@@ -20,12 +21,20 @@ def compute_errors(model, dataloader, device="cpu"):
     return np.concatenate(errors, axis=0)  # [T, N]
 
 
-def anomaly_score(errors, median, iqr):
-    # Compute global score per timestamp
-    normalized = (errors - median) / iqr
+def compute_anomaly_score(train_errors, test_errors):
+    """
+    Compute global score per timestamp (argmax of errors among all devices)
+    Input: errors [T, N]
+    Output: score per timestamp [T]
+    """
+    median = np.median(train_errors, axis=0)
+    iqr = np.percentile(train_errors, 75, axis=0) - np.percentile(train_errors, 25, axis=0)
+    iqr[iqr == 0] = 1e-6  # avoid division by zero
+
+    normalized = (test_errors - median) / iqr
     scores = np.max(normalized, axis=1)
 
-    # Apply SMA smoothing
+    # Apply SMA smoothing (if applied, KS-Test will be NaN)
     # scores_series = pd.Series(scores)
     # scores = scores_series.rolling(window=5).mean()
 
@@ -33,56 +42,68 @@ def anomaly_score(errors, median, iqr):
 
 def evaluate_pipeline(model, train_loader, test_loader):
     # 1. Compute raw errors
-    train_errors = compute_errors(model, dataloader=train_loader)
-    test_errors = compute_errors(model, dataloader=test_loader)
+    train_errors = compute_prediction_errors(model, dataloader=train_loader)
+    test_errors = compute_prediction_errors(model, dataloader=test_loader)
 
-    # 2. Compute normalized anomaly score
-    median = np.median(train_errors, axis=0)
-    iqr = np.percentile(train_errors, 75, axis=0) - np.percentile(train_errors, 25, axis=0)
-    iqr[iqr == 0] = 1e-6  # avoid division by zero
+    # 2. Compute global (normalized) anomaly scores per timestamp
+    train_scores = compute_anomaly_score(train_errors, test_errors=train_errors)
+    test_scores = compute_anomaly_score(train_errors, test_errors=test_errors)
+    
+    np.save("train_scores.npy", train_scores)
+    np.save("test_scores.npy", test_scores)
 
-    # 3. Compute global anomaly scores per timestamp
-    train_scores = anomaly_score(train_errors, median, iqr)
-    test_scores = anomaly_score(test_errors, median, iqr)
+    # weak labeling
+    # y_true_actor1 = np.zeros(len(train_scores))
+    # y_true_actor2 = np.ones(len(test_scores))
+    # y_true = np.concatenate([y_true_actor1, y_true_actor2])
+    # y_score = np.concatenate([train_scores, test_scores])
+
+    # auc = roc_auc_score(y_true, y_score)
+    # print("AUC:", auc)
 
     # 4. Estimate threshold from normal data (Method 1)
     # threshold = np.percentile(train_scores, 99)
 
     # 4. Estimate threshold from normal data (Method 2)
-    median = np.median(train_scores)
-    q75 = np.percentile(train_scores, 75)
-    q25 = np.percentile(train_scores, 25)
-    iqr = q75 - q25
-    threshold = median + 3 * iqr
+    # median = np.median(train_scores)
+    # q75 = np.percentile(train_scores, 75)
+    # q25 = np.percentile(train_scores, 25)
+    # iqr = q75 - q25
+    # threshold = median + 3 * iqr
 
     # # 5. Detect anomalies
-    train_anomaly_flags = train_scores > threshold
-    test_anomaly_flags = test_scores > threshold
+    # train_anomaly_flags = train_scores > threshold
+    # test_anomaly_flags = test_scores > threshold
 
+    # plt.hist(train_scores, bins=50, alpha=0.5, label="Actor1")
+    # plt.hist(test_scores, bins=50, alpha=0.5, label="Actor2")
+    # plt.legend()
+    # plt.title("Score Distribution")
+    # plt.show()
     # Extract Detected Anomaly Points
-    train_anomaly_indices = np.where(train_scores > threshold)[0]
-    test_anomaly_indices = np.where(test_scores > threshold)[0]
-    print("Anomalies in train", len(train_anomaly_indices)/len(train_scores)*100, "%")
-    print("Anomalies in train",len(test_anomaly_indices)/len(test_scores)*100, "%")
+    # train_anomaly_indices = np.where(train_scores > threshold)[0]
+    # test_anomaly_indices = np.where(test_scores > threshold)[0]
+    # print("Anomalies in train", len(train_anomaly_indices)/len(train_scores)*100, "%")
+    # print("Anomalies in train",len(test_anomaly_indices)/len(test_scores)*100, "%")
 
-    # Combine With Sensor Attribution
-    timestep = 0
-    devices_scores = test_scores[timestep]
-    top_device = np.argmax(devices_scores)
-    print("Top device: ", top_device)
+    # # Combine With Sensor Attribution
+    # timestep = 0
+    # devices_scores = test_scores[timestep]
+    # top_device = np.argmax(devices_scores)
+    # print("Top device: ", top_device)
 
-    # Visualize Threshold on the Score Plot
-    plt.figure(figsize=(15,5))
-    plt.plot(train_scores, label="Train Score")
-    plt.plot(test_scores, label="Anomaly Score")
-    plt.axhline(threshold, color='r', linestyle='--', label="Threshold")
-    plt.legend()
-    plt.title("Anomaly Detection")
-    plt.show()
+    # # Visualize Threshold on the Score Plot
+    # plt.figure(figsize=(15,5))
+    # plt.plot(train_scores, label="Train Score")
+    # plt.plot(test_scores, label="Anomaly Score")
+    # plt.axhline(threshold, color='r', linestyle='--', label="Threshold")
+    # plt.legend()
+    # plt.title("Anomaly Detection")
+    # plt.show()
 
     return {
-        "errors_actor1": train_errors,
-        "errors_actor2": test_errors,
-        "threshold": threshold,
-        "anomalies": test_anomaly_flags
+        train_scores,
+        test_scores,
+    #     "threshold": threshold,
+    #     "anomalies": test_anomaly_flags
     }

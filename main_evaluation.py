@@ -11,6 +11,10 @@ from src.utils.experiment import create_experiment_folder
 from src.models.builders import build_gdn_model
 from src.evaluation.load_checkpoint import load_checkpoint
 from src.evaluation.pipeline import evaluate_pipeline
+from src.evaluation.pipeline import compute_prediction_errors
+from src.evaluation.pipeline import compute_anomaly_score
+import matplotlib.pyplot as plt
+from scipy.stats import ks_2samp
 
 def main_evaluation():
     # 1. Set configuration
@@ -35,51 +39,46 @@ def main_evaluation():
     optimizer = optim.Adam(model_arch.parameters(), lr=config["training"]["lr"])
     model, optimizer, _ = load_checkpoint(
         model_arch,
-        "best_model.pth",
+        "best_model_w30.pth",
         optimizer
     )
 
     # 4. Dataset/Loaders Create
     train_array = np.load(f"{processed_data_folder}/train_array.npy")
-    test_array_actor2 = np.load(f"{processed_data_folder}/test_array.npy")
+    test_array = np.load(f"{processed_data_folder}/test_array.npy")
     train_dataset = TimeSeriesDataset(train_array, window_size)
-    test_dataset = TimeSeriesDataset(test_array_actor2, window_size)
+    test_dataset = TimeSeriesDataset(test_array, window_size)
     train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=64, shuffle=True)
 
+    # 5. Compute raw prediction errors
+    # train_errors = compute_prediction_errors(model, dataloader=train_loader)
+    # test_errors = compute_prediction_errors(model, dataloader=test_loader)
+    # print(train_errors.shape) # [T, N]
+    # print(test_errors.shape) # [T, N]
+    # np.save("train_errors.npy", train_errors)
+    # np.save("test_errors.npy", test_errors)
 
-    # Evaluation Pipeline
-    evaluate_pipeline(model, train_loader, test_loader)
-    # # Compute raw errors
-    # train_errors = compute_errors(model, dataloader=train_loader)
-    # test_errors_actor2 = compute_errors(model, dataloader=test_loader_actor2)
+    # 6. Compute a global (normalized) anomaly score per timestamp
+    train_errors = np.load("train_errors.npy")
+    test_errors = np.load("test_errors.npy")
+    train_scores = compute_anomaly_score(train_errors, test_errors=train_errors)
+    test_scores = compute_anomaly_score(train_errors, test_errors=test_errors)
+    # print(train_scores.shape) # [T]
+    # print(test_scores.shape) # [T]
 
-    # # Compute normalized anomaly score
-    # median = np.median(train_errors, axis=0)
-    # iqr = np.percentile(train_errors, 75, axis=0) - np.percentile(train_errors, 25, axis=0)
-    # iqr[iqr == 0] = 1e-6  # avoid division by zero
+    # # Visualizae scores distribution
+    plt.figure(figsize=(15,5))
+    plt.plot(train_scores, label="Actor 1 (Normal)")
+    plt.plot(test_scores, label="Actor 2 (Test)")
+    plt.legend()
+    plt.title("Anomaly Scores")
+    plt.show()
 
-    # train_score = anomaly_score(train_errors, median, iqr)
-    # test_score_actor2 = anomaly_score(test_errors_actor2, median, iqr)
-    # print(train_score)
-    # print(test_score_actor2)
-
-    # # Apply SMA smoothing
-    # train_scores_series = pd.Series(train_score)
-    # smoothed_train_scores = train_scores_series.rolling(window=5).mean()
-    # test_score_actor2_series = pd.Series(test_score_actor2)
-    # smoothed_actor2_scores = test_score_actor2_series.rolling(window=5).mean()
-
-    # # Visualization
-    # plt.figure(figsize=(15,5))
-    # plt.plot(smoothed_train_scores, label="Actor 1 (Normal)")
-    # plt.plot(smoothed_actor2_scores, label="Actor 2 (Test)")
-    # plt.legend()
-    # plt.title("Anomaly Scores")
-    # plt.show()
-    # # save_scores(test_errors_actor1, exp_dir)
-    # # save_scores(test_errors_actor2, exp_dir)
-
+    # 
+    stat, p = ks_2samp(train_scores, test_scores)
+    print("KS statistic:", stat)
+    print("p-value:", p)
     # # 6. Visualization
     # # plot_scores(test_errors_actor1, exp_dir)
     # # plot_scores(test_errors_actor1, test_errors_actor2, exp_dir)
