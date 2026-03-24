@@ -3,11 +3,12 @@ import joblib
 import json
 import yaml
 
-def save_processed(train_array, test_array_actor1, test_array_actor2, scaler, devices, config):
+def save_processed(train_array, val_array, actor2_test_array, actor1_test_array, scaler, devices, config):
     processed_data_path = config["dataset"]["processed_folder"]
     np.save(f"{processed_data_path}/train_array.npy", train_array)
-    np.save(f"{processed_data_path}/val_array.npy", test_array_actor1)
-    np.save(f"{processed_data_path}/test_array.npy", test_array_actor2)
+    np.save(f"{processed_data_path}/val_array.npy", val_array)
+    np.save(f"{processed_data_path}/actor2_test_array.npy", actor2_test_array)
+    np.save(f"{processed_data_path}/actor1_test_array.npy", actor1_test_array)
 
     joblib.dump(scaler, f"{processed_data_path}/scaler.pkl")
 

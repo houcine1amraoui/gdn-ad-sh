@@ -45,26 +45,32 @@ def main_evaluation():
 
     # 4. Dataset/Loaders Create
     train_array = np.load(f"{processed_data_folder}/train_array.npy")
-    test_array = np.load(f"{processed_data_folder}/test_array.npy")
+    actor2_test_array = np.load(f"{processed_data_folder}/actor2_test_array.npy")
+    actor1_test_array = np.load(f"{processed_data_folder}/actor1_test_array.npy")
     train_dataset = TimeSeriesDataset(train_array, window_size)
-    test_dataset = TimeSeriesDataset(test_array, window_size)
+    actor2_test_dataset = TimeSeriesDataset(actor2_test_array, window_size)
+    actor1_test_dataset = TimeSeriesDataset(actor1_test_array, window_size)
     train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-    test_loader = DataLoader(test_dataset, batch_size=64, shuffle=True)
+    actor2_test_loader = DataLoader(actor2_test_dataset, batch_size=64, shuffle=True)
+    actor1_test_loader = DataLoader(actor1_test_dataset, batch_size=64, shuffle=True)
 
     # 5. Compute raw prediction errors
-    # train_errors = compute_prediction_errors(model, dataloader=train_loader)
-    # test_errors = compute_prediction_errors(model, dataloader=test_loader)
-    # np.save("train_errors.npy", train_errors)
-    # np.save("test_errors.npy", test_errors)
+    train_errors = compute_prediction_errors(model, dataloader=train_loader)
+    actor2_test_errors = compute_prediction_errors(model, dataloader=actor2_test_loader)
+    actor1_test_errors = compute_prediction_errors(model, dataloader=actor1_test_loader)
+    np.save("train_errors.npy", train_errors)
+    np.save("actor2_test_errors.npy", actor2_test_errors)
+    np.save("actor1_test_errors.npy", actor1_test_errors)
 
     # 6. Compute a global (normalized) anomaly score per timestamp
     train_errors = np.load("train_errors.npy")
-    test_errors = np.load("test_errors.npy")
-    train_scores, test_scores = compute_anomaly_score(train_errors, test_errors)
+    actor2_test_errors = np.load("actor2_test_errors.npy")
+    actor1_test_errors = np.load("actor1_test_errors.npy")
+    train_scores, actor2_test_scores = compute_anomaly_score(train_errors, actor2_test_errors)
 
     plt.figure(figsize=(8, 5))
     plt.hist(train_scores, bins=100, alpha=0.6, label="Train", density=True)
-    plt.hist(test_scores, bins=100, alpha=0.6, label="Test", density=True)
+    plt.hist(actor2_test_scores, bins=100, alpha=0.6, label="Test", density=True)
     plt.legend()
     plt.title("Score Distribution (Train vs Test)")
     plt.xlabel("Score")
