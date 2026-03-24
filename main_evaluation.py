@@ -78,10 +78,10 @@ def main_evaluation():
     plt.show()
 
     print("Train mean:", train_scores.mean())
-    print("Test mean:", test_scores.mean())
+    print("Test mean:", actor2_test_scores.mean())
 
     print("Train 95th percentile:", np.percentile(train_scores, 95))
-    print("Test 95th percentile:", np.percentile(test_scores, 95))
+    print("Test 95th percentile:", np.percentile(actor2_test_scores, 95))
 
     # # Visualizae scores distribution
     # plt.figure(figsize=(15,5))
