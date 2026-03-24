@@ -20,7 +20,7 @@ def compute_prediction_errors(model, dataloader, device="cpu"):
             errors.append(err.cpu().numpy())
     return np.concatenate(errors, axis=0)  # [T, N]
 
-def compute_anomaly_score(train_errors, test_errors):
+def compute_anomaly_score(train_errors, actor2_test_errors, actor1_test_errors):
 
     median = np.median(train_errors, axis=0)
     iqr = np.percentile(train_errors, 75, axis=0) - np.percentile(train_errors, 25, axis=0)
@@ -28,18 +28,21 @@ def compute_anomaly_score(train_errors, test_errors):
 
     # Normalize BOTH
     train_norm = np.abs((train_errors - median) / iqr)
-    test_norm  = np.abs((test_errors  - median) / iqr)
+    actor2_test_norm  = np.abs((actor2_test_errors  - median) / iqr)
+    actor1_test_norm  = np.abs((actor1_test_errors  - median) / iqr)
 
     # Use TOP-K instead of max
     k = max(1, int(0.1 * train_norm.shape[1]))
 
     train_topk = np.sort(train_norm, axis=1)[:, -k:]
-    test_topk  = np.sort(test_norm, axis=1)[:, -k:]
+    actor2_test_topk  = np.sort(actor2_test_norm, axis=1)[:, -k:]
+    actor1_test_topk  = np.sort(actor1_test_norm, axis=1)[:, -k:]
 
     train_scores = np.mean(train_topk, axis=1)
-    test_scores  = np.mean(test_topk, axis=1)
+    actor2_test_scores  = np.mean(actor2_test_topk, axis=1)
+    actor1_test_scores  = np.mean(actor1_test_topk, axis=1)
 
-    return train_scores, test_scores
+    return train_scores, actor2_test_scores, actor1_test_scores
     
 def evaluate_pipeline(model, train_loader, test_loader):
     # 1. Compute raw errors

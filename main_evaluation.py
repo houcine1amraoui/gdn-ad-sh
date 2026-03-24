@@ -39,57 +39,64 @@ def main_evaluation():
     optimizer = optim.Adam(model_arch.parameters(), lr=config["training"]["lr"])
     model, optimizer, _ = load_checkpoint(
         model_arch,
-        "best_model_minmax.pth",
+        "best_model.pth",
         optimizer
     )
 
     # 4. Dataset/Loaders Create
+    batch_size = config["training"]["batch_size"]
+
     train_array = np.load(f"{processed_data_folder}/train_array.npy")
     actor2_test_array = np.load(f"{processed_data_folder}/actor2_test_array.npy")
     actor1_test_array = np.load(f"{processed_data_folder}/actor1_test_array.npy")
     train_dataset = TimeSeriesDataset(train_array, window_size)
     actor2_test_dataset = TimeSeriesDataset(actor2_test_array, window_size)
     actor1_test_dataset = TimeSeriesDataset(actor1_test_array, window_size)
-    train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-    actor2_test_loader = DataLoader(actor2_test_dataset, batch_size=64, shuffle=True)
-    actor1_test_loader = DataLoader(actor1_test_dataset, batch_size=64, shuffle=True)
+    train_loader = DataLoader(train_dataset, batch_size, shuffle=True)
+    actor2_test_loader = DataLoader(actor2_test_dataset, batch_size, shuffle=True)
+    actor1_test_loader = DataLoader(actor1_test_dataset, batch_size, shuffle=True)
 
     # 5. Compute raw prediction errors
-    train_errors = compute_prediction_errors(model, dataloader=train_loader)
-    actor2_test_errors = compute_prediction_errors(model, dataloader=actor2_test_loader)
-    actor1_test_errors = compute_prediction_errors(model, dataloader=actor1_test_loader)
-    np.save("train_errors.npy", train_errors)
-    np.save("actor2_test_errors.npy", actor2_test_errors)
-    np.save("actor1_test_errors.npy", actor1_test_errors)
+    # train_errors = compute_prediction_errors(model, dataloader=train_loader)
+    # actor2_test_errors = compute_prediction_errors(model, dataloader=actor2_test_loader)
+    # actor1_test_errors = compute_prediction_errors(model, dataloader=actor1_test_loader)
+    # np.save("train_errors.npy", train_errors)
+    # np.save("actor2_test_errors.npy", actor2_test_errors)
+    # np.save("actor1_test_errors.npy", actor1_test_errors)
 
     # 6. Compute a global (normalized) anomaly score per timestamp
     train_errors = np.load("train_errors.npy")
     actor2_test_errors = np.load("actor2_test_errors.npy")
     actor1_test_errors = np.load("actor1_test_errors.npy")
-    train_scores, actor2_test_scores = compute_anomaly_score(train_errors, actor2_test_errors)
+    train_scores, actor2_test_scores, actor1_test_scores = (
+        compute_anomaly_score(train_errors, actor2_test_errors, actor1_test_errors)
+    )
 
-    plt.figure(figsize=(8, 5))
-    plt.hist(train_scores, bins=100, alpha=0.6, label="Train", density=True)
-    plt.hist(actor2_test_scores, bins=100, alpha=0.6, label="Test", density=True)
-    plt.legend()
-    plt.title("Score Distribution (Train vs Test)")
-    plt.xlabel("Score")
-    plt.ylabel("Density")
-    plt.show()
+    # plt.figure(figsize=(8, 5))
+    # plt.hist(train_scores, bins=100, alpha=0.6, label="Train", density=True)
+    # plt.hist(actor2_test_scores, bins=100, alpha=0.6, label="Test", density=True)
+    # plt.legend()
+    # plt.title("Score Distribution (Train vs Test)")
+    # plt.xlabel("Score")
+    # plt.ylabel("Density")
+    # plt.show()
 
     print("Train mean:", train_scores.mean())
-    print("Test mean:", actor2_test_scores.mean())
+    print("Actor 2 Test mean:", actor2_test_scores.mean())
+    print("Actor 1 Test mean:", actor1_test_scores.mean())
 
     print("Train 95th percentile:", np.percentile(train_scores, 95))
     print("Test 95th percentile:", np.percentile(actor2_test_scores, 95))
+    print("Test 95th percentile:", np.percentile(actor1_test_scores, 95))
 
-    # # Visualizae scores distribution
-    # plt.figure(figsize=(15,5))
-    # plt.plot(train_scores, label="Actor 1 (Normal)")
-    # plt.plot(test_scores, label="Actor 2 (Test)")
-    # plt.legend()
-    # plt.title("Anomaly Scores")
-    # plt.show()
+    # Visualizae scores distribution
+    plt.figure(figsize=(15,5))
+    plt.plot(train_scores, label="Actor 1 (Normal)")
+    plt.plot(actor2_test_scores, label="Actor 2 (Test)")
+    plt.plot(actor1_test_scores, label="Actor 1 (Test)")
+    plt.legend()
+    plt.title("Anomaly Scores")
+    plt.show()
 
     # 
     # stat, p = ks_2samp(train_scores, test_scores)
