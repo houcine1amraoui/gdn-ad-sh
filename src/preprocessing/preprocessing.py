@@ -1,6 +1,5 @@
 import pandas as pd
-from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import RobustScaler
+from sklearn.preprocessing import MinMaxScaler
 
 def clean_data(df):
     """
@@ -55,7 +54,7 @@ def normalize(actor1_train_df, actor1_val_df, actor2_test_df, sensors):
     - scaler
     """
 
-    scaler = RobustScaler()
+    scaler = MinMaxScaler()
 
     # Fit ONLY on training data
     # .to_numpy() is safer than .values() which removes column structure
