@@ -58,11 +58,12 @@ def normalize(actor1_train_df, actor1_val_df, actor2_test_df, sensors):
     scaler = RobustScaler()
 
     # Fit ONLY on training data
-    train_array = scaler.fit_transform(actor1_train_df[sensors].values)
+    # .to_numpy() is safer than .values() which removes column structure
+    train_array = scaler.fit_transform(actor1_train_df[sensors].to_numpy())
 
     # Transform validation and test using same scaler
-    val_array = scaler.transform(actor1_val_df[sensors].values)
-    test_array = scaler.transform(actor2_test_df[sensors].values)
+    val_array = scaler.transform(actor1_val_df[sensors].to_numpy())
+    test_array = scaler.transform(actor2_test_df[sensors].to_numpy())
 
     return train_array, val_array, test_array, scaler
 

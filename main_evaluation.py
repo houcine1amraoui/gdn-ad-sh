@@ -62,23 +62,39 @@ def main_evaluation():
     # 6. Compute a global (normalized) anomaly score per timestamp
     train_errors = np.load("train_errors.npy")
     test_errors = np.load("test_errors.npy")
-    train_scores = compute_anomaly_score(train_errors, test_errors=train_errors)
-    test_scores = compute_anomaly_score(train_errors, test_errors=test_errors)
+    train_scores, test_scores = compute_anomaly_score(train_errors, test_errors)
+    # test_scores = compute_anomaly_score(train_errors, test_errors=test_errors)
     # print(train_scores.shape) # [T]
     # print(test_scores.shape) # [T]
 
+    # plt.figure(figsize=(8, 5))
+
+    # plt.hist(train_scores, bins=100, alpha=0.6, label="Train", density=True)
+    # plt.hist(test_scores, bins=100, alpha=0.6, label="Test", density=True)
+
+    # plt.legend()
+    # plt.title("Score Distribution (Train vs Test)")
+    # plt.xlabel("Score")
+    # plt.ylabel("Density")
+
+    # plt.show()
+    print("Train mean:", train_scores.mean())
+    print("Test mean:", test_scores.mean())
+
+    print("Train 95th percentile:", np.percentile(train_scores, 95))
+    print("Test 95th percentile:", np.percentile(test_scores, 95))
     # # Visualizae scores distribution
-    plt.figure(figsize=(15,5))
-    plt.plot(train_scores, label="Actor 1 (Normal)")
-    plt.plot(test_scores, label="Actor 2 (Test)")
-    plt.legend()
-    plt.title("Anomaly Scores")
-    plt.show()
+    # plt.figure(figsize=(15,5))
+    # plt.plot(train_scores, label="Actor 1 (Normal)")
+    # plt.plot(test_scores, label="Actor 2 (Test)")
+    # plt.legend()
+    # plt.title("Anomaly Scores")
+    # plt.show()
 
     # 
-    stat, p = ks_2samp(train_scores, test_scores)
-    print("KS statistic:", stat)
-    print("p-value:", p)
+    # stat, p = ks_2samp(train_scores, test_scores)
+    # print("KS statistic:", stat)
+    # print("p-value:", p)
     # # 6. Visualization
     # # plot_scores(test_errors_actor1, exp_dir)
     # # plot_scores(test_errors_actor1, test_errors_actor2, exp_dir)

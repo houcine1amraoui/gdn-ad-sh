@@ -18,7 +18,7 @@ dataset:
   # path: data/sample/BREMaster-3.csv
   path: data/raw/CUMaster.csv
   processed_folder: data/processed
-  window_size: 60
+  window_size: 30
 
 training:
   batch_size: 64
@@ -27,7 +27,7 @@ training:
 
 model:
   hidden_dim: 64
-  topk: 5
+  topk: 15 # previously 15
   heads: 1
 
 experiments_folder: experiments
