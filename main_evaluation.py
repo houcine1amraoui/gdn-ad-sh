@@ -51,8 +51,8 @@ def main_evaluation():
     #     threshold_percentile=99
     # )
 
-    # scores = compute_anomaly_scores()
-    # plot_anomaly_scores_distribution(scores)
+    scores = compute_anomaly_scores(exp_dir)
+    plot_anomaly_scores_distribution(scores)
     # Plot distributions
     # plot_anomaly_score_distributions(scores)
     # 7. Compute detection rates

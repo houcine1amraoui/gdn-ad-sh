@@ -56,12 +56,12 @@ def compute_prediction_errors(model, data_loaders, exp_dir):
     np.save(f"{exp_dir}/actor2_test_errors.npy", actor2_test_errors)
     np.save(f"{exp_dir}/actor1_test_errors.npy", actor1_test_errors)
 
-def compute_anomaly_scores():
+def compute_anomaly_scores(exp_dir):
     # --- Load errors ---
-    train_errors = np.load("train_errors.npy")
-    val_errors = np.load("val_errors.npy")
-    actor2_test_errors = np.load("actor2_test_errors.npy")
-    actor1_test_errors = np.load("actor1_test_errors.npy")
+    train_errors = np.load(f"{exp_dir}/train_errors.npy")
+    val_errors = np.load(f"{exp_dir}/val_errors.npy")
+    actor2_test_errors = np.load(f"{exp_dir}/actor2_test_errors.npy")
+    actor1_test_errors = np.load(f"{exp_dir}/actor1_test_errors.npy")
 
     # Robust Stats
     median = np.median(train_errors, axis=0)
