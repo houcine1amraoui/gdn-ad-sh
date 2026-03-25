@@ -11,6 +11,8 @@ from src.evaluation.load_checkpoint import load_checkpoint
 from src.evaluation.pipeline import create_evaluation_dataloaders, plot_anomaly_score_distributions, compute_anomaly_score_and_detection
 from src.evaluation.pipeline import compute_anomaly_scores, errors_computation_pipeline
 import matplotlib.pyplot as plt
+import argparse
+
 from scipy.stats import ks_2samp
 from src.evaluation.viz import plot_boxplot
 from src.evaluation.viz import plot_anomaly_scores_distribution
@@ -20,6 +22,21 @@ def main_evaluation():
     with open("configs/config.yaml") as f:
         config = yaml.safe_load(f)
     set_seed(config["seed"])
+
+    # parse CLI args
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--processed_folder", type=str)
+    parser.add_argument("--experiments_folder", type=str)
+    args = parser.parse_args()
+
+    # override processed data folder path
+    if args.processed_folder:
+        config["dataset"]["processed_folder"] = args.processed_folder
+
+    # override experiments_folder
+    if args.experiments_folder:
+        config["experiments_folder"] = args.experiments_folder
+
     experiments_folder = config["experiments_folder"]
 
     exp_dir = create_experiment_folder(config, f"{experiments_folder}/eval")
