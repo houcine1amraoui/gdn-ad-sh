@@ -21,6 +21,33 @@ def create_experiment_folder(config, experiments_folder):
 
     return exp_dir
 
+import os
+import yaml
+
+def get_best_experiment(experiments_folder, metric_name="best_val_loss", mode="min"):
+    best_value = float("inf") if mode == "min" else -float("inf")
+    best_exp_path = None
+
+    for exp_name in os.listdir(experiments_folder):
+        exp_path = os.path.join(experiments_folder, exp_name)
+
+        metrics_path = os.path.join(exp_path, "metrics.yaml")
+
+        if not os.path.exists(metrics_path):
+            continue
+
+        with open(metrics_path, "r") as f:
+            metrics = yaml.safe_load(f)
+
+        value = metrics.get(metric_name)
+        if value is None:
+            continue
+
+        if (mode == "min" and value < best_value) or (mode == "max" and value > best_value):
+            best_value = value
+            best_exp_path = exp_path
+
+    return best_exp_path, best_value
 
 def save_experiment_config(config, flat_config, args, exp_dir):
     os.makedirs(exp_dir, exist_ok=True)

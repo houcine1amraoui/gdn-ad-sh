@@ -1,6 +1,7 @@
 import torch
 from tqdm import tqdm
 import os
+import yaml
 
 def train(model, train_loader, val_loader, optimizer, epochs, exp_dir,
           device="cpu", patience=20):
@@ -58,7 +59,11 @@ def train(model, train_loader, val_loader, optimizer, epochs, exp_dir,
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
                 'val_loss': val_loss
-            }, f"{exp_dir}/best_model.pth")
+            }, f"{exp_dir}/best.pth")
+
+            # Save metric
+            with open(os.path.join(f"{exp_dir}/metrics.yaml"), "w") as f:
+                yaml.dump({"best_val_loss": float(best_val_loss)}, f)
 
         else:
             patience_counter += 1

@@ -3,100 +3,74 @@ import numpy as np
 import json
 import torch.optim as optim
 
-from src.preprocessing.TimeSeriesDataset import TimeSeriesDataset
-from torch.utils.data import DataLoader
 from src.utils.seed import set_seed
 from src.utils.device import get_device
-from src.utils.experiment import create_experiment_folder
+from src.utils.experiment import create_experiment_folder, get_best_experiment
 from src.models.builders import build_gdn_model
 from src.evaluation.load_checkpoint import load_checkpoint
-from src.evaluation.pipeline import evaluate_pipeline
-from src.evaluation.pipeline import compute_prediction_errors
-from src.evaluation.pipeline import compute_anomaly_score
+from src.evaluation.pipeline import create_evaluation_dataloaders, plot_anomaly_score_distributions, compute_anomaly_score_and_detection
+from src.evaluation.pipeline import compute_anomaly_scores, errors_computation_pipeline
 import matplotlib.pyplot as plt
 from scipy.stats import ks_2samp
+from src.evaluation.viz import plot_boxplot
+from src.evaluation.viz import plot_anomaly_scores_distribution
 
 def main_evaluation():
     # 1. Set configuration
     with open("configs/config.yaml") as f:
         config = yaml.safe_load(f)
     set_seed(config["seed"])
-    device = get_device()
-    
+    experiments_folder = config["experiments_folder"]
 
-    with open("data/processed/devices.json") as f:
-        devices = json.load(f)
-    window_size = config["dataset"]["window_size"]
+    exp_dir = create_experiment_folder(config, f"{experiments_folder}/eval")
+    best_exp_path, _ = get_best_experiment(experiments_folder+"/train")
 
-    processed_data_folder = config["dataset"]["processed_folder"]
-    # experiments_folder = config["experiments_folder"]
-    # exp_dir = create_experiment_folder(config)
-    
-    # 2. Model Initialization
-    model_arch = build_gdn_model(len(devices), config, device)
+    errors_computation_pipeline(config, best_exp_path, exp_dir)
 
-    # 3. load checkpoint
-    optimizer = optim.Adam(model_arch.parameters(), lr=config["training"]["lr"])
-    model, optimizer, _ = load_checkpoint(
-        model_arch,
-        "best_model.pth",
-        optimizer
-    )
+    # Compute a global (normalized) anomaly score per timestamp
+    # Compute scores + detection
+    # scores, detection_rate, false_positive_rate = compute_anomaly_score_and_detection(
+    #     topk_ratio=0.4,
+    #     threshold_percentile=99
+    # )
 
-    # 4. Dataset/Loaders Create
-    batch_size = config["training"]["batch_size"]
+    # scores = compute_anomaly_scores()
+    # plot_anomaly_scores_distribution(scores)
+    # Plot distributions
+    # plot_anomaly_score_distributions(scores)
+    # 7. Compute detection rates
+    # detection_rate, fp_rate = (
+    # compute_detection_rates(scores["train_scores"], scores[]"actor2_test_scores", actor1_test_scores))
+    # print("detection rate: ", detection_rate, "false positive rate", false_positive_rate)
 
-    train_array = np.load(f"{processed_data_folder}/train_array.npy")
-    actor2_test_array = np.load(f"{processed_data_folder}/actor2_test_array.npy")
-    actor1_test_array = np.load(f"{processed_data_folder}/actor1_test_array.npy")
-    train_dataset = TimeSeriesDataset(train_array, window_size)
-    actor2_test_dataset = TimeSeriesDataset(actor2_test_array, window_size)
-    actor1_test_dataset = TimeSeriesDataset(actor1_test_array, window_size)
-    train_loader = DataLoader(train_dataset, batch_size, shuffle=True)
-    actor2_test_loader = DataLoader(actor2_test_dataset, batch_size, shuffle=True)
-    actor1_test_loader = DataLoader(actor1_test_dataset, batch_size, shuffle=True)
+    # plot_boxplot(train_scores, val_scores, actor2_test_scores, actor1_test_scores)
+    # print("Train mean:", train_scores.mean())
+    # print("Val mean:", val_scores.mean())
+    # print("Actor 2 Test mean:", actor2_test_scores.mean())
+    # print("Actor 1 Test mean:", actor1_test_scores.mean())
 
-    # 5. Compute raw prediction errors
-    # train_errors = compute_prediction_errors(model, dataloader=train_loader)
-    # actor2_test_errors = compute_prediction_errors(model, dataloader=actor2_test_loader)
-    # actor1_test_errors = compute_prediction_errors(model, dataloader=actor1_test_loader)
-    # np.save("train_errors.npy", train_errors)
-    # np.save("actor2_test_errors.npy", actor2_test_errors)
-    # np.save("actor1_test_errors.npy", actor1_test_errors)
+    # print("Train 95th percentile:", np.percentile(train_scores, 95))
+    # print("Test 95th percentile:", np.percentile(actor2_test_scores, 95))
+    # print("Test 95th percentile:", np.percentile(actor1_test_scores, 95))
 
-    # 6. Compute a global (normalized) anomaly score per timestamp
-    train_errors = np.load("train_errors.npy")
-    actor2_test_errors = np.load("actor2_test_errors.npy")
-    actor1_test_errors = np.load("actor1_test_errors.npy")
-    train_scores, actor2_test_scores, actor1_test_scores = (
-        compute_anomaly_score(train_errors, actor2_test_errors, actor1_test_errors)
-    )
+    # full_scores = np.concatenate([
+    #     train_scores,
+    #     actor2_test_scores,
+    #     actor1_test_scores
+    # ])
 
-    # plt.figure(figsize=(8, 5))
-    # plt.hist(train_scores, bins=100, alpha=0.6, label="Train", density=True)
-    # plt.hist(actor2_test_scores, bins=100, alpha=0.6, label="Test", density=True)
-    # plt.legend()
-    # plt.title("Score Distribution (Train vs Test)")
-    # plt.xlabel("Score")
-    # plt.ylabel("Density")
+    # plt.plot(full_scores)
     # plt.show()
 
-    print("Train mean:", train_scores.mean())
-    print("Actor 2 Test mean:", actor2_test_scores.mean())
-    print("Actor 1 Test mean:", actor1_test_scores.mean())
-
-    print("Train 95th percentile:", np.percentile(train_scores, 95))
-    print("Test 95th percentile:", np.percentile(actor2_test_scores, 95))
-    print("Test 95th percentile:", np.percentile(actor1_test_scores, 95))
-
     # Visualizae scores distribution
-    plt.figure(figsize=(15,5))
-    plt.plot(train_scores, label="Actor 1 (Normal)")
-    plt.plot(actor2_test_scores, label="Actor 2 (Test)")
-    plt.plot(actor1_test_scores, label="Actor 1 (Test)")
-    plt.legend()
-    plt.title("Anomaly Scores")
-    plt.show()
+    # plt.figure(figsize=(15,5))
+    # plt.plot(scores["train"], label="Actor 1 (Normal)")
+    # plt.plot(scores["val"], label="Validation")
+    # plt.plot(scores["actor2_test"], label="Actor 2 (Test)")
+    # plt.plot(scores["actor1_test"], label="Actor 1 (Test)")
+    # plt.legend()
+    # plt.title("Anomaly Scores")
+    # plt.show()
 
     # 
     # stat, p = ks_2samp(train_scores, test_scores)

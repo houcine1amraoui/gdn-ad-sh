@@ -30,4 +30,5 @@ model:
   topk: 15 # previously 15
   heads: 1
 
+best_model: "best_model.pth"
 experiments_folder: experiments

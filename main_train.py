@@ -42,7 +42,7 @@ def main_train():
     
     processed_data_folder = config["dataset"]["processed_folder"]
     experiments_folder = config["experiments_folder"]
-    exp_dir = create_experiment_folder(config, experiments_folder)
+    exp_dir = create_experiment_folder(config, experiments_folder+"/train")
 
     with open(f"{processed_data_folder}/devices.json") as f:
         devices = json.load(f)
