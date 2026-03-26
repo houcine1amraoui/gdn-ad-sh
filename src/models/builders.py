@@ -4,14 +4,14 @@ from src.models.mtad_gat import MTAD_GAT
 from src.utils.device import get_device 
     
 def build_gdn_model(name, config):
-    processed_data_folder = config["dataset"]["processed_folder"]
+    processed_data_folder = config["dataset"]["processed_data_folder"]
 
     with open(f"{processed_data_folder}/devices.json") as f:
         devices = json.load(f)
 
     device = get_device()
     model = None
-    
+
     if name == "gdn":
         model = GDN(
             number_nodes=len(devices),
