@@ -174,15 +174,16 @@ class GDN(nn.Module):
         Returns:
             Tensor: node prediction with size [batch_size, number_nodes]
         """
+
+        # 🔥 ADD THIS LINE
+        batch_x = batch_x.permute(0, 2, 1)  # (B, n, k) → (B, k, n)
+
         B, N, C = batch_x.shape
         
         # get node features for GNN
         # --> size [number_nodes * batch_size, number_node_features]
         x = batch_x.reshape(-1, C)
         
-        # this is my personal modification
-        x = x.permute(0, 2, 1)  # (B, W, N) → (B, N, W)
-
         # get batched KNN edge_index for GNN
         embeddings = self.embedding.weight
         knn_edge_index = knn_graph(embeddings, self.topk)
