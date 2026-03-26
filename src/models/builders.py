@@ -13,17 +13,18 @@ def build_gdn_model(name, config):
     model = None
 
     if name == "gdn":
+        params = config["models"][0]["params"]
         model = GDN(
             number_nodes=len(devices),
             in_dim=config["dataset"]["window_size"],
-            hid_dim=config["models"][0]["params"]["hidden_dim"],
-            topk=config["models"][0]["params"]["topk"],
-            heads=config["models"][0]["params"]["heads"]
-        )
+            hid_dim=params["hidden_dim"],
+            topk=params["topk"],
+            heads=params["heads"]
+        ).to(device)
     elif name == "mtad_gat":
-        model = MTAD_GAT()
+        params = config["models"][0]["params"]
+        model = MTAD_GAT().to(device)
     else:
         raise ValueError(f"Unknown model: {name}")
     
-    model.to(device)
     return model
