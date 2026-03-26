@@ -20,17 +20,28 @@ dataset:
   processed_data_folder: data/processed
   window_size: 30
 
+models:
+  - name: "gdn"
+    enabled: true
+    params:
+      hidden_dim: 64
+      topk: 10 # previously 15
+      heads: 1
+
+  - name: "mtad_gat"
+    enabled: true
+    params:
+      kernel_size: 7
+      gru_hidden_dim: 150
+      gat_heads: 3
+
 training:
   batch_size: 64
   epochs: 50
   lr: 0.001
   train_experiments_main_folder: train_experiments
 
-model:
-  hidden_dim: 64
-  topk: 10 # previously 15
-  heads: 1
-
 evaluation:
+  batch_size: 64
   threshold_percentile: 99
   eval_results_folder: eval_results

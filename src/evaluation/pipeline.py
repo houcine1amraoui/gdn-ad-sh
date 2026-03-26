@@ -8,6 +8,7 @@ import seaborn as sns
 import numpy as np
 import os
 import yaml
+from scipy.stats import ks_2samp
 
 from src.preprocessing.TimeSeriesDataset import TimeSeriesDataset
 from torch.utils.data import DataLoader
@@ -15,7 +16,7 @@ from src.models.builders import build_gdn_model
 from src.evaluation.load_checkpoint import load_checkpoint
 from src.utils.experiment import get_best_experiment
 
-def compute_detection_rates(scores, config):
+def compute_metrics(scores, config):
     """
     Detection rate (Actor2) Expect: HIGH (~1.0)
     False positive rate (Actor1 Test) LOW (~0.05)
@@ -25,17 +26,20 @@ def compute_detection_rates(scores, config):
 
     # --- Threshold ---
     threshold = np.percentile(scores["train"], threshold_percentile)
+    # actor2_test_threshold = np.percentile(scores["actor2_test"], threshold_percentile)
+    # actor1_test_threshold = np.percentile(scores["actor1_test"], threshold_percentile)
+    # stat, p = ks_2samp(scores["train"], scores["actor2_test"])
 
     detection_rate = np.mean(scores["actor2_test"] > threshold)
     false_positive_rate = np.mean(scores["actor1_test"] > threshold)
-    
+
     with open(os.path.join(f"{eval_results_folder}/metrics.yaml"), "w") as f:
          yaml.dump({"detection_rate": float(detection_rate)}, f)
          yaml.dump({"false_positive_rate": float(false_positive_rate)}, f)
 
 def errors_computation_pipeline(config):
-    train_experiments_main_folder = config["train_experiments_main_folder"]
-    eval_results_folder = config["eval_results_folder"]
+    train_experiments_main_folder = config["training"]["train_experiments_main_folder"]
+    eval_results_folder = config["evaluation"]["eval_results_folder"]
 
     best_exp_path, _ = get_best_experiment(train_experiments_main_folder)
 
@@ -101,7 +105,6 @@ def compute_anomaly_scores(config):
     val_norm = (val_errors - median) / iqr
     actor2_test_norm = (actor2_test_errors - median) / iqr
     actor1_test_norm = (actor1_test_errors - median) / iqr
-
 
     train_scores = np.mean(train_norm, axis=1)
     val_scores = np.mean(val_norm, axis=1)
@@ -204,37 +207,11 @@ def compute_anomaly_score_and_detection(
 
     return scores, detection_rate, false_positive_rate    
 
-def plot_anomaly_score_distributions(scores):
-    """
-    Plot distribution of anomaly scores for train, val, Actor2, Actor1.
-    
-    Parameters:
-    - scores: dict with keys 'train', 'val', 'actor2', 'actor1'
-    """
-
-    plt.figure(figsize=(10, 6))
-    sns.set(style="whitegrid")
-
-    # Plot each distribution
-    sns.kdeplot(scores['train'], label='Train', color='blue', fill=True, alpha=0.3)
-    sns.kdeplot(scores['val'], label='Validation', color='green', fill=True, alpha=0.3)
-    sns.kdeplot(scores['actor2'], label='Actor2 Test (Anomaly)', color='red', fill=True, alpha=0.3)
-    sns.kdeplot(scores['actor1'], label='Actor1 Test (Normal)', color='orange', fill=True, alpha=0.3)
-
-    plt.xlabel("Anomaly Score (log-scaled)")
-    plt.ylabel("Density")
-    plt.title("Anomaly Score Distributions")
-    plt.legend()
-    plt.tight_layout()
-    plt.show()
-    
-
-
 def create_evaluation_dataloaders(config):
     # load config
-    processed_data_folder = config["dataset"]["processed_folder"]
+    processed_data_folder = config["dataset"]["processed_data_folder"]
     window_size = config["dataset"]["window_size"]
-    batch_size = config["training"]["batch_size"]
+    batch_size = config["evaluation"]["batch_size"]
 
     train_array = np.load(f"{processed_data_folder}/train_array.npy")
     val_array = np.load(f"{processed_data_folder}/val_array.npy")
@@ -259,70 +236,4 @@ def create_evaluation_dataloaders(config):
     }
     return data_loaders
 
-def evaluate_pipeline(model, train_loader, test_loader):
-    # 1. Compute raw errors
-    train_errors = compute_prediction_errors(model, dataloader=train_loader)
-    test_errors = compute_prediction_errors(model, dataloader=test_loader)
-
-    # 2. Compute global (normalized) anomaly scores per timestamp
-    # train_scores = compute_anomaly_score(train_errors, test_errors=train_errors)
-    # test_scores = compute_anomaly_score(train_errors, test_errors=test_errors)
     
-    # np.save("train_scores.npy", train_scores)
-    # np.save("test_scores.npy", test_scores)
-
-    # weak labeling
-    # y_true_actor1 = np.zeros(len(train_scores))
-    # y_true_actor2 = np.ones(len(test_scores))
-    # y_true = np.concatenate([y_true_actor1, y_true_actor2])
-    # y_score = np.concatenate([train_scores, test_scores])
-
-    # auc = roc_auc_score(y_true, y_score)
-    # print("AUC:", auc)
-
-    # 4. Estimate threshold from normal data (Method 1)
-    # threshold = np.percentile(train_scores, 99)
-
-    # 4. Estimate threshold from normal data (Method 2)
-    # median = np.median(train_scores)
-    # q75 = np.percentile(train_scores, 75)
-    # q25 = np.percentile(train_scores, 25)
-    # iqr = q75 - q25
-    # threshold = median + 3 * iqr
-
-    # # 5. Detect anomalies
-    # train_anomaly_flags = train_scores > threshold
-    # test_anomaly_flags = test_scores > threshold
-
-    # plt.hist(train_scores, bins=50, alpha=0.5, label="Actor1")
-    # plt.hist(test_scores, bins=50, alpha=0.5, label="Actor2")
-    # plt.legend()
-    # plt.title("Score Distribution")
-    # plt.show()
-    # Extract Detected Anomaly Points
-    # train_anomaly_indices = np.where(train_scores > threshold)[0]
-    # test_anomaly_indices = np.where(test_scores > threshold)[0]
-    # print("Anomalies in train", len(train_anomaly_indices)/len(train_scores)*100, "%")
-    # print("Anomalies in train",len(test_anomaly_indices)/len(test_scores)*100, "%")
-
-    # # Combine With Sensor Attribution
-    # timestep = 0
-    # devices_scores = test_scores[timestep]
-    # top_device = np.argmax(devices_scores)
-    # print("Top device: ", top_device)
-
-    # # Visualize Threshold on the Score Plot
-    # plt.figure(figsize=(15,5))
-    # plt.plot(train_scores, label="Train Score")
-    # plt.plot(test_scores, label="Anomaly Score")
-    # plt.axhline(threshold, color='r', linestyle='--', label="Threshold")
-    # plt.legend()
-    # plt.title("Anomaly Detection")
-    # plt.show()
-
-    # return {
-    #     train_scores,
-    #     test_scores,
-    # #     "threshold": threshold,
-    # #     "anomalies": test_anomaly_flags
-    # }
