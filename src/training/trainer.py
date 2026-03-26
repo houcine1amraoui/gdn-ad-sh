@@ -5,7 +5,7 @@ import yaml
 from src.utils.device import get_device
 
 def train(model, train_loader, val_loader, optimizer, epochs, 
-          train_experiments_sub_folder, patience=20):
+          train_experiments_sub_folder, patience):
     
     # Create a folder if it doesn't exist
     os.makedirs(train_experiments_sub_folder, exist_ok=True)

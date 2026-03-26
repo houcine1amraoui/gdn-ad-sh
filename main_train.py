@@ -50,6 +50,7 @@ def main_train():
 
     batch_size = config["training"]["batch_size"]
     epochs = config["training"]["epochs"]
+    patience = config["training"]["patience"]
 
     # 2. Dataset/DataLoader creation
     train_array = np.load(f"{processed_data_folder}/train_array.npy")
@@ -67,7 +68,7 @@ def main_train():
     # 4. Train
     optimizer = optim.Adam(model.parameters(), lr=config["training"]["lr"])
     
-    train(model, train_loader, val_loader, optimizer, epochs, train_experiments_sub_folder, device)
+    train(model, train_loader, val_loader, optimizer, epochs, train_experiments_sub_folder, patience)
   
 if __name__ == "__main__":
     main_train()

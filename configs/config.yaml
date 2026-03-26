@@ -39,6 +39,7 @@ training:
   batch_size: 64
   epochs: 50
   lr: 0.001
+  patience: 20
   train_experiments_main_folder: train_experiments
 
 evaluation:
