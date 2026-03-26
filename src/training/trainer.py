@@ -24,8 +24,9 @@ def train(model, train_loader, val_loader, optimizer, epochs,
             x = x.to(device)
             y = y.to(device)
 
-            pred = model(x)
-            loss = model.loss(pred, y)
+            batch = {"x": x, "y": y}
+            output = model(x)
+            loss = model.loss(batch, output)
 
             optimizer.zero_grad()
             loss.backward()

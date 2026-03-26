@@ -76,4 +76,17 @@ class MTAD_GAT(nn.Module):
         predictions = self.forecasting_model(h_end)
         recons = self.recon_model(h_end)
 
-        return predictions, recons
+        return {"pred": predictions, "recon": recons}
+    
+    # This is my personal modification
+    def loss(self, batch, output):
+        x = batch["x"]
+        y = batch["y"]
+
+        pred = output["pred"]
+        recon = output["recon"]
+
+        forecast_loss = torch.mean((pred - y) ** 2)
+        recon_loss = torch.mean((recon - x) ** 2)
+
+        return forecast_loss + recon_loss

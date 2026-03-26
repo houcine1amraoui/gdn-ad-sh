@@ -175,8 +175,8 @@ class GDN(nn.Module):
             Tensor: node prediction with size [batch_size, number_nodes]
         """
 
-        # 🔥 ADD THIS LINE
-        batch_x = batch_x.permute(0, 2, 1)  # (B, n, k) → (B, k, n)
+        # This is my personal change (not from github repo)
+        batch_x = batch_x.permute(0, 2, 1)  # (B, W, N) → (B, N, W)
 
         B, N, C = batch_x.shape
         
@@ -199,7 +199,16 @@ class GDN(nn.Module):
         out = torch.mul(out, embeddings_repeat)
         out = self.dropout(self.batch_norm_out(out))
         out = self.out_layer(out) # [number_nodes * batch_size, 1]
-        return out.view(B, N)
+
+        # This is my personal modification
+        out = out.view(B, N)
+        return {"pred": out}
     
-    def loss(self, pred: Tensor, label: Tensor):
-        return self.loss_fun(pred, label)
+    # def loss(self, pred: Tensor, label: Tensor):
+    #     return self.loss_fun(pred, label)
+    
+    def loss(self, batch, output):
+        pred = output["pred"]
+        y = batch["y"]
+
+        return self.loss_fun(pred, y)
