@@ -83,10 +83,13 @@ def compute_prediction_errors(model, data_loaders, eval_results_folder):
     actor2_test_errors = compute_prediction_errors_per_loader(model, dataloader=data_loaders["actor2_test_loader"])
     actor1_test_errors = compute_prediction_errors_per_loader(model, dataloader=data_loaders["actor1_test_loader"])
     
-    np.save(f"{eval_results_folder}/errors/train_errors.npy", train_errors)
-    np.save(f"{eval_results_folder}/errors/val_errors.npy", val_errors)
-    np.save(f"{eval_results_folder}/errors/actor2_test_errors.npy", actor2_test_errors)
-    np.save(f"{eval_results_folder}/errors/actor1_test_errors.npy", actor1_test_errors)
+    errors_folder = f"{eval_results_folder}/errors"
+    os.makedirs(errors_folder, exist_ok=True)
+
+    np.save(f"{errors_folder}/train_errors.npy", train_errors)
+    np.save(f"{errors_folder}/val_errors.npy", val_errors)
+    np.save(f"{errors_folder}/actor2_test_errors.npy", actor2_test_errors)
+    np.save(f"{errors_folder}/actor1_test_errors.npy", actor1_test_errors)
 
 def compute_anomaly_scores(config):
     eval_results_folder = config["evaluation"]["eval_results_folder"]
