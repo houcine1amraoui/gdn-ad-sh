@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 from src.utils.seed import set_seed
 from src.utils.device import get_device
 from src.utils.experiment import create_experiment_folder
-from models.builder import build_gdn_model
+from src.models.builder import build_gdn_model
 from src.training.trainer import train
 import argparse
 

@@ -180,6 +180,7 @@ class GDN(nn.Module):
         # --> size [number_nodes * batch_size, number_node_features]
         x = batch_x.reshape(-1, C)
         
+        # this is my personal modification
         x = x.permute(0, 2, 1)  # (B, W, N) → (B, N, W)
 
         # get batched KNN edge_index for GNN
