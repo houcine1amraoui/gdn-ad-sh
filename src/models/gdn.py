@@ -175,7 +175,7 @@ class GDN(nn.Module):
             Tensor: node prediction with size [batch_size, number_nodes]
         """
 
-        # This is my personal change (not from github repo)
+        # This is my personal modification (not from github repo)
         batch_x = batch_x.permute(0, 2, 1)  # (B, W, N) → (B, N, W)
 
         B, N, C = batch_x.shape
