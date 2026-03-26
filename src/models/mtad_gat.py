@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from modules import (
+from src.models.modules import (
     ConvLayer,
     FeatureAttentionLayer,
     TemporalAttentionLayer,
