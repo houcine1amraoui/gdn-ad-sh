@@ -46,6 +46,7 @@ def train(model, train_loader, val_loader, optimizer, epochs,
                 y = y.to(device)
 
                 batch = {"x": x, "y": y}
+                output = model(x)
                 loss = model.loss(batch, output)
 
                 val_loss += loss.item()
