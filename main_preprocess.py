@@ -15,21 +15,21 @@ def main_preprocess():
 
     # parse CLI args
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data_path", type=str)
-    parser.add_argument("--processed_folder", type=str)
+    parser.add_argument("--raw_data_path", type=str)
+    parser.add_argument("--processed_data_folder", type=str)
     args = parser.parse_args()
 
     # override dataset path
-    if args.data_path:
-        config["dataset"]["path"] = args.data_path
+    if args.raw_data_path:
+        config["dataset"]["raw_data_path"] = args.raw_data_path
 
     # override processed data folder path
     if args.processed_folder:
-        config["dataset"]["processed_folder"] = args.processed_folder
+        config["dataset"]["processed_data_folder"] = args.processed_data_folder
         
-    data_path = config["dataset"]["path"]
+    raw_data_path = config["dataset"]["raw_data_path"]
     
-    train_array, val_array, actor2_test_array, actor1_test_array, scaler, devices = data_preprocessing(data_path)
+    train_array, val_array, actor2_test_array, actor1_test_array, scaler, devices = data_preprocessing(raw_data_path)
     print(len(train_array), len(val_array), len(actor2_test_array), len(actor1_test_array))
     
     save_processed(

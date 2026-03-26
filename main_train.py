@@ -2,6 +2,7 @@ import numpy as np
 import yaml
 import json
 import torch.optim as optim
+import os
 
 from src.preprocessing.TimeSeriesDataset import TimeSeriesDataset
 from torch.utils.data import DataLoader
@@ -20,29 +21,28 @@ def main_train():
 
     # parse CLI args
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data_path", type=str)
-    parser.add_argument("--processed_folder", type=str)
-    parser.add_argument("--experiments_folder", type=str)
+    parser.add_argument("--processed_data_folder", type=str)
+    parser.add_argument("--train_experiments_main_folder", type=str)
     args = parser.parse_args()
 
-    # override dataset path
-    if args.data_path:
-        config["dataset"]["path"] = args.data_path
-
     # override processed data folder path
-    if args.processed_folder:
-        config["dataset"]["processed_folder"] = args.processed_folder
+    if args.processed_data_folder:
+        config["dataset"]["processed_data_folder"] = args.processed_data_folder
 
     # override experiments_folder
-    if args.experiments_folder:
-        config["experiments_folder"] = args.experiments_folder
+    if args.train_experiments_main_folder:
+        config["training"]["train_experiments_main_folder"] = args.train_experiments_main_folder
 
     set_seed(config["seed"])
     device = get_device()
     
-    processed_data_folder = config["dataset"]["processed_folder"]
-    experiments_folder = config["experiments_folder"]
-    exp_dir = create_experiment_folder(config, experiments_folder+"/train")
+    processed_data_folder = config["dataset"]["processed_data_folder"]
+    train_experiments_main_folder = config["training"]["train_experiments_main_folder"]
+
+    # Create a folder if it doesn't exist
+    os.makedirs(train_experiments_main_folder, exist_ok=True)
+
+    train_experiments_sub_folder = create_experiment_folder(config, train_experiments_main_folder)
 
     with open(f"{processed_data_folder}/devices.json") as f:
         devices = json.load(f)
@@ -67,7 +67,7 @@ def main_train():
     # 4. Train
     optimizer = optim.Adam(model.parameters(), lr=config["training"]["lr"])
     
-    train(model, train_loader, val_loader, optimizer, epochs, exp_dir, device)
+    train(model, train_loader, val_loader, optimizer, epochs, train_experiments_sub_folder, device)
   
 if __name__ == "__main__":
     main_train()

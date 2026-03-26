@@ -7,29 +7,29 @@ from types import SimpleNamespace
 from src.utils.device import get_device
 from src.utils.seed import set_seed
 
-def create_experiment_folder(config, experiments_folder):
+def create_experiment_folder(config, train_experiments_main_folder):
     """
     """
     timestamp = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-    exp_dir = os.path.join(experiments_folder, f"exp_{timestamp}")
+    train_experiments_sub_folder = os.path.join(train_experiments_main_folder, f"exp_{timestamp}")
 
-    os.makedirs(exp_dir, exist_ok=True)
+    os.makedirs(train_experiments_sub_folder, exist_ok=True)
 
     # Save config for reproducibility
-    with open(os.path.join(exp_dir, "config.yaml"), "w") as f:
+    with open(os.path.join(train_experiments_sub_folder, "config.yaml"), "w") as f:
         yaml.dump(config, f)
 
-    return exp_dir
+    return train_experiments_sub_folder
 
 import os
 import yaml
 
-def get_best_experiment(experiments_folder, metric_name="best_val_loss", mode="min"):
+def get_best_experiment(train_experiments_main_folder, metric_name="best_val_loss", mode="min"):
     best_value = float("inf") if mode == "min" else -float("inf")
     best_exp_path = None
 
-    for exp_name in os.listdir(experiments_folder):
-        exp_path = os.path.join(experiments_folder, exp_name)
+    for exp_name in os.listdir(train_experiments_main_folder):
+        exp_path = os.path.join(train_experiments_main_folder, exp_name)
 
         metrics_path = os.path.join(exp_path, "metrics.yaml")
 

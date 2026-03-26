@@ -3,10 +3,11 @@ from tqdm import tqdm
 import os
 import yaml
 
-def train(model, train_loader, val_loader, optimizer, epochs, exp_dir,
+def train(model, train_loader, val_loader, optimizer, epochs, train_experiments_sub_folder,
           device="cpu", patience=20):
     
-    os.makedirs(exp_dir, exist_ok=True)
+    # Create a folder if it doesn't exist
+    os.makedirs(train_experiments_sub_folder, exist_ok=True)
 
     best_val_loss = float("inf")
     patience_counter = 0
@@ -59,10 +60,10 @@ def train(model, train_loader, val_loader, optimizer, epochs, exp_dir,
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
                 'val_loss': val_loss
-            }, f"{exp_dir}/best.pth")
+            }, f"{train_experiments_sub_folder}/best.pth")
 
             # Save metric
-            with open(os.path.join(f"{exp_dir}/metrics.yaml"), "w") as f:
+            with open(os.path.join(f"{train_experiments_sub_folder}/metrics.yaml"), "w") as f:
                 yaml.dump({"best_val_loss": float(best_val_loss)}, f)
 
         else:
@@ -78,4 +79,4 @@ def train(model, train_loader, val_loader, optimizer, epochs, exp_dir,
         'epoch': epoch,
         'model_state_dict': model.state_dict(),
         'optimizer_state_dict': optimizer.state_dict(),
-    }, f"{exp_dir}/last_model.pth")
+    }, f"{train_experiments_sub_folder}/last_model.pth")

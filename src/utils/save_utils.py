@@ -1,16 +1,20 @@
 import numpy as np
 import joblib
 import json
-import yaml
+import os
 
 def save_processed(train_array, val_array, actor2_test_array, actor1_test_array, scaler, devices, config):
-    processed_data_path = config["dataset"]["processed_folder"]
-    np.save(f"{processed_data_path}/train_array.npy", train_array)
-    np.save(f"{processed_data_path}/val_array.npy", val_array)
-    np.save(f"{processed_data_path}/actor2_test_array.npy", actor2_test_array)
-    np.save(f"{processed_data_path}/actor1_test_array.npy", actor1_test_array)
+    processed_data_folder = config["dataset"]["processed_data_folder"]
 
-    joblib.dump(scaler, f"{processed_data_path}/scaler.pkl")
+    # Create folder if it doesn't exist
+    os.makedirs(processed_data_folder, exist_ok=True)
 
-    with open(f"{processed_data_path}/devices.json", "w") as f:
+    np.save(f"{processed_data_folder}/train_array.npy", train_array)
+    np.save(f"{processed_data_folder}/val_array.npy", val_array)
+    np.save(f"{processed_data_folder}/actor2_test_array.npy", actor2_test_array)
+    np.save(f"{processed_data_folder}/actor1_test_array.npy", actor1_test_array)
+
+    joblib.dump(scaler, f"{processed_data_folder}/scaler.pkl")
+
+    with open(f"{processed_data_folder}/devices.json", "w") as f:
         json.dump(devices, f)

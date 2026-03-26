@@ -108,9 +108,9 @@ def normalize(train_df, val_df, actor2_test_df, actor1_test_df, devices):
 
     return train_array, val_array, actor2_test_array, actor1_test_array, scaler
 
-def data_preprocessing(path):
+def data_preprocessing(raw_data_path):
     # 1. Load data
-    df = pd.read_csv(path)
+    df = pd.read_csv(raw_data_path)
     print("Data loding done.")
 
     # Data Cleaning

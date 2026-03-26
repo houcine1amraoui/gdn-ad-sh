@@ -6,13 +6,39 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import roc_auc_score
 import seaborn as sns
 import numpy as np
+import os
+import yaml
 
 from src.preprocessing.TimeSeriesDataset import TimeSeriesDataset
 from torch.utils.data import DataLoader
 from src.models.builders import build_gdn_model
 from src.evaluation.load_checkpoint import load_checkpoint
+from src.utils.experiment import get_best_experiment
 
-def errors_computation_pipeline(config, best_exp_path, exp_dir):
+def compute_detection_rates(scores, config):
+    """
+    Detection rate (Actor2) Expect: HIGH (~1.0)
+    False positive rate (Actor1 Test) LOW (~0.05)
+    """
+    threshold_percentile = config["evaluation"]["threshold_percentile"]
+    eval_results_folder = config["evaluation"]["eval_results_folder"]
+
+    # --- Threshold ---
+    threshold = np.percentile(scores["train"], threshold_percentile)
+
+    detection_rate = np.mean(scores["actor2_test"] > threshold)
+    false_positive_rate = np.mean(scores["actor1_test"] > threshold)
+    
+    with open(os.path.join(f"{eval_results_folder}/metrics.yaml"), "w") as f:
+         yaml.dump({"detection_rate": float(detection_rate)}, f)
+         yaml.dump({"false_positive_rate": float(false_positive_rate)}, f)
+
+def errors_computation_pipeline(config):
+    train_experiments_main_folder = config["train_experiments_main_folder"]
+    eval_results_folder = config["eval_results_folder"]
+
+    best_exp_path, _ = get_best_experiment(train_experiments_main_folder)
+
     # 1. Model Initialization
     model_arch = build_gdn_model(config)
 
@@ -28,7 +54,7 @@ def errors_computation_pipeline(config, best_exp_path, exp_dir):
     data_loaders = create_evaluation_dataloaders(config)
     
     # 5. Compute raw prediction errors
-    compute_prediction_errors(model, data_loaders, exp_dir)
+    compute_prediction_errors(model, data_loaders, eval_results_folder)
 
 def compute_prediction_errors_per_loader(model, dataloader, device="cpu"):
     """
@@ -45,23 +71,25 @@ def compute_prediction_errors_per_loader(model, dataloader, device="cpu"):
             errors.append(err.cpu().numpy())
     return np.concatenate(errors, axis=0)  # [T, N]
 
-def compute_prediction_errors(model, data_loaders, exp_dir):
+def compute_prediction_errors(model, data_loaders, eval_results_folder):
     train_errors = compute_prediction_errors_per_loader(model, dataloader=data_loaders["train_loader"])
     val_errors = compute_prediction_errors_per_loader(model, dataloader=data_loaders["val_loader"])
     actor2_test_errors = compute_prediction_errors_per_loader(model, dataloader=data_loaders["actor2_test_loader"])
     actor1_test_errors = compute_prediction_errors_per_loader(model, dataloader=data_loaders["actor1_test_loader"])
     
-    np.save(f"{exp_dir}/train_errors.npy", train_errors)
-    np.save(f"{exp_dir}/val_errors.npy", val_errors)
-    np.save(f"{exp_dir}/actor2_test_errors.npy", actor2_test_errors)
-    np.save(f"{exp_dir}/actor1_test_errors.npy", actor1_test_errors)
+    np.save(f"{eval_results_folder}/errors/train_errors.npy", train_errors)
+    np.save(f"{eval_results_folder}/errors/val_errors.npy", val_errors)
+    np.save(f"{eval_results_folder}/errors/actor2_test_errors.npy", actor2_test_errors)
+    np.save(f"{eval_results_folder}/errors/actor1_test_errors.npy", actor1_test_errors)
 
-def compute_anomaly_scores(exp_dir):
+def compute_anomaly_scores(config):
+    eval_results_folder = config["evaluation"]["eval_results_folder"]
+
     # --- Load errors ---
-    train_errors = np.load(f"{exp_dir}/train_errors.npy")
-    val_errors = np.load(f"{exp_dir}/val_errors.npy")
-    actor2_test_errors = np.load(f"{exp_dir}/actor2_test_errors.npy")
-    actor1_test_errors = np.load(f"{exp_dir}/actor1_test_errors.npy")
+    train_errors = np.load(f"{eval_results_folder}/errors/train_errors.npy")
+    val_errors = np.load(f"{eval_results_folder}/errors/val_errors.npy")
+    actor2_test_errors = np.load(f"{eval_results_folder}/errors/actor2_test_errors.npy")
+    actor1_test_errors = np.load(f"{eval_results_folder}/errors/actor1_test_errors.npy")
 
     # Robust Stats
     median = np.median(train_errors, axis=0)
@@ -75,10 +103,10 @@ def compute_anomaly_scores(exp_dir):
     actor1_test_norm = (actor1_test_errors - median) / iqr
 
 
-    train_scores = np.max(train_norm, axis=1)
-    val_scores = np.max(val_norm, axis=1)
-    actor2_test_scores = np.max(actor2_test_norm, axis=1)
-    actor1_test_scores = np.max(actor1_test_norm, axis=1)
+    train_scores = np.mean(train_norm, axis=1)
+    val_scores = np.mean(val_norm, axis=1)
+    actor2_test_scores = np.mean(actor2_test_norm, axis=1)
+    actor1_test_scores = np.mean(actor1_test_norm, axis=1)
     
     scores = {
         "train": train_scores,
@@ -200,15 +228,7 @@ def plot_anomaly_score_distributions(scores):
     plt.tight_layout()
     plt.show()
     
-def compute_detection_rates(train_scores, actor2_test_scores, actor1_test_scores):
-    """
-    Detection rate (Actor2) Expect: HIGH (~1.0)
-    False positive rate (Actor1 Test) LOW (~0.05)
-    """
-    threshold = np.percentile(train_scores, 99)
-    detection_rate = np.mean(actor2_test_scores > threshold)
-    fp_rate = np.mean(actor1_test_scores > threshold)
-    return detection_rate, fp_rate
+
 
 def create_evaluation_dataloaders(config):
     # load config

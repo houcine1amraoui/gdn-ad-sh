@@ -16,19 +16,21 @@ seed: 42
 
 dataset:
   # path: data/sample/BREMaster-3.csv
-  path: data/raw/CUMaster.csv
-  processed_folder: data/processed
+  raw_data_path: data/raw/CUMaster.csv
+  processed_data_folder: data/processed
   window_size: 30
 
 training:
   batch_size: 64
   epochs: 50
   lr: 0.001
+  train_experiments_main_folder: train_experiments
 
 model:
   hidden_dim: 64
   topk: 10 # previously 15
   heads: 1
 
-best_model: "best_model.pth"
-experiments_folder: experiments
+evaluation:
+  threshold_percentile: 99
+  eval_results_folder: eval_results

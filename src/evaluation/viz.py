@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
+import os
 
-def plot_anomaly_scores_distribution(scores):
+def plot_anomaly_scores_distribution(scores, eval_results_folder):
     plt.figure(figsize=(15,5))
 
     # lengths
@@ -30,14 +31,32 @@ def plot_anomaly_scores_distribution(scores):
     plt.title("Anomaly Scores (Concatenated Timeline)")
     plt.show()
 
-def plot_boxplot(train_scores, val_scores, actor2_test_scores, actor1_test_scores):
+    os.makedirs(f"{eval_results_folder}/plots", exist_ok=True)
+    plt.savefig(f"{eval_results_folder}/plots/anomlay_scores_distribution.png", dpi=300, bbox_inches="tight")
+
+
+
+def plot_boxplot(scores, eval_results_folder):
+
     plt.figure(figsize=(8, 5))
 
-    plt.boxplot([train_scores, val_scores, actor2_test_scores, actor1_test_scores],
-                labels=["Train", "Val", "Test A", "Test B"],
+    data = [
+        scores["train"],
+        scores["val"],
+        scores["actor2_test"],
+        scores["actor1_test"]
+    ]
+
+    plt.boxplot(data,
                 showfliers=False)
 
     plt.title("Score Distribution Comparison")
     plt.ylabel("Score")
 
+    #
+    os.makedirs(f"{eval_results_folder}/plots", exist_ok=True)
+    plt.savefig(f"{eval_results_folder}/plots/boxplot.png", dpi=300, bbox_inches="tight")
+
     plt.show()
+
+

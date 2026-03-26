@@ -1,15 +1,13 @@
 import yaml
-import numpy as np
-import json
+import os
 import torch.optim as optim
 
 from src.utils.seed import set_seed
 from src.utils.device import get_device
-from src.utils.experiment import create_experiment_folder, get_best_experiment
 from src.models.builders import build_gdn_model
 from src.evaluation.load_checkpoint import load_checkpoint
 from src.evaluation.pipeline import create_evaluation_dataloaders, plot_anomaly_score_distributions, compute_anomaly_score_and_detection
-from src.evaluation.pipeline import compute_anomaly_scores, errors_computation_pipeline
+from src.evaluation.pipeline import compute_anomaly_scores, errors_computation_pipeline, compute_detection_rates
 import matplotlib.pyplot as plt
 import argparse
 
@@ -25,35 +23,35 @@ def main_evaluation():
 
     # parse CLI args
     parser = argparse.ArgumentParser()
-    parser.add_argument("--processed_folder", type=str)
-    parser.add_argument("--experiments_folder", type=str)
+    parser.add_argument("--processed_data_folder", type=str)
+    parser.add_argument("--train_experiments_main_folder", type=str)
+    parser.add_argument("--eval_results_folder", type=str)
     args = parser.parse_args()
 
-    # override processed data folder path
-    if args.processed_folder:
-        config["dataset"]["processed_folder"] = args.processed_folder
+    # override processed data folder
+    if args.processed_data_folder:
+        config["dataset"]["processed_data_folder"] = args.processed_data_folder
 
-    # override experiments_folder
-    if args.experiments_folder:
-        config["experiments_folder"] = args.experiments_folder
+    # override train_experiments_main_folder
+    if args.train_experiments_main_folder:
+        config["training"]["train_experiments_main_folder"] = args.train_experiments_main_folder
 
-    experiments_folder = config["experiments_folder"]
+    # override eval_results_folder
+    if args.eval_results_folder:
+        config["evaluation"]["eval_results_folder"] = args.eval_results_folder
 
-    exp_dir = create_experiment_folder(config, f"{experiments_folder}/eval")
-    best_exp_path, _ = get_best_experiment(experiments_folder+"/train")
+    eval_results_folder = config["evaluation"]["eval_results_folder"]
+    # Create a folder if it doesn't exist
+    os.makedirs(eval_results_folder, exist_ok=True)
 
-    errors_computation_pipeline(config, best_exp_path, exp_dir)
+    # errors_computation_pipeline(config)
 
-    # Compute a global (normalized) anomaly score per timestamp
-    # Compute scores + detection
-    # scores, detection_rate, false_positive_rate = compute_anomaly_score_and_detection(
-    #     topk_ratio=0.4,
-    #     threshold_percentile=99
-    # )
+    scores = compute_anomaly_scores(config)
+    compute_detection_rates(scores, config)
+    # plot_anomaly_scores_distribution(scores, eval_results_folder)
+    # plot_boxplot(scores, eval_results_folder)
 
-    scores = compute_anomaly_scores(exp_dir)
-    plot_anomaly_scores_distribution(scores)
-    # Plot distributions
+
     # plot_anomaly_score_distributions(scores)
     # 7. Compute detection rates
     # detection_rate, fp_rate = (
