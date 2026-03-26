@@ -15,6 +15,7 @@ from torch.utils.data import DataLoader
 from src.models.builders import build_gdn_model
 from src.evaluation.load_checkpoint import load_checkpoint
 from src.utils.experiment import get_best_experiment
+from src.utils.device import get_device
 
 def compute_metrics(scores, config):
     """
@@ -60,10 +61,11 @@ def errors_computation_pipeline(config):
     # 5. Compute raw prediction errors
     compute_prediction_errors(model, data_loaders, eval_results_folder)
 
-def compute_prediction_errors_per_loader(model, dataloader, device="cpu"):
+def compute_prediction_errors_per_loader(model, dataloader):
     """
     Compute raw errors
     """
+    device = get_device()
     model.eval()
     errors = []
     with torch.no_grad():
