@@ -180,6 +180,8 @@ class GDN(nn.Module):
         # --> size [number_nodes * batch_size, number_node_features]
         x = batch_x.reshape(-1, C)
         
+        x = x.permute(0, 2, 1)  # (B, W, N) → (B, N, W)
+
         # get batched KNN edge_index for GNN
         embeddings = self.embedding.weight
         knn_edge_index = knn_graph(embeddings, self.topk)

@@ -29,12 +29,11 @@ def plot_anomaly_scores_distribution(scores, eval_results_folder):
 
     plt.legend()
     plt.title("Anomaly Scores (Concatenated Timeline)")
-    plt.show()
 
     os.makedirs(f"{eval_results_folder}/plots", exist_ok=True)
     plt.savefig(f"{eval_results_folder}/plots/anomlay_scores_distribution.png", dpi=300, bbox_inches="tight")
 
-
+    plt.show()
 
 def plot_boxplot(scores, eval_results_folder):
 

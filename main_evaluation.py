@@ -3,7 +3,7 @@ import os
 import argparse
 
 from src.utils.seed import set_seed
-from src.evaluation.pipeline import compute_anomaly_scores, errors_computation_pipeline, compute_metrics
+from src.evaluation.pipeline import compute_anomaly_scores, compute_metrics_with_pot_thresholding, errors_computation_pipeline, compute_metrics
 from src.evaluation.viz import plot_boxplot, plot_anomaly_scores_distribution
 
 def main_evaluation():
@@ -35,12 +35,14 @@ def main_evaluation():
     # Create a folder if it doesn't exist
     os.makedirs(eval_results_folder, exist_ok=True)
 
-    errors_computation_pipeline(config)
+    # errors_computation_pipeline(config)
     scores = compute_anomaly_scores(config)
-    compute_metrics(scores, config)
-    plot_anomaly_scores_distribution(scores, eval_results_folder)
-    plot_boxplot(scores, eval_results_folder)
+    # compute_metrics(scores, config)
+    # plot_anomaly_scores_distribution(scores, eval_results_folder)
+    # plot_boxplot(scores, eval_results_folder)
 
+
+    compute_metrics_with_pot_thresholding(scores)
 
 if __name__ == "__main__":
     main_evaluation()

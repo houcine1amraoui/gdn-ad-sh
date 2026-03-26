@@ -22,8 +22,10 @@ class TimeSeriesDataset(Dataset):
         x = self.data[idx:idx+self.window_size]
         y = self.data[idx+self.window_size]
 
-        # transpose to [N, window]
-        x = torch.tensor(x.T, dtype=torch.float32)
+        # transpose to [N, window] only for GDN
+        # x = torch.tensor(x.T, dtype=torch.float32)
+
+        x = torch.tensor(x, dtype=torch.float32)
         y = torch.tensor(y, dtype=torch.float32)
 
         return x, y
