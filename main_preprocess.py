@@ -24,7 +24,7 @@ def main_preprocess():
         config["dataset"]["raw_data_path"] = args.raw_data_path
 
     # override processed data folder path
-    if args.processed_folder:
+    if args.processed_data_folder:
         config["dataset"]["processed_data_folder"] = args.processed_data_folder
         
     raw_data_path = config["dataset"]["raw_data_path"]
