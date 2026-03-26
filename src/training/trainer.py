@@ -2,9 +2,10 @@ import torch
 from tqdm import tqdm
 import os
 import yaml
+from src.utils.device import get_device
 
-def train(model, train_loader, val_loader, optimizer, epochs, train_experiments_sub_folder,
-          device="cpu", patience=20):
+def train(model, train_loader, val_loader, optimizer, epochs, 
+          train_experiments_sub_folder, patience=20):
     
     # Create a folder if it doesn't exist
     os.makedirs(train_experiments_sub_folder, exist_ok=True)
@@ -12,6 +13,8 @@ def train(model, train_loader, val_loader, optimizer, epochs, train_experiments_
     best_val_loss = float("inf")
     patience_counter = 0
 
+    device = get_device()
+    
     for epoch in tqdm(range(epochs)):
         # Training
         model.train()
