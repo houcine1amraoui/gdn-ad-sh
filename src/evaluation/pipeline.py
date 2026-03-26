@@ -44,7 +44,7 @@ def errors_computation_pipeline(config):
     best_exp_path, _ = get_best_experiment(train_experiments_main_folder)
 
     # 1. Model Initialization
-    model_arch = build_gdn_model(config)
+    model_arch = build_gdn_model("gdn", config)
 
     # 2. load best checkpoint
     optimizer = optim.Adam(model_arch.parameters(), lr=config["training"]["lr"])
