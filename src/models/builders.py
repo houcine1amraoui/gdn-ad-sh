@@ -16,9 +16,9 @@ def build_gdn_model(name, config):
         model = GDN(
             number_nodes=len(devices),
             in_dim=config["dataset"]["window_size"],
-            hid_dim=config["model"]["hidden_dim"],
-            topk=config["model"]["topk"],
-            heads=config["model"]["heads"]
+            hid_dim=config["models"][name]["params"]["hidden_dim"],
+            topk=config["models"][name]["params"]["topk"],
+            heads=config["models"][name]["params"]["heads"]
         )
     elif name == "mtad_gat":
         model = MTAD_GAT()
