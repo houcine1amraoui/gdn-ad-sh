@@ -50,6 +50,7 @@ def compute_scores(config):
         "actor1_test": actor1_test_scores
     }
 
+    return scores
     # Aggregate errors
     # forecast = 
     # Normalize
