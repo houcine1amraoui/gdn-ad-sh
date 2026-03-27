@@ -110,6 +110,12 @@ def compute_errors_all_loaders(model, eval_results_per_model_folder, config):
     np.save(f"{errors_folder}/forecast__test_errors_actor2.npy", actor2_test_errors["forecast"])
     np.save(f"{errors_folder}/forecast_test_errors_actor1.npy", actor1_test_errors["forecast"])
 
+    if train_errors["reconstruction"] != None:
+        np.save(f"{errors_folder}/recon_train_errors.npy", train_errors["reconstruction"])
+        np.save(f"{errors_folder}/recon_val_errors.npy", val_errors["reconstruction"])
+        np.save(f"{errors_folder}/recon__test_errors_actor2.npy", actor2_test_errors["reconstruction"])
+        np.save(f"{errors_folder}/recon_test_errors_actor1.npy", actor1_test_errors["reconstruction"])
+
 def compute_errors(config):
     model_name = config["evaluation"]["model"]
 
