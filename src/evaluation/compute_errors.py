@@ -97,24 +97,35 @@ def compute_errors_per_loader(model, dataloader):
 
 def compute_errors_all_loaders(model, eval_results_per_model_folder, config):
     data_loaders = create_evaluation_dataloaders(config)
-    train_errors = compute_errors_per_loader(model, dataloader=data_loaders["train_loader"])
-    val_errors = compute_errors_per_loader(model, dataloader=data_loaders["val_loader"])
-    actor2_test_errors = compute_errors_per_loader(model, dataloader=data_loaders["actor2_test_loader"])
-    actor1_test_errors = compute_errors_per_loader(model, dataloader=data_loaders["actor1_test_loader"])
-    
+
+    train_errors = compute_errors_per_loader(model, data_loaders["train_loader"])
+    val_errors = compute_errors_per_loader(model, data_loaders["val_loader"])
+    actor2_test_errors = compute_errors_per_loader(model, data_loaders["actor2_test_loader"])
+    actor1_test_errors = compute_errors_per_loader(model, data_loaders["actor1_test_loader"])
+
     errors_folder = f"{eval_results_per_model_folder}/errors"
     os.makedirs(errors_folder, exist_ok=True)
 
-    np.save(f"{errors_folder}/forecast_train_errors.npy", train_errors["forecast"])
-    np.save(f"{errors_folder}/forecast_val_errors.npy", val_errors["forecast"])
-    np.save(f"{errors_folder}/forecast__test_errors_actor2.npy", actor2_test_errors["forecast"])
-    np.save(f"{errors_folder}/forecast_test_errors_actor1.npy", actor1_test_errors["forecast"])
+    # Check once
+    has_recon = train_errors["reconstruction"] is not None
 
-    if train_errors["reconstruction"] != None:
-        np.save(f"{errors_folder}/recon_train_errors.npy", train_errors["reconstruction"])
-        np.save(f"{errors_folder}/recon_val_errors.npy", val_errors["reconstruction"])
-        np.save(f"{errors_folder}/recon__test_errors_actor2.npy", actor2_test_errors["reconstruction"])
-        np.save(f"{errors_folder}/recon_test_errors_actor1.npy", actor1_test_errors["reconstruction"])
+    def save_split(name, errors):
+        if has_recon:
+            np.savez(
+                f"{errors_folder}/{name}.npz",
+                forecast=errors["forecast"],
+                reconstruction=errors["reconstruction"]
+            )
+        else:
+            np.savez(
+                f"{errors_folder}/{name}.npz",
+                forecast=errors["forecast"]
+            )
+
+    save_split("train", train_errors)
+    save_split("val", val_errors)
+    save_split("actor2_test", actor2_test_errors)
+    save_split("actor1_test", actor1_test_errors)
 
 def compute_errors(config):
     model_name = config["evaluation"]["model"]
