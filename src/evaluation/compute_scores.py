@@ -31,7 +31,7 @@ def normalize(train_scores, scores):
 
 def compute_scores(config):
     errors = load_errors(config)
-    print(errors)
+    print(errors.keys())
 
     # Aggregate errors
     # forecast = 
