@@ -3,7 +3,7 @@ from src.models.gdn import GDN
 from src.models.mtad_gat import MTAD_GAT
 from src.utils.device import get_device 
     
-def build_gdn_model(name, config):
+def build_model(model_name, config):
     processed_data_folder = config["dataset"]["processed_data_folder"]
 
     with open(f"{processed_data_folder}/devices.json") as f:
@@ -12,7 +12,7 @@ def build_gdn_model(name, config):
     device = get_device()
     model = None
 
-    if name == "gdn":
+    if model_name == "gdn":
         params = config["models"][0]["params"]
         model = GDN(
             number_nodes=len(devices),
@@ -21,7 +21,7 @@ def build_gdn_model(name, config):
             topk=params["topk"],
             heads=params["heads"]
         ).to(device)
-    elif name == "mtad_gat":
+    elif model_name == "mtad_gat":
         params = config["models"][0]["params"]
 
         model = MTAD_GAT(
@@ -46,6 +46,6 @@ def build_gdn_model(name, config):
             alpha=params.get("alpha", 0.2)
         ).to(device)
     else:
-        raise ValueError(f"Unknown model: {name}")
+        raise ValueError(f"Unknown model: {model_name}")
     
     return model

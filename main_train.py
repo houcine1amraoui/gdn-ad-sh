@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 from src.utils.seed import set_seed
 from src.utils.device import get_device
 from src.utils.experiment import create_experiment_folder
-from src.models.builder import build_gdn_model
+from src.models.builder import build_model
 from src.training.trainer import train
 import argparse
 
@@ -63,7 +63,7 @@ def main_train():
     val_loader   = DataLoader(val_dataset, batch_size, shuffle=False, num_workers=0)
 
     # 3. Model Initialization
-    model = build_gdn_model("mtad_gat", config)
+    model = build_model("mtad_gat", config)
 
     # 4. Train
     optimizer = optim.Adam(model.parameters(), lr=config["training"]["lr"])

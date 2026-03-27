@@ -1,0 +1,135 @@
+from src.preprocessing.TimeSeriesDataset import TimeSeriesDataset
+from torch.utils.data import DataLoader
+import numpy as np
+import torch
+from tqdm import tqdm
+import os
+import torch.optim as optim
+
+from src.utils.experiment import get_best_experiment
+from src.utils.device import get_device
+from src.models.builder import build_model
+from src.evaluation.load_checkpoint import load_checkpoint
+
+def create_evaluation_dataloaders(config):
+    # load config
+    processed_data_folder = config["dataset"]["processed_data_folder"]
+    window_size = config["dataset"]["window_size"]
+    batch_size = config["evaluation"]["batch_size"]
+
+    train_array = np.load(f"{processed_data_folder}/train_array.npy")
+    val_array = np.load(f"{processed_data_folder}/val_array.npy")
+    actor2_test_array = np.load(f"{processed_data_folder}/actor2_test_array.npy")
+    actor1_test_array = np.load(f"{processed_data_folder}/actor1_test_array.npy")
+    
+    train_dataset = TimeSeriesDataset(train_array, window_size)
+    val_dataset = TimeSeriesDataset(val_array, window_size)
+    actor2_test_dataset = TimeSeriesDataset(actor2_test_array, window_size)
+    actor1_test_dataset = TimeSeriesDataset(actor1_test_array, window_size)
+    
+    train_loader = DataLoader(train_dataset, batch_size, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size, shuffle=True)
+    actor2_test_loader = DataLoader(actor2_test_dataset, batch_size, shuffle=True)
+    actor1_test_loader = DataLoader(actor1_test_dataset, batch_size, shuffle=True)
+
+    data_loaders = {
+        "train_loader": train_loader,
+        "val_loader": val_loader,
+        "actor2_test_loader": actor2_test_loader,
+        "actor1_test_loader": actor1_test_loader
+    }
+    return data_loaders
+
+def compute_errors_per_loader(model, dataloader):
+    device = get_device()
+    model.eval()
+
+    forecast_errors = []
+    recon_errors = []
+
+    with torch.no_grad():
+        for x, y in tqdm(dataloader):
+            x = x.to(device)
+            y = y.to(device)
+
+            output = model(x)
+
+            # 🔵 Case 1: MTAD-GAT (dict output)
+            if isinstance(output, dict):
+                pred = output["pred"]
+                recon = output.get("recon", None)
+            else:
+                # 🔵 Case 2: GDN (tensor output)
+                pred = output
+                recon = None
+
+            # --- Forecast error ---
+            f_err = torch.abs(pred - y)   # (B, k)
+            forecast_errors.append(f_err.cpu().numpy())
+
+            # --- Reconstruction error (if exists) ---
+            if recon is not None:
+                r_err = torch.abs(recon - x)      # (B, n, k)
+                r_err_last = r_err[:, -1, :]      # align with prediction
+                recon_errors.append(r_err_last.cpu().numpy())
+
+    forecast_errors = np.concatenate(forecast_errors, axis=0)
+
+    if len(recon_errors) > 0:
+        recon_errors = np.concatenate(recon_errors, axis=0)
+    else:
+        recon_errors = None
+
+    return {
+        "forecast": forecast_errors,   # shape [T, k]
+        "reconstruction": recon_errors # shape [T, k] or None
+    }
+
+def compute_errors_all_loaders(model, config):
+    eval_results_folder = config["evaluation"]["eval_results_folder"]
+
+    data_loaders = create_evaluation_dataloaders(config)
+    train_errors = compute_errors_per_loader(model, dataloader=data_loaders["train_loader"])
+    val_errors = compute_errors_per_loader(model, dataloader=data_loaders["val_loader"])
+    actor2_test_errors = compute_errors_per_loader(model, dataloader=data_loaders["actor2_test_loader"])
+    actor1_test_errors = compute_errors_per_loader(model, dataloader=data_loaders["actor1_test_loader"])
+    
+    errors_folder = f"{eval_results_folder}/errors"
+    os.makedirs(errors_folder, exist_ok=True)
+
+    np.save(f"{errors_folder}/train_errors.npy", train_errors)
+    np.save(f"{errors_folder}/val_errors.npy", val_errors)
+    np.save(f"{errors_folder}/actor2_test_errors.npy", actor2_test_errors)
+    np.save(f"{errors_folder}/actor1_test_errors.npy", actor1_test_errors)
+
+def errors_computation_pipeline(config):
+    train_experiments_main_folder = config["training"]["train_experiments_main_folder"]
+    model_name = config["evaluation"]["model"]
+
+    best_exp_path, _ = get_best_experiment(train_experiments_main_folder, model_name)
+
+    # 1. Model Initialization
+    model_arch = build_model(model_name, config)
+
+    # 2. load best checkpoint
+    optimizer = optim.Adam(model_arch.parameters(), lr=config["training"]["lr"])
+    model, optimizer, _ = load_checkpoint(
+        model_arch,
+        f"{best_exp_path}/best.pth",
+        optimizer
+    )
+
+    # 3. Compute errors for all loaders
+    compute_errors_all_loaders(model, config)
+
+def compute_anomaly_score_gdn(batch, output):
+    pass
+
+def compute_anomaly_score_mtad(batch, output):
+    pass
+
+def compute_anomaly_score(model, batch, output):
+    if hasattr(model, "recon_model"):
+        return compute_anomaly_score_mtad(batch, output)
+    else:
+        return compute_anomaly_score_gdn(batch, output)

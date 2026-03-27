@@ -14,10 +14,11 @@ from scipy.stats import genpareto
 
 from src.preprocessing.TimeSeriesDataset import TimeSeriesDataset
 from torch.utils.data import DataLoader
-from models.builder import build_gdn_model
+from src.models.builder import build_gdn_model
 from src.evaluation.load_checkpoint import load_checkpoint
 from src.utils.experiment import get_best_experiment
 from src.utils.device import get_device
+from src.evaluation.eval import compute_errors_all_loaders
 
 def compute_metrics(scores, config):
     """
@@ -43,11 +44,12 @@ def compute_metrics(scores, config):
 def errors_computation_pipeline(config):
     train_experiments_main_folder = config["training"]["train_experiments_main_folder"]
     eval_results_folder = config["evaluation"]["eval_results_folder"]
+    model_name = config["evaluation"]["model"]
 
-    best_exp_path, _ = get_best_experiment(train_experiments_main_folder)
+    best_exp_path, _ = get_best_experiment(train_experiments_main_folder, model_name)
 
     # 1. Model Initialization
-    model_arch = build_gdn_model("gdn", config)
+    model_arch = build_gdn_model(model_name, config)
 
     # 2. load best checkpoint
     optimizer = optim.Adam(model_arch.parameters(), lr=config["training"]["lr"])
@@ -57,11 +59,8 @@ def errors_computation_pipeline(config):
         optimizer
     )
 
-    # 4. Dataset/Loaders Create
-    data_loaders = create_evaluation_dataloaders(config)
-    
-    # 5. Compute raw prediction errors
-    compute_prediction_errors(model, data_loaders, eval_results_folder)
+    # 5. Compute errors for all loaders
+    compute_errors_all_loaders(model, config)
 
 def compute_prediction_errors_per_loader(model, dataloader):
     """

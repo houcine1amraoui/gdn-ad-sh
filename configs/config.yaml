@@ -36,6 +36,7 @@ models:
       gat_heads: 3
 
 training:
+  model: mtad_gat
   batch_size: 64
   epochs: 50
   lr: 0.001
@@ -43,6 +44,7 @@ training:
   train_experiments_main_folder: train_experiments
 
 evaluation:
+  model: mtad_gat
   batch_size: 64
   threshold_percentile: 99
   eval_results_folder: eval_results
