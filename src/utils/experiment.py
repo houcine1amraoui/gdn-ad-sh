@@ -7,11 +7,11 @@ from types import SimpleNamespace
 from src.utils.device import get_device
 from src.utils.seed import set_seed
 
-def create_experiment_folder(config, train_experiments_main_folder):
+def create_experiment_folder(config, train_exeriments_per_model_folder):
     """
     """
     timestamp = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-    train_experiments_sub_folder = os.path.join(train_experiments_main_folder, f"exp_{timestamp}")
+    train_experiments_sub_folder = os.path.join(train_exeriments_per_model_folder, f"exp_{timestamp}")
 
     os.makedirs(train_experiments_sub_folder, exist_ok=True)
 

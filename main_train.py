@@ -34,7 +34,6 @@ def main_train():
         config["training"]["train_experiments_main_folder"] = args.train_experiments_main_folder
 
     set_seed(config["seed"])
-    device = get_device()
     
     processed_data_folder = config["dataset"]["processed_data_folder"]
     train_experiments_main_folder = config["training"]["train_experiments_main_folder"]
@@ -42,10 +41,13 @@ def main_train():
     # Create a folder if it doesn't exist
     os.makedirs(train_experiments_main_folder, exist_ok=True)
 
-    train_experiments_sub_folder = create_experiment_folder(config, train_experiments_main_folder)
+    model_name = config["training"]["model"]
+    train_exeriments_per_model_folder = f"{train_experiments_main_folder}/{model_name}"
+    # Create a folder if it doesn't exist
+    os.makedirs(train_exeriments_per_model_folder, exist_ok=True)    
 
-    with open(f"{processed_data_folder}/devices.json") as f:
-        devices = json.load(f)
+    train_experiments_sub_folder = create_experiment_folder(config, train_exeriments_per_model_folder)
+
     window_size = config["dataset"]["window_size"]
 
     batch_size = config["training"]["batch_size"]
