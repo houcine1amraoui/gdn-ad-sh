@@ -9,7 +9,7 @@ def compute_final_error(split_errors, alpha=0.5):
         return f  # GDN case
     return alpha * f + (1 - alpha) * r  # MTAD-GAT case
     
-def load_errors(config):
+def load_errors_all_splits(config):
     eval_results_folder = config["evaluation"]["eval_results_folder"]
     model_name = config["evaluation"]["model"]
 
@@ -30,9 +30,14 @@ def normalize(train_scores, scores):
     return (scores - min_v) / (max_v - min_v + 1e-8)
 
 def compute_scores(config):
-    errors = load_errors(config)
-    print(errors.keys())
+    errors = load_errors_all_splits(config)
 
+    train_scores = errors["train"].mean(axis=1)
+    val_scores = errors["val"].mean(axis=1)
+    actor2_test_scores = errors["actor2_test"].mean(axis=1)
+    actor1_scores = errors["actor1_test"].mean(axis=1)
+    print(train_scores)
+    
     # Aggregate errors
     # forecast = 
     # Normalize
