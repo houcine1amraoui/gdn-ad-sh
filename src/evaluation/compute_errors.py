@@ -105,10 +105,10 @@ def compute_errors_all_loaders(model, eval_results_per_model_folder, config):
     errors_folder = f"{eval_results_per_model_folder}/errors"
     os.makedirs(errors_folder, exist_ok=True)
 
-    np.save(f"{errors_folder}/train_errors.npy", train_errors)
-    np.save(f"{errors_folder}/val_errors.npy", val_errors)
-    np.save(f"{errors_folder}/actor2_test_errors.npy", actor2_test_errors)
-    np.save(f"{errors_folder}/actor1_test_errors.npy", actor1_test_errors)
+    np.save(f"{errors_folder}/forecast_train_errors.npy", train_errors["forecast"])
+    np.save(f"{errors_folder}/forecast_val_errors.npy", val_errors["forecast"])
+    np.save(f"{errors_folder}/forecast__test_errors_actor2.npy", actor2_test_errors["forecast"])
+    np.save(f"{errors_folder}/forecast_test_errors_actor1.npy", actor1_test_errors["forecast"])
 
 def compute_errors(config):
     model_name = config["evaluation"]["model"]
