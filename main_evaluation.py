@@ -37,6 +37,7 @@ def main_evaluation():
     os.makedirs(eval_results_folder, exist_ok=True)
 
     errors_computation_pipeline(config)
+
     # scores = compute_anomaly_scores(config)
     # compute_metrics(scores, config)
     # plot_anomaly_scores_distribution(scores, eval_results_folder)
