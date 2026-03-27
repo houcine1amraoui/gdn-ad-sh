@@ -37,8 +37,8 @@ def main_evaluation():
     # Create a folder if it doesn't exist
     os.makedirs(eval_results_folder, exist_ok=True)
 
-    compute_errors(config)
-    # scores = compute_scores(config)
+    # compute_errors(config)
+    scores = compute_scores(config)
     # compute_metrics(scores, config)
     # plot_anomaly_scores_distribution(scores, eval_results_folder)
     # plot_boxplot(scores, eval_results_folder)
