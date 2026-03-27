@@ -24,12 +24,12 @@ def create_experiment_folder(config, train_exeriments_per_model_folder):
 import os
 import yaml
 
-def get_best_experiment(eval_results_per_model_folder, metric_name="best_val_loss", mode="min"):
+def get_best_experiment(train_experiments_per_model_folder, metric_name="best_val_loss", mode="min"):
     best_value = float("inf") if mode == "min" else -float("inf")
     best_exp_path = None
 
-    for exp_name in os.listdir(eval_results_per_model_folder):
-        exp_path = os.path.join(eval_results_per_model_folder, exp_name)
+    for exp_name in os.listdir(train_experiments_per_model_folder):
+        exp_path = os.path.join(train_experiments_per_model_folder, exp_name)
 
         metrics_path = os.path.join(exp_path, "metrics.yaml")
 

@@ -103,14 +103,18 @@ def compute_errors_all_loaders(model, config):
     np.save(f"{errors_folder}/actor1_test_errors.npy", actor1_test_errors)
 
 def errors_computation_pipeline(config):
-    eval_results_folder = config["evaluation"]["eval_results_folder"]
     model_name = config["evaluation"]["model"]
+
+    train_experiments_main_folder = config["training"]["train_experiments_main_folder"]
+    train_experiments_per_model_folder = f"{train_experiments_main_folder}{model_name}"
+    eval_results_folder = config["evaluation"]["eval_results_folder"]
+    
 
     eval_results_per_model_folder = f"{eval_results_folder}/{model_name}"
     # Create a folder if it doesn't exist
     os.makedirs(eval_results_per_model_folder, exist_ok=True)
 
-    best_exp_path, _ = get_best_experiment(eval_results_per_model_folder, model_name)
+    best_exp_path, _ = get_best_experiment(train_experiments_per_model_folder)
 
     # 1. Model Initialization
     model_arch = build_model(model_name, config)
