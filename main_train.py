@@ -45,7 +45,6 @@ def main_train():
     os.makedirs(train_exeriments_per_model_folder, exist_ok=True)    
 
     train_experiments_sub_folder = create_experiment_folder(config, train_exeriments_per_model_folder)
-
     window_size = config["dataset"]["window_size"]
     batch_size = config["training"]["batch_size"]
 
