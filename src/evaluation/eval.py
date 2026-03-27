@@ -85,16 +85,14 @@ def compute_errors_per_loader(model, dataloader):
         "reconstruction": recon_errors # shape [T, k] or None
     }
 
-def compute_errors_all_loaders(model, config):
-    eval_results_folder = config["evaluation"]["eval_results_folder"]
-
+def compute_errors_all_loaders(model, eval_results_per_model_folder, config):
     data_loaders = create_evaluation_dataloaders(config)
     train_errors = compute_errors_per_loader(model, dataloader=data_loaders["train_loader"])
     val_errors = compute_errors_per_loader(model, dataloader=data_loaders["val_loader"])
     actor2_test_errors = compute_errors_per_loader(model, dataloader=data_loaders["actor2_test_loader"])
     actor1_test_errors = compute_errors_per_loader(model, dataloader=data_loaders["actor1_test_loader"])
     
-    errors_folder = f"{eval_results_folder}/errors"
+    errors_folder = f"{eval_results_per_model_folder}/errors"
     os.makedirs(errors_folder, exist_ok=True)
 
     np.save(f"{errors_folder}/train_errors.npy", train_errors)
@@ -128,7 +126,7 @@ def errors_computation_pipeline(config):
     )
 
     # 3. Compute errors for all loaders
-    compute_errors_all_loaders(model, config)
+    compute_errors_all_loaders(model, eval_results_per_model_folder, config)
 
 def compute_anomaly_score_gdn(batch, output):
     pass
