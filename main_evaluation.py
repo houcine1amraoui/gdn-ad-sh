@@ -3,10 +3,10 @@ import os
 import argparse
 
 from src.utils.seed import set_seed
-# from src.evaluation.pipeline import compute_anomaly_scores, compute_metrics_with_pot_thresholding, errors_computation_pipeline, compute_metrics
 from src.evaluation.viz import plot_boxplot, plot_anomaly_scores_distribution
 from src.evaluation.compute_errors import compute_errors
 from src.evaluation.compute_scores import compute_scores
+from src.evaluation.compute_metrics import compute_metrics
 
 def main_evaluation():
     # 1. Set configuration
@@ -39,7 +39,7 @@ def main_evaluation():
 
     # compute_errors(config)
     scores = compute_scores(config)
-    # compute_metrics(scores, config)
+    compute_metrics(scores, config)
     # plot_anomaly_scores_distribution(scores, eval_results_folder)
     # plot_boxplot(scores, eval_results_folder)
 

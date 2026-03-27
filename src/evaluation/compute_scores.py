@@ -32,15 +32,24 @@ def normalize(train_scores, scores):
 def compute_scores(config):
     errors = load_errors_all_splits(config)
 
+    # Aggregation
     train_scores = errors["train"].mean(axis=1)
     val_scores = errors["val"].mean(axis=1)
     actor2_test_scores = errors["actor2_test"].mean(axis=1)
-    actor1_scores = errors["actor1_test"].mean(axis=1)
-    print(train_scores)
-    print(actor2_test_scores)
+    actor1_test_scores = errors["actor1_test"].mean(axis=1)
     
+    # Normalization
+    val_scores = normalize(train_scores, val_scores)
     actor2_test_scores = normalize(train_scores, actor2_test_scores)
-    print(actor2_test_scores)
+    actor1_test_scores = normalize(train_scores, actor1_test_scores)
+
+    scores = {
+        "train": train_scores,
+        "val": val_scores,
+        "actor2_test": actor2_test_scores,
+        "actor1_test": actor1_test_scores
+    }
+
     # Aggregate errors
     # forecast = 
     # Normalize

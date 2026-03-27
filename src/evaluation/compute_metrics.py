@@ -9,8 +9,11 @@ def compute_metrics(scores, config):
     Detection rate (Actor2) Expect: HIGH (~1.0)
     False positive rate (Actor1 Test) LOW (~0.05)
     """
-    threshold_percentile = config["evaluation"]["threshold_percentile"]
     eval_results_folder = config["evaluation"]["eval_results_folder"]
+    model_name = config["evaluation"]["model"]
+    eval_results_per_model = f"{eval_results_folder}/{model_name}"
+    
+    threshold_percentile = config["evaluation"]["threshold_percentile"]
 
     # --- Threshold ---
     threshold = np.percentile(scores["train"], threshold_percentile)
@@ -21,7 +24,7 @@ def compute_metrics(scores, config):
     detection_rate = np.mean(scores["actor2_test"] > threshold)
     false_positive_rate = np.mean(scores["actor1_test"] > threshold)
 
-    with open(os.path.join(f"{eval_results_folder}/metrics.yaml"), "w") as f:
+    with open(os.path.join(f"{eval_results_per_model}/metrics.yaml"), "w") as f:
          yaml.dump({"detection_rate": float(detection_rate)}, f)
          yaml.dump({"false_positive_rate": float(false_positive_rate)}, f)
 
