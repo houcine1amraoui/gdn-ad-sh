@@ -37,7 +37,10 @@ def compute_scores(config):
     actor2_test_scores = errors["actor2_test"].mean(axis=1)
     actor1_scores = errors["actor1_test"].mean(axis=1)
     print(train_scores)
+    print(actor2_test_scores)
     
+    actor2_test_scores = normalize(train_scores, actor2_test_scores)
+    print(actor2_test_scores)
     # Aggregate errors
     # forecast = 
     # Normalize
