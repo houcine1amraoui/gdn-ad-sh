@@ -5,11 +5,21 @@ import torch
 from tqdm import tqdm
 import os
 import torch.optim as optim
+import torch
 
 from src.utils.experiment import get_best_experiment
 from src.utils.device import get_device
 from src.models.builder import build_model
-from src.evaluation.load_checkpoint import load_checkpoint
+
+def load_checkpoint(model, path, optimizer):
+    device = get_device()
+    # if training was done on GPU but evaluation will be on CPU
+    # use map_location=torch.device('cpu')
+    checkpoint = torch.load(path, map_location=torch.device(device), weights_only=True)
+    model.load_state_dict(checkpoint['model_state_dict'])
+    optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+    start_epoch = checkpoint['epoch']
+    return model, optimizer, start_epoch
 
 def create_evaluation_dataloaders(config):
     # load config
@@ -100,7 +110,7 @@ def compute_errors_all_loaders(model, eval_results_per_model_folder, config):
     np.save(f"{errors_folder}/actor2_test_errors.npy", actor2_test_errors)
     np.save(f"{errors_folder}/actor1_test_errors.npy", actor1_test_errors)
 
-def errors_computation_pipeline(config):
+def compute_errors(config):
     model_name = config["evaluation"]["model"]
 
     train_experiments_main_folder = config["training"]["train_experiments_main_folder"]
@@ -114,10 +124,10 @@ def errors_computation_pipeline(config):
 
     best_exp_path, _ = get_best_experiment(train_experiments_per_model_folder)
 
-    # 1. Model Initialization
+    # Intitialize model
     model_arch = build_model(model_name, config)
 
-    # 2. load best checkpoint
+    # load best checkpoint
     optimizer = optim.Adam(model_arch.parameters(), lr=config["training"]["lr"])
     model, optimizer, _ = load_checkpoint(
         model_arch,
@@ -125,17 +135,5 @@ def errors_computation_pipeline(config):
         optimizer
     )
 
-    # 3. Compute errors for all loaders
+    # Compute errors for all loaders
     compute_errors_all_loaders(model, eval_results_per_model_folder, config)
-
-def compute_anomaly_score_gdn(batch, output):
-    pass
-
-def compute_anomaly_score_mtad(batch, output):
-    pass
-
-def compute_anomaly_score(model, batch, output):
-    if hasattr(model, "recon_model"):
-        return compute_anomaly_score_mtad(batch, output)
-    else:
-        return compute_anomaly_score_gdn(batch, output)
