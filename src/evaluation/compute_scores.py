@@ -1,34 +1,42 @@
 import numpy as np
+import os
 
-def compute_anomaly_score_gdn(batch, output):
-    pass
+def compute_final_error(split_errors, alpha=0.5):
+    f = split_errors["forecast"]
+    r = split_errors["reconstruction"]
 
-def compute_anomaly_score_mtad(batch, output):
-    pass
-
-def compute_anomaly_score(model, batch, output):
-    if hasattr(model, "recon_model"):
-        return compute_anomaly_score_mtad(batch, output)
-    else:
-        return compute_anomaly_score_gdn(batch, output)
-
-def compute_scores(config):
+    if r is None:
+        return f  # GDN case
+    return alpha * f + (1 - alpha) * r  # MTAD-GAT case
+    
+def load_errors(config):
     eval_results_folder = config["evaluation"]["eval_results_folder"]
     model_name = config["evaluation"]["model"]
 
-    # --- Load errors ---
-    train_errors = np.load(f"{eval_results_folder}/{model_name}/errors/train.npz")
-    val_errors = np.load(f"{eval_results_folder}/{model_name}/errors/val.npz")
-    actor2_test_errors = np.load(f"{eval_results_folder}/{model_name}/errors/actor2_test.npz")
-    actor1_test_errors = np.load(f"{eval_results_folder}/{model_name}/errors/actor1_test.npz")
+    splits = ["train", "val", "actor2_test", "actor1_test"]
 
-    forecast = train_errors["forecast"]
-    recon = train_errors["reconstruction"] if "reconstruction" in train_errors else None
+    errors = {}
 
-    print(forecast)
-    print(recon)
-    
+    for split in splits:
+        path = os.path.join(eval_results_folder, model_name, "errors", f"{split}.npz")
+        data = np.load(path)
+        errors[split] = compute_final_error(data, alpha=0.5)
 
+    return errors
+
+def normalize(train_scores, scores):
+    min_v = train_scores.min()
+    max_v = train_scores.max()
+    return (scores - min_v) / (max_v - min_v + 1e-8)
+
+def compute_scores(config):
+    errors = load_errors(config)
+    print(errors)
+
+    # Aggregate errors
+    # forecast = 
+    # Normalize
+    # train_scores = normalize()
     # # Robust Stats
     # median = np.median(train_errors, axis=0)
     # iqr = np.percentile(train_errors, 75, axis=0) - np.percentile(train_errors, 25, axis=0)
