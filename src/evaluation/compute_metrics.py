@@ -16,7 +16,6 @@ def compute_metrics(scores, config):
     threshold_percentile = config["evaluation"]["threshold_percentile"]
 
     # --- Threshold ---
-    print("hhhhh::::", scores["train"])
     threshold = np.percentile(scores["train"], threshold_percentile)
     # actor2_test_threshold = np.percentile(scores["actor2_test"], threshold_percentile)
     # actor1_test_threshold = np.percentile(scores["actor1_test"], threshold_percentile)
@@ -24,7 +23,7 @@ def compute_metrics(scores, config):
 
     detection_rate = np.mean(scores["actor2_test"] > threshold)
     false_positive_rate = np.mean(scores["actor1_test"] > threshold)
-
+    print(detection_rate, false_positive_rate)
     with open(os.path.join(f"{eval_results_per_model}/metrics.yaml"), "w") as f:
          yaml.dump({"detection_rate": float(detection_rate)}, f)
          yaml.dump({"false_positive_rate": float(false_positive_rate)}, f)
