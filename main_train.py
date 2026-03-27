@@ -65,7 +65,7 @@ def main_train():
     val_loader   = DataLoader(val_dataset, batch_size, shuffle=False, num_workers=0)
 
     # 3. Model Initialization
-    model = build_model("mtad_gat", config)
+    model = build_model(model_name, config)
 
     # 4. Train
     optimizer = optim.Adam(model.parameters(), lr=config["training"]["lr"])
