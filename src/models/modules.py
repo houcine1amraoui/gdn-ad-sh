@@ -234,7 +234,11 @@ class GRULayer(nn.Module):
 
     def forward(self, x):
         out, h = self.gru(x)
-        out, h = out[-1, :, :], h[-1, :, :]  # Extracting from last layer
+        # out, h = out[-1, :, :], h[-1, :, :]  # Extracting from last layer
+
+        # This is my personal modification
+        out = out[:, -1, :]     # last timestep
+        h = h[-1, :, :]        # last layer
         return out, h
 
 
