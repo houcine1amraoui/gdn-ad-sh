@@ -1,7 +1,5 @@
 import numpy as np
 import yaml
-import json
-import torch.optim as optim
 import os
 
 from src.preprocessing.TimeSeriesDataset import TimeSeriesDataset
@@ -49,10 +47,7 @@ def main_train():
     train_experiments_sub_folder = create_experiment_folder(config, train_exeriments_per_model_folder)
 
     window_size = config["dataset"]["window_size"]
-
     batch_size = config["training"]["batch_size"]
-    epochs = config["training"]["epochs"]
-    patience = config["training"]["patience"]
 
     # 2. Dataset/DataLoader creation
     train_array = np.load(f"{processed_data_folder}/train_array.npy")
@@ -67,10 +62,8 @@ def main_train():
     # 3. Model Initialization
     model = build_model(model_name, config)
 
-    # 4. Train
-    optimizer = optim.Adam(model.parameters(), lr=config["training"]["lr"])
-    
-    train(model, train_loader, val_loader, optimizer, epochs, train_experiments_sub_folder, patience)
+    # Train
+    train(model, train_loader, val_loader, train_experiments_sub_folder, config)
   
 if __name__ == "__main__":
     main_train()

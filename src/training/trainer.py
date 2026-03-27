@@ -2,18 +2,19 @@ import torch
 from tqdm import tqdm
 import os
 import yaml
+import torch.optim as optim
+
 from src.utils.device import get_device
 
-def train(model, train_loader, val_loader, optimizer, epochs, 
-          train_experiments_sub_folder, patience):
+def train(model, train_loader, val_loader, train_experiments_sub_folder, config):
     
-    # Create a folder if it doesn't exist
-    os.makedirs(train_experiments_sub_folder, exist_ok=True)
+    epochs = config["training"]["epochs"]
+    patience = config["training"]["patience"]
+    optimizer = optim.Adam(model.parameters(), lr=config["training"]["lr"])
+    device = get_device()
 
     best_val_loss = float("inf")
     patience_counter = 0
-
-    device = get_device()
     
     for epoch in tqdm(range(epochs)):
         # Training
