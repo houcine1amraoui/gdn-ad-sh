@@ -16,6 +16,7 @@ def compute_metrics(scores, config):
     threshold_percentile = config["evaluation"]["threshold_percentile"]
 
     # --- Threshold ---
+    print("hhhhh::::", scores["train"])
     threshold = np.percentile(scores["train"], threshold_percentile)
     # actor2_test_threshold = np.percentile(scores["actor2_test"], threshold_percentile)
     # actor1_test_threshold = np.percentile(scores["actor1_test"], threshold_percentile)
