@@ -16,6 +16,7 @@ def compute_scores(config):
     eval_results_folder = config["evaluation"]["eval_results_folder"]
     model_name = config["evaluation"]["model"]
 
+    print(f"hhh {eval_results_folder}/{model_name}/errors")
     # --- Load errors ---
     train_errors = np.load(f"{eval_results_folder}/{model_name}/errors/train_errors.npy")
     val_errors = np.load(f"{eval_results_folder}/{model_name}/errors/val_errors.npy")
