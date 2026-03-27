@@ -106,7 +106,7 @@ def errors_computation_pipeline(config):
     model_name = config["evaluation"]["model"]
 
     train_experiments_main_folder = config["training"]["train_experiments_main_folder"]
-    train_experiments_per_model_folder = f"{train_experiments_main_folder}{model_name}"
+    train_experiments_per_model_folder = f"{train_experiments_main_folder}/{model_name}"
     eval_results_folder = config["evaluation"]["eval_results_folder"]
     
 
