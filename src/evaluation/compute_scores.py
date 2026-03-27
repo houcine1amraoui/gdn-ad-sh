@@ -17,10 +17,10 @@ def compute_scores(config):
     model_name = config["evaluation"]["model"]
 
     # --- Load errors ---
-    train_errors = np.load(f"{eval_results_folder}/{model_name}/errors/train_errors.npz")
-    val_errors = np.load(f"{eval_results_folder}/{model_name}/errors/val_errors.npz")
-    actor2_test_errors = np.load(f"{eval_results_folder}/{model_name}/errors/actor2_test_errors.npz")
-    actor1_test_errors = np.load(f"{eval_results_folder}/{model_name}/errors/actor1_test_errors.npz")
+    train_errors = np.load(f"{eval_results_folder}/{model_name}/errors/train.npz")
+    val_errors = np.load(f"{eval_results_folder}/{model_name}/errors/val.npz")
+    actor2_test_errors = np.load(f"{eval_results_folder}/{model_name}/errors/actor2_test.npz")
+    actor1_test_errors = np.load(f"{eval_results_folder}/{model_name}/errors/actor1_test.npz")
 
     forecast = train_errors["forecast"]
     recon = train_errors["reconstruction"] if "reconstruction" in train_errors else None
