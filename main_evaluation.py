@@ -5,7 +5,7 @@ import argparse
 from src.utils.seed import set_seed
 from src.evaluation.viz import plot_boxplot, plot_anomaly_scores_distribution, plot_bins
 from src.evaluation.compute_errors import compute_errors
-from src.evaluation.compute_scores import compute_scores
+from src.evaluation.compute_scores import compute_scores, evalutation_pipeline
 from src.evaluation.compute_metrics import compute_metrics
 
 def main_evaluation():
@@ -37,8 +37,9 @@ def main_evaluation():
     # Create a folder if it doesn't exist
     os.makedirs(eval_results_folder, exist_ok=True)
 
-    compute_errors(config)
+    # compute_errors(config)
     # scores = compute_scores(config)
+    evalutation_pipeline(config)
     # print("train mean and std: ", scores["train"].mean(), scores["train"].std())
     # print("val mean and std: ", scores["val"].mean(), scores["val"].std())
     # print("actor 2 test mean and std: ", scores["actor2_test"].mean(), scores["actor2_test"].std())
