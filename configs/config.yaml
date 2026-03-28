@@ -30,7 +30,7 @@ models:
       gat_heads: 2
 
 training:
-  model: mtad_gat
+  model: gdn
   batch_size: 32
   epochs: 50
   lr: 0.0005

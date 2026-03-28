@@ -8,18 +8,19 @@ def save_processed_data(train_array, val_array, actor2_test_array,
                    timestamps_train, timestamps_val, 
                    timestamps_actor2_test, timestamps_actor1_test,
                    config):
+    
     processed_data_folder = config["dataset"]["processed_data_folder"]
-
+    print(processed_data_folder)
     # Create folder if it doesn't exist
     os.makedirs(processed_data_folder, exist_ok=True)
 
     np.save(f"{processed_data_folder}/train_array.npy", train_array)
     np.save(f"{processed_data_folder}/val_array.npy", val_array)
     np.save(f"{processed_data_folder}/actor2_test_array.npy", actor2_test_array)
-    np.save(f"{processed_data_folder}/timestamps_val.npy", timestamps_val)
+    np.save(f"{processed_data_folder}/actor1_test_array.npy", actor1_test_array)
 
     np.save(f"{processed_data_folder}/timestamps_train.npy", timestamps_train)
-    np.save(f"{processed_data_folder}/actor1_test_array.npy", actor1_test_array)
+    np.save(f"{processed_data_folder}/timestamps_val.npy", timestamps_val)
     np.save(f"{processed_data_folder}/timestamps_actor2_test.npy", timestamps_actor2_test)
     np.save(f"{processed_data_folder}/timestamps_actor1_test.npy", timestamps_actor1_test)
 
