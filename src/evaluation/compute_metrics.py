@@ -21,6 +21,7 @@ def compute_metrics(scores, config):
     # actor1_test_threshold = np.percentile(scores["actor1_test"], threshold_percentile)
     # stat, p = ks_2samp(scores["train"], scores["actor2_test"])
 
+    threshold = 0.2
     detection_rate = np.mean(scores["actor2_test"] > threshold)
     false_positive_rate = np.mean(scores["actor1_test"] > threshold)
     print(detection_rate, false_positive_rate)

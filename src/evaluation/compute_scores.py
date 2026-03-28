@@ -35,8 +35,8 @@ def compute_scores(config):
     # Aggregation
     train_scores = errors["train"].mean(axis=1)
     val_scores = errors["val"].mean(axis=1)
-    actor2_test_scores = errors["actor2_test"].max(axis=1)
-    actor1_test_scores = errors["actor1_test"].max(axis=1)
+    actor2_test_scores = errors["actor2_test"].mean(axis=1)
+    actor1_test_scores = errors["actor1_test"].mean(axis=1)
     
     # Normalization
     val_scores = normalize(train_scores, val_scores)
