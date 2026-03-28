@@ -11,7 +11,7 @@ models:
     enabled: true
     params:
       hidden_dim: 64
-      topk: 10 # previously 15
+      topk: 15 # previously 15
       heads: 1
 
   - name: "mtad_gat"

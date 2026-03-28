@@ -13,7 +13,9 @@ def clean_data(df):
     df = df.dropna(axis=1)  # or use fillna()
     return df
 
-import pandas as pd
+def downsample_data(df, freq="3s"):
+    df_downsampled = df.resample(freq).mean()
+    return df_downsampled
 
 def split_actor_periods(df, val_ratio=0.2):
     """
@@ -89,6 +91,9 @@ def data_preprocessing(raw_data_path):
 
     # Get the list of devices
     devices = [c for c in df.columns if c != "Timestamp"]
+
+    # Data downsampling
+    df = downsample_data(df)
 
     # 2. Split actors
     train_df, val_df, actor2_test_df, actor1_test_df = split_actor_periods(df)
