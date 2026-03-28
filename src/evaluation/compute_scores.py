@@ -1,6 +1,7 @@
 import numpy as np
 import os
 from scipy.stats import ks_2samp
+import matplotlib.pyplot as plt
 
 def compute_final_error(split_errors, alpha=0.5):
     f = split_errors["forecast"]
@@ -74,27 +75,84 @@ def compute_scores(norm_errors, iqr, topk_ratio=0.4):
 
     return scores
 
-def evalutation_pipeline(config):
-    errors = load_errors_all_splits(config)
-    errors_norm, median, iqr = normalize_errors_all_splits(errors)
-
+def compute_scores_all_splits(errors_norm, iqr):
     train_scores = compute_scores(errors_norm["train"], iqr)
     val_scores = compute_scores(errors_norm["val"], iqr)
-    actor2_scores = compute_scores(errors_norm["actor2_test"], iqr)
-    actor1_scores = compute_scores(errors_norm["actor1_test"], iqr)
+    actor2_test_scores = compute_scores(errors_norm["actor2_test"], iqr)
+    actor1_test_scores = compute_scores(errors_norm["actor1_test"], iqr)
+
+    return {
+        "train": train_scores,
+        "val": val_scores,
+        "actor2_test": actor2_test_scores,
+        "actor1_test": actor1_test_scores,
+    }
+
+def compute_segment_metrics(pred, start, end):
+    segment = pred[start:end]
+
+    # SDR
+    SDR = int(np.any(segment))
+
+    # Coverage
+    coverage = np.mean(segment)
+
+    # Delay
+    if SDR:
+        delay = np.argmax(segment)
+    else:
+        delay = np.inf
+
+    return SDR, coverage, delay
+
+def segment_evaluation(scores, threshold):
+    start_actor2 = len(scores["train"])
+    end_actor2 = start_actor2 + len(scores["actor2_test"])
+
+    full_scores = np.concatenate([
+        scores["train"],
+        scores["actor2_test"],
+        scores["actor1_test"]
+    ])
+
+    pred = (full_scores > threshold).astype(int)
+
+    SDR, coverage, delay = compute_segment_metrics(pred, start_actor2, end_actor2)
+
+    print("SDR: ", SDR, "coverage: ", coverage, "detaly: ", delay)
+
+    normal_mask = np.ones_like(full_scores, dtype=bool)
+    normal_mask[start_actor2:end_actor2] = False
+
+    fp_rate = np.mean(pred[normal_mask])
+    print("FPR: ", fp_rate)
+
+    # plt.figure(figsize=(14,4))
+    # plt.plot(full_scores)
+    # plt.axhline(threshold)
+    # plt.axvspan(start_actor2, end_actor2, alpha=0.2)
+    # plt.title("Full Timeline")
+    # plt.show()
+
+def evalutation_pipeline(config):
+    errors = load_errors_all_splits(config)
+    errors_norm, _, iqr = normalize_errors_all_splits(errors)
+    scores = compute_scores_all_splits(errors_norm, iqr)
     
-    threshold = np.percentile(train_scores, 95)
+    threshold = np.percentile(scores["train"], 95)
+    # threshold = 0.5
     
+    segment_evaluation(scores, threshold)
     # KS Test
     # ks_actor2 = ks_2samp(train_scores, actor2_scores)
     # ks_actor1 = ks_2samp(train_scores, actor1_scores)
     # print("KS Train vs Actor2:", ks_actor2)
     # print("KS Train vs Actor1:", ks_actor1)
 
-    detection_rate = np.mean(actor2_scores > threshold)
-    fp_rate = np.mean(actor1_scores > threshold)
-    print("Detection rate:", detection_rate)
-    print("False positive rate:", fp_rate)
+    # detection_rate = np.mean(actor2_scores > threshold)
+    # fp_rate = np.mean(actor1_scores > threshold)
+    # print("Detection rate:", detection_rate)
+    # print("False positive rate:", fp_rate)
 
     # Aggregation
     # train_scores = errors["train"].mean(axis=1)
