@@ -10,7 +10,7 @@ actor1_t2_end: 2022-11-17 23:59:59
 
 dataset:
   # path: data/sample/BREMaster-3.csv
-  raw_data_path: data/raw/CUMaster.csv
+  raw_data_path: data/raw/CUMaster2.csv
   processed_data_folder: data/processed
   window_size: 50
 
