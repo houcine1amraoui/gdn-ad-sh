@@ -2,6 +2,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 import pandas as pd
+ 
+from src.preprocessing.preprocessing import split_actor_periods
 
 def rank_sensor_noise(df, timestamp_col="Timestamp"):
     """
@@ -58,3 +60,8 @@ def corr_heatmap(df, start_string, end_string):
     plt.colorbar()
     plt.tight_layout()
     plt.show()
+
+
+def describe():
+    df = pd.read_csv("data/raw/CUMaster.csv")
+    train_df, val_df, actor2_test_df, actor1_test_df = split_actor_periods(df)

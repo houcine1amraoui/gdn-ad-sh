@@ -37,12 +37,12 @@ def main_evaluation():
     # Create a folder if it doesn't exist
     os.makedirs(eval_results_folder, exist_ok=True)
 
-    # compute_errors(config)
-    scores = compute_scores(config)
-    print("train mean and std: ", scores["train"].mean(), scores["train"].std())
-    print("val mean and std: ", scores["val"].mean(), scores["val"].std())
-    print("actor 2 test mean and std: ", scores["actor2_test"].mean(), scores["actor2_test"].std())
-    print("actor 1 test mean and std: ", scores["actor1_test"].mean(), scores["actor1_test"].std())
+    compute_errors(config)
+    # scores = compute_scores(config)
+    # print("train mean and std: ", scores["train"].mean(), scores["train"].std())
+    # print("val mean and std: ", scores["val"].mean(), scores["val"].std())
+    # print("actor 2 test mean and std: ", scores["actor2_test"].mean(), scores["actor2_test"].std())
+    # print("actor 1 test mean and std: ", scores["actor1_test"].mean(), scores["actor1_test"].std())
     # compute_metrics(scores, config)
     # plot_anomaly_scores_distribution(scores, config)
     # plot_boxplot(scores, eval_results_folder)

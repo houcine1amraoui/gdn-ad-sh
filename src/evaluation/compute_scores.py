@@ -29,6 +29,23 @@ def normalize(train_scores, scores):
     max_v = train_scores.max()
     return (scores - min_v) / (max_v - min_v + 1e-8)
 
+def normalize_errors(train_errors, errors):
+    """
+    Normalize errors using train statistics only
+    """
+    median = np.median(train_errors, axis=0)
+    iqr = np.percentile(train_errors, 75, axis=0) - np.percentile(train_errors, 25, axis=0)
+
+    # stabilize
+    iqr = np.maximum(iqr, 0.05)
+
+    norm = np.abs((errors - median) / iqr)
+
+    # clip
+    norm = np.clip(norm, 0, 10)
+
+    return norm, median, iqr
+
 def compute_scores(config):
     errors = load_errors_all_splits(config)
 

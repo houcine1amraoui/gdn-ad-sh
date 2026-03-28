@@ -112,6 +112,10 @@ def data_preprocessing(raw_data_path):
     train_df, val_df, actor2_test_df, actor1_test_df = split_actor_periods(df)
     print("Actor split done.")
 
+    df.describe().to_csv("data/df_describe.csv")
+    train_df.describe().to_csv("data/train_describe.csv")
+    actor2_test_df.describe().to_csv("data/actor2_test_describe.csv")
+
     # 7. Save timestamps for reference/plotting
     timestamps_train = train_df['Timestamp'].to_numpy()
     timestamps_val   = val_df['Timestamp'].to_numpy()
