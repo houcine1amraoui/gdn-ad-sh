@@ -10,6 +10,7 @@ def clean_data(df):
     By default, df.dropna() removes any row that has at least one NaN. (we dont want that)
     """
     df.columns = df.columns.str.strip()
+    df.set_index('Timestamp', inplace=True)
     df = df.dropna(axis=1)  # or use fillna()
     return df
 
