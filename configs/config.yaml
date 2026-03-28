@@ -1,5 +1,13 @@
 seed: 42
 
+# Define actor timelines
+actor1_t1_start: 2022-10-18 00:00:00
+actor1_t1_end: 2022-11-07 23:59:59
+actor2_start: 2022-11-08 00:00:00
+actor2_end: 2022-11-10 23:59:59
+actor1_t2_start: 2022-11-11 00:00:00
+actor1_t2_end: 2022-11-17 23:59:59
+
 dataset:
   # path: data/sample/BREMaster-3.csv
   raw_data_path: data/raw/CUMaster.csv
@@ -25,7 +33,7 @@ training:
   model: mtad_gat
   batch_size: 64
   epochs: 50
-  lr: 0.001
+  lr: 0.0005
   patience: 20
   train_experiments_main_folder: train_experiments
 

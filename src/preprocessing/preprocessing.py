@@ -3,9 +3,10 @@ from sklearn.preprocessing import MinMaxScaler
 
 def clean_data(df):
     """
-    Clean data:
-    - Strip whitespace from column names
-    - Drop columns with all NaNs
+    CU dataset has the column "light.philips_hue_lightstrip_pid_146 " 
+    with white sapce at the end
+    CU dataset has the column "light.philips_hue_lightstrip_pid_146 " with all NaN
+    By default, df.dropna() removes any row that has at least one NaN. (we dont want that)
     """
     df.columns = df.columns.str.strip()
     df = df.dropna(axis=1, how='all')  # drop columns where all values are NaN
@@ -26,6 +27,10 @@ def downsample_data(df, freq="3s"):
 def split_actor_periods(df, val_ratio=0.2):
     """
     Split dataset into train/val/test according to actor timelines.
+    - actor1_train (normal training from Actor 1 timeline 1 only)
+    - actor1_val (normal validation from Actor 1 timeline 1 only)
+    - actor2_test (test from Actor 2 timeline)
+    - actor1_test (test from Actor 1 timeline 2)
     """
     # Define actor timelines
     actor1_t1_start = "2022-10-18 00:00:00"
@@ -61,7 +66,8 @@ def normalize(train_df, val_df, actor2_test_df, actor1_test_df, devices):
     """
     scaler = MinMaxScaler()
 
-    # Fit scaler only on training data
+    # Fit scaler only on training data (features only without timestamp)
+    # .to_numpy() is safer than .values() which removes column structure
     train_array = scaler.fit_transform(train_df[devices].to_numpy())
     val_array   = scaler.transform(val_df[devices].to_numpy())
     actor2_test_array = scaler.transform(actor2_test_df[devices].to_numpy())

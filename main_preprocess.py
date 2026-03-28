@@ -1,5 +1,5 @@
 from src.preprocessing.preprocessing import data_preprocessing
-from src.utils.save_utils import save_processed
+from src.utils.save_utils import save_processed_data
 import yaml
 import argparse
 
@@ -29,16 +29,24 @@ def main_preprocess():
         
     raw_data_path = config["dataset"]["raw_data_path"]
     
-    train_array, val_array, actor2_test_array, actor1_test_array, scaler, devices = data_preprocessing(raw_data_path)
+    (train_array, val_array, actor2_test_array, actor1_test_array, 
+     scaler, devices, 
+     timestamps_train, timestamps_val, 
+     timestamps_actor2_test, timestamps_actor1_test) = (data_preprocessing(raw_data_path))
+
     print(len(train_array), len(val_array), len(actor2_test_array), len(actor1_test_array))
     
-    save_processed(
+    save_processed_data(
         train_array,
         val_array,
         actor2_test_array,
         actor1_test_array,
         scaler,
         devices,
+        timestamps_train, 
+        timestamps_val, 
+        timestamps_actor2_test, 
+        timestamps_actor1_test,
         config
     )
     print("Preprocessing Done.")
