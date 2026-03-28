@@ -10,7 +10,6 @@ def save_processed_data(train_array, val_array, actor2_test_array,
                    config):
     
     processed_data_folder = config["dataset"]["processed_data_folder"]
-    print(processed_data_folder)
     # Create folder if it doesn't exist
     os.makedirs(processed_data_folder, exist_ok=True)
 

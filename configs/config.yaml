@@ -12,7 +12,7 @@ dataset:
   # path: data/sample/BREMaster-3.csv
   raw_data_path: data/raw/CUMaster2.csv
   processed_data_folder: data/processed
-  window_size: 50
+  window_size: 30 # set to 50 for mtad 30 for gdn
 
 models:
   - name: "gdn"
@@ -38,7 +38,7 @@ training:
   train_experiments_main_folder: train_experiments
 
 evaluation:
-  model: gdn
+  model: mtad_gat
   batch_size: 32
   threshold_percentile: 99
   eval_results_folder: eval_results

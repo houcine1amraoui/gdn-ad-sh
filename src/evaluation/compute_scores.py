@@ -81,6 +81,12 @@ def compute_scores_all_splits(errors_norm, iqr):
     actor2_test_scores = compute_scores(errors_norm["actor2_test"], iqr)
     actor1_test_scores = compute_scores(errors_norm["actor1_test"], iqr)
 
+    # soomthing
+    train_scores = smooth_scores(train_scores)
+    val_scores = smooth_scores(val_scores)
+    actor2_test_scores = smooth_scores(actor2_test_scores)
+    actor1_test_scores = smooth_scores(actor1_test_scores)
+
     return {
         "train": train_scores,
         "val": val_scores,
@@ -112,14 +118,14 @@ def segment_evaluation(scores, threshold):
     full_scores = np.concatenate([
         scores["train"],
         scores["actor2_test"],
-        scores["actor1_test"]
+        # scores["actor1_test"]
     ])
 
     pred = (full_scores > threshold).astype(int)
 
     SDR, coverage, delay = compute_segment_metrics(pred, start_actor2, end_actor2)
 
-    print("SDR: ", SDR, "coverage: ", coverage, "detaly: ", delay)
+    print("SDR: ", SDR, "coverage: ", coverage, "delay: ", delay)
 
     normal_mask = np.ones_like(full_scores, dtype=bool)
     normal_mask[start_actor2:end_actor2] = False
@@ -133,6 +139,11 @@ def segment_evaluation(scores, threshold):
     # plt.axvspan(start_actor2, end_actor2, alpha=0.2)
     # plt.title("Full Timeline")
     # plt.show()
+
+import pandas as pd
+
+def smooth_scores(scores, window=5):
+    return pd.Series(scores).rolling(window=window, center=True).mean().fillna(method="bfill").fillna(method="ffill").values
 
 def evalutation_pipeline(config):
     errors = load_errors_all_splits(config)
