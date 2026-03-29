@@ -13,6 +13,15 @@ def train(model, train_loader, val_loader, train_experiments_sub_folder, config)
     optimizer = optim.Adam(model.parameters(), lr=config["training"]["lr"])
     device = get_device()
 
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer,
+        mode='min',        # minimize validation loss
+        factor=0.5,        # reduce LR by half
+        patience=3,        # wait 3 epochs
+        verbose=True,
+        min_lr=1e-6
+    )
+        
     best_val_loss = float("inf")
     patience_counter = 0
     
@@ -54,7 +63,19 @@ def train(model, train_loader, val_loader, train_experiments_sub_folder, config)
 
         val_loss /= len(val_loader)
 
-        print(f"Epoch {epoch+1} | Train Loss: {train_loss:.6f} | Val Loss: {val_loss:.6f}")
+        # -------------------------
+        # LR Scheduler Step
+        # -------------------------
+        scheduler.step(val_loss)
+
+        current_lr = optimizer.param_groups[0]['lr']
+
+        print(
+            f"Epoch {epoch+1} | "
+            f"LR: {current_lr:.6f} | "
+            f"Train Loss: {train_loss:.6f} | "
+            f"Val Loss: {val_loss:.6f}"
+        )
 
         # Save BEST model
         if val_loss < best_val_loss:
