@@ -12,7 +12,8 @@ def compute_final_error(split_errors, alpha=0.5):
     return alpha * f + (1 - alpha) * r  # MTAD-GAT case
     
 def load_errors_all_splits(config):
-    eval_results_folder = config["evaluation"]["eval_results_folder"]
+    project_root_dir = config["project_root_dir"]
+    eval_results_folder = f"{project_root_dir}/eval_results"
     model_name = config["evaluation"]["model"]
 
     splits = ["train", "val", "actor2_test", "actor1_test"]

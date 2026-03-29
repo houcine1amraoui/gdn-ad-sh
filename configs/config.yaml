@@ -8,10 +8,13 @@ actor2_end: 2022-11-10 23:59:59
 actor1_t2_start: 2022-11-11 00:00:00
 actor1_t2_end: 2022-11-17 23:59:59
 
+# change the project root directory if using colab
+# e.g., "/content/drive/MyDrive/gnn"
+project_root_dir: .
+
 dataset:
   dataset_name: BRE
-  raw_data_folder: data/raw
-  processed_data_folder: data/processed
+  dataset_folder: data
   window_size: 50 # set to 50 for mtad 30 for gdn
 
 models:

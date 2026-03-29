@@ -128,13 +128,13 @@ def compute_errors_all_loaders(model, eval_results_per_model_folder, config):
     save_split("actor1_test", actor1_test_errors)
 
 def compute_errors(config):
+    project_root_dir = config["project_root_dir"]
     model_name = config["evaluation"]["model"]
 
-    train_experiments_main_folder = config["training"]["train_experiments_main_folder"]
+    train_experiments_main_folder = f"{project_root_dir}/train_experiments"
     train_experiments_per_model_folder = f"{train_experiments_main_folder}/{model_name}"
-    eval_results_folder = config["evaluation"]["eval_results_folder"]
     
-
+    eval_results_folder = f"{project_root_dir}/eval_results"
     eval_results_per_model_folder = f"{eval_results_folder}/{model_name}"
     # Create a folder if it doesn't exist
     os.makedirs(eval_results_per_model_folder, exist_ok=True)

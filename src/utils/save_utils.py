@@ -9,7 +9,9 @@ def save_processed_data(train_array, val_array, actor2_test_array,
                    timestamps_actor2_test, timestamps_actor1_test,
                    config):
     
-    processed_data_folder = config["dataset"]["processed_data_folder"]
+    project_root_dir = config["project_root_dir"]
+    dataset_folder = config["dataset"]["dataset_folder"]
+    processed_data_folder = f"{project_root_dir}/{dataset_folder}/processed"
     # Create folder if it doesn't exist
     os.makedirs(processed_data_folder, exist_ok=True)
 

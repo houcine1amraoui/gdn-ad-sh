@@ -16,26 +16,15 @@ def main_train():
     # 1. Set configuration
     with open("configs/config.yaml") as f:
         config = yaml.safe_load(f)
-
-    # parse CLI args
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--processed_data_folder", type=str)
-    parser.add_argument("--train_experiments_main_folder", type=str)
-    args = parser.parse_args()
-
-    # override processed data folder path
-    if args.processed_data_folder:
-        config["dataset"]["processed_data_folder"] = args.processed_data_folder
-
-    # override experiments_folder
-    if args.train_experiments_main_folder:
-        config["training"]["train_experiments_main_folder"] = args.train_experiments_main_folder
-
+        
     set_seed(config["seed"])
     
-    processed_data_folder = config["dataset"]["processed_data_folder"]
-    train_experiments_main_folder = config["training"]["train_experiments_main_folder"]
+    project_root_dir = config["project_root_dir"]
+    dataset_folder = config["dataset"]["dataset_folder"]
 
+    processed_data_folder = f"{project_root_dir}/{dataset_folder}/processed"
+
+    train_experiments_main_folder = f"{project_root_dir}/train_experiments"
     # Create a folder if it doesn't exist
     os.makedirs(train_experiments_main_folder, exist_ok=True)
 

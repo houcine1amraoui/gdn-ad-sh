@@ -15,22 +15,22 @@ def main_preprocess():
 
     # parse CLI args
     parser = argparse.ArgumentParser()
+    parser.add_argument("--project_root_dir", type=str)
     parser.add_argument("--dataset_name", type=str)
-    parser.add_argument("--raw_data_folder", type=str)
-    parser.add_argument("--processed_data_folder", type=str)
+    parser.add_argument("--data_folder", type=str)
     args = parser.parse_args()
+
+    # override project_root_directory
+    if args.project_root_dir:
+        config["project_root_dir"] = args.project_root_dir
 
     # override dataset name
     if args.dataset_name:
         config["dataset"]["dataset_name"] = args.dataset_name
 
-    # override raw dataset folder
-    if args.raw_data_folder:
-        config["dataset"]["raw_data_folder"] = args.raw_data_folder
-
-    # override processed data folder path
-    if args.processed_data_folder:
-        config["dataset"]["processed_data_folder"] = args.processed_data_folder
+    # override data folder
+    if args.dataset_folder:
+        config["dataset"]["dataset_folder"] = args.dataset_folder
 
     (train_array, val_array, actor2_test_array, actor1_test_array, 
      scaler, devices, 

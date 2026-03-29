@@ -14,30 +14,12 @@ def main_evaluation():
         config = yaml.safe_load(f)
     set_seed(config["seed"])
 
-    # parse CLI args
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--processed_data_folder", type=str)
-    parser.add_argument("--train_experiments_main_folder", type=str)
-    parser.add_argument("--eval_results_folder", type=str)
-    args = parser.parse_args()
-
-    # override processed data folder
-    if args.processed_data_folder:
-        config["dataset"]["processed_data_folder"] = args.processed_data_folder
-
-    # override train_experiments_main_folder
-    if args.train_experiments_main_folder:
-        config["training"]["train_experiments_main_folder"] = args.train_experiments_main_folder
-
-    # override eval_results_folder
-    if args.eval_results_folder:
-        config["evaluation"]["eval_results_folder"] = args.eval_results_folder
-
-    eval_results_folder = config["evaluation"]["eval_results_folder"]
+    project_root_dir = config["project_root_dir"]
+    eval_results_folder = f"{project_root_dir}/eval_results"
     # Create a folder if it doesn't exist
     os.makedirs(eval_results_folder, exist_ok=True)
 
-    # compute_errors(config)
+    compute_errors(config)
     # scores = compute_scores(config)
     evalutation_pipeline(config)
     # print("train mean and std: ", scores["train"].mean(), scores["train"].std())
