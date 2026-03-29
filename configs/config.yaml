@@ -9,8 +9,8 @@ actor1_t2_start: 2022-11-11 00:00:00
 actor1_t2_end: 2022-11-17 23:59:59
 
 dataset:
-  raw_data_path: data/sample/BREMaster.csv
-  # raw_data_path: data/raw/CUMaster2.csv
+  dataset_name: BRE
+  raw_data_folder: data/raw
   processed_data_folder: data/processed
   window_size: 50 # set to 50 for mtad 30 for gdn
 
