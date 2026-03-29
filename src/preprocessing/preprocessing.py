@@ -1,6 +1,8 @@
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
+from src.utils.downsample import detect_sensor_types
+
 def clean_data(df):
     """
     CU dataset has the column "light.philips_hue_lightstrip_pid_146 " 
@@ -14,15 +16,39 @@ def clean_data(df):
 
 def downsample_data(df, freq="3s"):
     """
-    Downsample data to target frequency using mean aggregation.
-    Assumes 'Timestamp' column exists and is datetime.
+    Downsample data to target frequency while preserving events.
+    continuous sensors → mean
+    binary/event sensors → max
     """
+    # Detect devices type (binary/continuous)
+    binary_cols, continuous_cols = detect_sensor_types(df)
+
     # Set datetime index for resampling
-    df.set_index('Timestamp', inplace=True)
-    df_downsampled = df.resample(freq).mean()
-    # Keep Timestamp column for reference
-    df_downsampled['Timestamp'] = df_downsampled.index
-    return df_downsampled
+    # parse timestamp
+    df["Timestamp"] = pd.to_datetime(df["Timestamp"])
+    df = df.set_index("Timestamp")
+
+    if continuous_cols is None:
+        continuous_cols = []
+
+    if binary_cols is None:
+        binary_cols = []
+
+    # aggregation dictionary
+    agg_dict = {}
+    for col in continuous_cols: agg_dict[col] = "mean"
+    for col in binary_cols: agg_dict[col] = "max"
+
+    # downsample
+    df_down = df.resample(freq).agg(agg_dict)
+    df_down = df_down.reset_index()
+
+    return df_down
+
+    # df_downsampled = df.resample(freq).mean()
+    # # Keep Timestamp column for reference
+    # df_downsampled['Timestamp'] = df_downsampled.index
+    # return df_downsampled
 
 def split_actor_periods(df, val_ratio=0.2):
     """
@@ -112,9 +138,9 @@ def data_preprocessing(raw_data_path):
     train_df, val_df, actor2_test_df, actor1_test_df = split_actor_periods(df)
     print("Actor split done.")
 
-    # df.describe().to_csv("data/df_describe.csv")
-    # train_df.describe().to_csv("data/train_describe.csv")
-    # actor2_test_df.describe().to_csv("data/actor2_test_describe.csv")
+    df.describe().to_csv("data/df_describe.csv")
+    train_df.describe().to_csv("data/train_describe.csv")
+    actor2_test_df.describe().to_csv("data/actor2_test_describe.csv")
 
     # 7. Save timestamps for reference/plotting
     timestamps_train = train_df['Timestamp'].to_numpy()

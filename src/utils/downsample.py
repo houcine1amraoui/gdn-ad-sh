@@ -2,22 +2,16 @@ import pandas as pd
 
 import pandas as pd
 
-def detect_sensor_types(csv_path, timestamp_col="timestamp"):
+def detect_sensor_types(df):
     """
     Automatically detect binary and continuous sensors in a CSV time-series dataset.
     """
-
-    df = pd.read_csv(csv_path)
-
-    # remove timestamp column
-    if timestamp_col in df.columns:
-        df = df.drop(columns=[timestamp_col])
+    df = df.drop(columns=["Timestamp"])
 
     binary_cols = []
     continuous_cols = []
 
     for col in df.columns:
-
         unique_vals = df[col].dropna().unique()
 
         # binary sensor condition
@@ -30,9 +24,6 @@ def detect_sensor_types(csv_path, timestamp_col="timestamp"):
 
         else:
             continuous_cols.append(col)
-
-    print("Binary sensors:", binary_cols)
-    print("Continuous sensors:", continuous_cols)
 
     return binary_cols, continuous_cols
 
