@@ -30,17 +30,12 @@ def main_train():
     if args.project_root_dir:
         config["project_root_dir"] = args.project_root_dir
 
-    # override dataset name
-    if args.dataset_name:
-        config["dataset"]["dataset_name"] = args.dataset_name
-
     # override data folder
     if args.dataset_folder:
         config["dataset"]["dataset_folder"] = args.dataset_folder
 
     project_root_dir = config["project_root_dir"]
     dataset_folder = config["dataset"]["dataset_folder"]
-    print("project_root_dir: ", project_root_dir)
     processed_data_folder = f"{project_root_dir}/{dataset_folder}/processed"
 
     train_experiments_main_folder = f"{project_root_dir}/train_experiments"
