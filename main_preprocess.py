@@ -16,8 +16,8 @@ def main_preprocess():
     # parse CLI args
     parser = argparse.ArgumentParser()
     parser.add_argument("--project_root_dir", type=str)
+    parser.add_argument("--dataset_folder", type=str)
     parser.add_argument("--dataset_name", type=str)
-    parser.add_argument("--data_folder", type=str)
     args = parser.parse_args()
 
     # override project_root_directory
