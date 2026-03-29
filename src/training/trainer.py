@@ -40,6 +40,10 @@ def train(model, train_loader, val_loader, train_experiments_sub_folder, config)
 
             optimizer.zero_grad()
             loss.backward()
+            
+            # gradient clipping
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+
             optimizer.step()
 
             train_loss += loss.item()
