@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
 from src.utils.downsample import detect_sensor_types
+from src.utils.load_actors_timelines import load_actor_timelines
 
 def filter_columns_one_data(df, config):
     project_root_dir = config["project_root_dir"]
@@ -108,50 +109,43 @@ def downsample_data(df, freq="3s"):
 
     return df_down
 
-    # df_downsampled = df.resample(freq).mean()
-    # # Keep Timestamp column for reference
-    # df_downsampled['Timestamp'] = df_downsampled.index
-    # return df_downsampled
-
-def split_actor_periods(df, val_ratio=0.2):
+def split_actor_periods(df, config):
     """
     Split dataset into train/val/test according to actor timelines.
     - actor1_train (normal training from Actor 1 timeline 1 only)
     - actor1_val (normal validation from Actor 1 timeline 1 only)
     - actor2_test (test from Actor 2 timeline)
-    - actor1_test (test from Actor 1 timeline 2)
+    - act
     """
-
     df["Timestamp"] = pd.to_datetime(df["Timestamp"])
 
-    actor1_t1_start = "2022-10-18 00:00:00"
-    actor1_t1_end   = "2022-11-07 23:59:59"
-    actor2_start    = "2022-11-08 00:00:00"
-    actor2_end      = "2022-11-10 23:59:59"
-    actor1_t2_start = "2022-11-11 00:00:00"
-    actor1_t2_end   = "2022-11-17 23:59:59"
+    # Load timelines and val_ratio from config
+    timelines = load_actor_timelines(config)
+    val_ratio = config["dataset"]["val_ratio"]
 
+    # Slice data according to timelines
     actor1_t1 = df[
-        (df["Timestamp"] >= actor1_t1_start) &
-        (df["Timestamp"] <= actor1_t1_end)
+        (df["Timestamp"] >= timelines["actor1_t1"][0]) &
+        (df["Timestamp"] <= timelines["actor1_t1"][1])
     ]
 
     actor2 = df[
-        (df["Timestamp"] >= actor2_start) &
-        (df["Timestamp"] <= actor2_end)
+        (df["Timestamp"] >= timelines["actor2"][0]) &
+        (df["Timestamp"] <= timelines["actor2"][1])
     ]
 
     actor1_t2 = df[
-        (df["Timestamp"] >= actor1_t2_start) &
-        (df["Timestamp"] <= actor1_t2_end)
+        (df["Timestamp"] >= timelines["actor1_t2"][0]) &
+        (df["Timestamp"] <= timelines["actor1_t2"][1])
     ]
 
+    # Sort
     actor1_t1 = actor1_t1.sort_values("Timestamp")
     actor2_test_df = actor2.sort_values("Timestamp")
     actor1_test_df = actor1_t2.sort_values("Timestamp")
 
+    # Split train/val
     split_idx = int(len(actor1_t1) * (1 - val_ratio))
-
     train_df = actor1_t1.iloc[:split_idx]
     val_df   = actor1_t1.iloc[split_idx:]
 
@@ -300,7 +294,7 @@ def data_preprocessing(config):
     devices = [c for c in df.columns if c != "Timestamp"]
     print("nbr of devices:", len(devices))
     # 6. Split actors / train-val-test
-    train_df, val_df, actor2_test_df, actor1_test_df = split_actor_periods(df)
+    train_df, val_df, actor2_test_df, actor1_test_df = split_actor_periods(df, config)
     print("Actor split done.")
 
     # df.describe().to_csv("data/df_describe.csv")
