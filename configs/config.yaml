@@ -10,12 +10,12 @@ dataset:
   val_ratio: 0.2
 
 # actor timelines
-actor1_t1_start: 2022-10-18 00:00:00
-actor1_t1_end: 2022-11-07 23:59:59
-actor2_start: 2022-11-08 00:00:00
-actor2_end: 2022-11-10 23:59:59
-actor1_t2_start: 2022-11-11 00:00:00
-actor1_t2_end: 2022-11-17 23:59:59
+actor1_t1_start: "2022-10-18 00:00:00"
+actor1_t1_end: "2022-11-07 23:59:59"
+actor2_start: "2022-11-08 00:00:00"
+actor2_end: "2022-11-10 23:59:59"
+actor1_t2_start: "2022-11-11 00:00:00"
+actor1_t2_end: "2022-11-17 23:59:59"
 
 seed: 42
 
