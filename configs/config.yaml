@@ -15,7 +15,7 @@ project_root_dir: .
 dataset:
   merge_bre_cu: true
   dataset_name: BRE
-  dataset_folder: data
+  dataset_folder: data/raw
   window_size: 50 # set to 50 for mtad 30 for gdn
 
 models:

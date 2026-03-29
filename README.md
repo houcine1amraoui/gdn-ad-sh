@@ -1,10 +1,10 @@
-# GDN-AD-SH: Graph Neural Network-Based Anomaly Detection for Smart Homes
+# Graph Neural Network-Based Anomaly Detection for Smart Homes
 
 This project implements a **Graph Neural Network-based anomaly detection
 framework** for smart home environments using:
 
 - GDN (Graph Deviation Network)
-- MTAD-GAT
+- MTAD-GAT (Multivariate Timeseries Anomaly Detection-Graph Attention Network)
 - Smart home datasets (BRE, CU, or merged BRE+CU)
 - Full pipeline: preprocessing → training → evaluation → visualization
 
@@ -13,7 +13,31 @@ home sensor data.
 
 ---
 
-## Project Structure
+## Project Structure Before Running Full Pipeline
+
+    gdn-ad-sh/
+    │
+    ├── configs/
+    │   └── config.yaml
+    ├── data/
+    │   ├── raw/
+    ├── notebooks/
+    ├── src/
+    │   ├── preprocessing/
+    │   ├── models/
+    │   ├── training/
+    │   ├── evaluation/
+    │   ├── utils/
+    │   └── visualization/
+    ├── main_preprocess.py
+    ├── main_train.py
+    ├── main_evaluation.py
+    ├── main.py
+    └── README.md
+
+---
+
+## Project Structure After Running Full Pipeline
 
     gdn-ad-sh/
     │
@@ -23,6 +47,8 @@ home sensor data.
     │   ├── raw/
     │   ├── processed/
     ├── eval_results/
+    │   ├── errors/
+    │   ├── plots/
     ├── notebooks/
     ├── src/
     │   ├── preprocessing/
@@ -31,6 +57,9 @@ home sensor data.
     │   ├── evaluation/
     │   ├── utils/
     │   └── visualization/
+    ├── train_experiments/
+    │   ├── gdn/
+    │   ├── matad_gat/
     ├── main_preprocess.py
     ├── main_train.py
     ├── main_evaluation.py
