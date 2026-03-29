@@ -8,7 +8,7 @@ from src.utils.seed import set_seed
 from src.utils.device import get_device
 from src.utils.experiment import create_experiment_folder
 from src.models.builder import build_model
-from src.training.trainer import train
+from training.trainer import train
 import argparse
 
 
