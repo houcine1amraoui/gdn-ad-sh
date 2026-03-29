@@ -174,7 +174,7 @@ def load_and_merge_bre_cu(config):
     project_root_dir = config["project_root_dir"]
     dataset_folder = config["dataset"]["dataset_folder"]
     
-    bre_data_path = f"{project_root_dir}/{dataset_folder}/CUMaster.csv"
+    bre_data_path = f"{project_root_dir}/{dataset_folder}/CUMaster2.csv"
     cu_data_path = f"{project_root_dir}/{dataset_folder}/BREMaster.csv"
     bre_df = pd.read_csv(bre_data_path)
     cu_df = pd.read_csv(cu_data_path)
