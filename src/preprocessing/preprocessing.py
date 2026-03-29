@@ -64,7 +64,17 @@ def clean_data(df):
     By default, df.dropna() removes any row that has at least one NaN. (we dont want that)
     """
     df.columns = df.columns.str.strip()
-    df = df.dropna(axis=1, how='all')  # drop columns where all values are NaN
+    
+    # Replace fake values with NaN
+    # e.g., sensor.aqara_wireless_switch_pid_081_action → mean = -9.68
+    df.replace([-9.21, -9.68, -9.7, -9.81], pd.NA, inplace=True)
+    
+    # Constant / useless sensors
+    # e.g., switch.kasa_023 → std = 0, this brings ZERO information
+    df = df.loc[:, df.std() > 1e-6]
+
+    df = df.dropna(axis=1, how="all")   # remove dead sensors
+    # df = df.fillna(method="ffill")      # or interpolate
     return df
 
 def downsample_data(df, freq="3s"):
