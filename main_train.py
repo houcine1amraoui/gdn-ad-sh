@@ -37,7 +37,7 @@ def main_train():
     # override data folder
     if args.dataset_folder:
         config["dataset"]["dataset_folder"] = args.dataset_folder
-        
+
     project_root_dir = config["project_root_dir"]
     dataset_folder = config["dataset"]["dataset_folder"]
     print("project_root_dir: ", project_root_dir)
@@ -67,7 +67,7 @@ def main_train():
     val_loader   = DataLoader(val_dataset, batch_size, shuffle=False, num_workers=0)
 
     # 3. Model Initialization
-    model = build_model(model_name, config)
+    model = build_model(processed_data_folder, model_name, config)
 
     # Train
     train(model, train_loader, val_loader, train_experiments_sub_folder, config)
