@@ -3,11 +3,10 @@ from sklearn.preprocessing import MinMaxScaler
 
 from src.utils.downsample import detect_sensor_types
 
-def filter_columns(df, dataset_folder, dataset_name):
-    txt_path = f"{dataset_folder}/{dataset_name}_filtered_columns.txt"
+def filter_columns(df, filtered_columns_path):
 
     # read column names from txt
-    with open(txt_path, "r") as f:
+    with open(filtered_columns_path, "r") as f:
         filtered_columns = [line.strip() for line in f if line.strip()]
 
     # keep only existing columns
@@ -178,7 +177,8 @@ def data_preprocessing(config):
     project_root_dir = config["project_root_dir"]
     dataset_name = config["dataset"]["dataset_name"]
     dataset_folder = config["dataset"]["dataset_folder"]
-    
+    filtered_columns_path = f"{project_root_dir}/{dataset_folder}/{dataset_name}_filtered_columns.txt"
+
     
     # 1. Load data
     raw_data_path = f"{project_root_dir}/{dataset_folder}/{dataset_name}Master.csv"
@@ -186,7 +186,7 @@ def data_preprocessing(config):
     print("Data loading done.")
 
     # 2. Keep selected columns only
-    df = filter_columns(df, dataset_folder, dataset_name)
+    df = filter_columns(df, filtered_columns_path)
     print("Columns selection done.")
 
     # 2. Clean data
