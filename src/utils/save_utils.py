@@ -20,10 +20,10 @@ def save_processed_data(train_array, val_array, actor2_test_array,
     np.save(f"{processed_data_folder}/actor2_test_array.npy", actor2_test_array)
     np.save(f"{processed_data_folder}/actor1_test_array.npy", actor1_test_array)
 
-    np.save(f"{processed_data_folder}/timestamps_train.npy", timestamps_train)
-    np.save(f"{processed_data_folder}/timestamps_val.npy", timestamps_val)
-    np.save(f"{processed_data_folder}/timestamps_actor2_test.npy", timestamps_actor2_test)
-    np.save(f"{processed_data_folder}/timestamps_actor1_test.npy", timestamps_actor1_test)
+    np.save(f"{processed_data_folder}/train_timestamps.npy", timestamps_train)
+    np.save(f"{processed_data_folder}/val_timestamps.npy", timestamps_val)
+    np.save(f"{processed_data_folder}/actor2_test_timestamps.npy", timestamps_actor2_test)
+    np.save(f"{processed_data_folder}/actor1_test_timestamps.npy", timestamps_actor1_test)
 
     joblib.dump(scaler, f"{processed_data_folder}/scaler.pkl")
 
