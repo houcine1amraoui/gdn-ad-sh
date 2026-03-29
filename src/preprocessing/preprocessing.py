@@ -21,25 +21,39 @@ def filter_columns_one_data(df, config):
     return df_filtered
 
 def filter_columns_merged_data(df, config):
+    
     project_root_dir = config["project_root_dir"]
     dataset_folder = config["dataset"]["dataset_folder"]
+
     bre_filtered_columns_path = f"{project_root_dir}/{dataset_folder}/BRE_filtered_columns.txt"
     cu_filtered_columns_path = f"{project_root_dir}/{dataset_folder}/CU_filtered_columns.txt"
 
-    # read column names from txt
+    # read BRE columns
     with open(bre_filtered_columns_path, "r") as f:
         bre_filtered_columns = [line.strip() for line in f if line.strip()]
 
-    # read column names from txt
+    # read CU columns
     with open(cu_filtered_columns_path, "r") as f:
         cu_filtered_columns = [line.strip() for line in f if line.strip()]
 
-    all_filtered_columns = bre_filtered_columns.append(cu_filtered_columns)
+    # merge column lists correctly
+    all_filtered_columns = bre_filtered_columns + cu_filtered_columns
+
+    # remove duplicates
+    all_filtered_columns = list(set(all_filtered_columns))
+
+    # keep timestamp
+    if "Timestamp" not in all_filtered_columns:
+        all_filtered_columns.append("Timestamp")
+
     # keep only existing columns
     selected_columns = [c for c in all_filtered_columns if c in df.columns]
 
     # filter dataframe
     df_filtered = df[selected_columns]
+
+    print(f"Selected {len(selected_columns)} columns from merged dataset")
+
     return df_filtered
 
 def clean_data(df):
@@ -194,18 +208,42 @@ def load_one_data(config):
     df = filter_columns_one_data(df, config)
     return df
 
+import pandas as pd
+
 def load_and_merge_bre_cu(config):
+    
     project_root_dir = config["project_root_dir"]
     dataset_folder = config["dataset"]["dataset_folder"]
-    
-    bre_data_path = f"{project_root_dir}/{dataset_folder}/CUMaster2.csv"
-    cu_data_path = f"{project_root_dir}/{dataset_folder}/BREMaster.csv"
+
+    bre_data_path = f"{project_root_dir}/{dataset_folder}/BREMaster.csv"
+    cu_data_path = f"{project_root_dir}/{dataset_folder}/CUMaster2.csv"
+
+    print("Loading BRE dataset...")
     bre_df = pd.read_csv(bre_data_path)
-    
+
+    print("Loading CU dataset...")
     cu_df = pd.read_csv(cu_data_path)
 
-    merged = pd.merge(bre_df, cu_df, on="Timestamp", how="inner")
+    # Convert timestamp
+    bre_df["Timestamp"] = pd.to_datetime(bre_df["Timestamp"])
+    cu_df["Timestamp"] = pd.to_datetime(cu_df["Timestamp"])
+
+    # Sort for time series merge
+    bre_df = bre_df.sort_values("Timestamp")
+    cu_df = cu_df.sort_values("Timestamp")
+
+    print("Merging time series...")
+
+    merged = pd.merge_asof(
+        bre_df,
+        cu_df,
+        on="Timestamp",
+        direction="nearest"
+    )
+
+    print("Filtering merged data...")
     merged_filtered = filter_columns_merged_data(merged, config)
+
     print("Data loading and merging done.")
 
     return merged_filtered
