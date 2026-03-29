@@ -9,10 +9,10 @@ actor1_t2_start: 2022-11-11 00:00:00
 actor1_t2_end: 2022-11-17 23:59:59
 
 dataset:
-  # path: data/sample/BREMaster-3.csv
-  raw_data_path: data/raw/CUMaster2.csv
+  path: data/sample/BREMaster.csv
+  # raw_data_path: data/raw/CUMaster2.csv
   processed_data_folder: data/processed
-  window_size: 30 # set to 50 for mtad 30 for gdn
+  window_size: 50 # set to 50 for mtad 30 for gdn
 
 models:
   - name: "gdn"
@@ -30,7 +30,7 @@ models:
       gat_heads: 2
 
 training:
-  model: gdn
+  model: mtad_gat
   batch_size: 32
   epochs: 50
   lr: 0.0005
