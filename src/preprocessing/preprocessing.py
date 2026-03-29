@@ -3,7 +3,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 from src.utils.downsample import detect_sensor_types
 
-def filter_columns(df, config):
+def filter_columns_one_data(df, config):
     project_root_dir = config["project_root_dir"]
     dataset_name = config["dataset"]["dataset_name"]
     dataset_folder = config["dataset"]["dataset_folder"]
@@ -15,6 +15,28 @@ def filter_columns(df, config):
 
     # keep only existing columns
     selected_columns = [c for c in filtered_columns if c in df.columns]
+
+    # filter dataframe
+    df_filtered = df[selected_columns]
+    return df_filtered
+
+def filter_columns_merged_data(df, config):
+    project_root_dir = config["project_root_dir"]
+    dataset_folder = config["dataset"]["dataset_folder"]
+    bre_filtered_columns_path = f"{project_root_dir}/{dataset_folder}/BRE_filtered_columns.txt"
+    cu_filtered_columns_path = f"{project_root_dir}/{dataset_folder}/CU_filtered_columns.txt"
+
+    # read column names from txt
+    with open(bre_filtered_columns_path, "r") as f:
+        bre_filtered_columns = [line.strip() for line in f if line.strip()]
+
+    # read column names from txt
+    with open(cu_filtered_columns_path, "r") as f:
+        cu_filtered_columns = [line.strip() for line in f if line.strip()]
+
+    all_filtered_columns = bre_filtered_columns.append(cu_filtered_columns)
+    # keep only existing columns
+    selected_columns = [c for c in all_filtered_columns if c in df.columns]
 
     # filter dataframe
     df_filtered = df[selected_columns]
@@ -169,6 +191,8 @@ def load_one_data(config):
     data_path = f"{project_root_dir}/{dataset_folder}/{dataset_name}Master.csv"
 
     df = pd.read_csv(data_path)
+    df = filter_columns_one_data(df, config)
+    return df
 
 def load_and_merge_bre_cu(config):
     project_root_dir = config["project_root_dir"]
@@ -177,10 +201,14 @@ def load_and_merge_bre_cu(config):
     bre_data_path = f"{project_root_dir}/{dataset_folder}/CUMaster2.csv"
     cu_data_path = f"{project_root_dir}/{dataset_folder}/BREMaster.csv"
     bre_df = pd.read_csv(bre_data_path)
+    
     cu_df = pd.read_csv(cu_data_path)
+
     merged = pd.merge(bre_df, cu_df, on="Timestamp", how="inner")
+    merged_filtered = filter_columns_merged_data(merged, config)
     print("Data loading and merging done.")
-    return merged
+
+    return merged_filtered
 
 def data_preprocessing(config):
     """
@@ -206,8 +234,8 @@ def data_preprocessing(config):
     else: df = load_one_data(config) # one data 
     
     # 2. Keep selected columns only
-    df = filter_columns(df, config)
-    print("Columns selection done.")
+    # df = filter_columns(df, config)
+    # print("Columns selection done.")
 
     # 2. Clean data
     df = clean_data(df)
@@ -222,7 +250,7 @@ def data_preprocessing(config):
 
     # 5. Get device columns (exclude Timestamp)
     devices = [c for c in df.columns if c != "Timestamp"]
-
+    print("nbr of devices:", len(devices))
     # 6. Split actors / train-val-test
     train_df, val_df, actor2_test_df, actor1_test_df = split_actor_periods(df)
     print("Actor split done.")
