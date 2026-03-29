@@ -24,12 +24,13 @@ def train(
     optimizer = optim.Adam(model.parameters(), lr=base_lr)
 
     # LR Scheduler (Reduce LR on plateau)
+    # lder versions of PyTorch don’t accept verbose in the ReduceLROnPlateau constructor.
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(
         optimizer,
         mode='min',
         factor=0.5,
         patience=3,
-        verbose=True,
+        # verbose=True,
         min_lr=1e-6
     )
 
