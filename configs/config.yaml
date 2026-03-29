@@ -13,6 +13,7 @@ actor1_t2_end: 2022-11-17 23:59:59
 project_root_dir: .
 
 dataset:
+  merge_bre_cu: true
   dataset_name: BRE
   dataset_folder: data
   window_size: 50 # set to 50 for mtad 30 for gdn

@@ -3,7 +3,11 @@ from sklearn.preprocessing import MinMaxScaler
 
 from src.utils.downsample import detect_sensor_types
 
-def filter_columns(df, filtered_columns_path):
+def filter_columns(df, config):
+    project_root_dir = config["project_root_dir"]
+    dataset_name = config["dataset"]["dataset_name"]
+    dataset_folder = config["dataset"]["dataset_folder"]
+    filtered_columns_path = f"{project_root_dir}/{dataset_folder}/{dataset_name}_filtered_columns.txt"
 
     # read column names from txt
     with open(filtered_columns_path, "r") as f:
@@ -158,6 +162,26 @@ def normalize(train_df, val_df, actor2_test_df, actor1_test_df, devices):
 
     return train_array, val_array, actor2_test_array, actor1_test_array, scaler
 
+def load_one_data(config):
+    project_root_dir = config["project_root_dir"]
+    dataset_name = config["dataset"]["dataset_name"]
+    dataset_folder = config["dataset"]["dataset_folder"]
+    data_path = f"{project_root_dir}/{dataset_folder}/{dataset_name}Master.csv"
+
+    df = pd.read_csv(data_path)
+
+def load_and_merge_bre_cu(config):
+    project_root_dir = config["project_root_dir"]
+    dataset_folder = config["dataset"]["dataset_folder"]
+    
+    bre_data_path = f"{project_root_dir}/{dataset_folder}/CUMaster.csv"
+    cu_data_path = f"{project_root_dir}/{dataset_folder}/BREMaster.csv"
+    bre_df = pd.read_csv(bre_data_path)
+    cu_df = pd.read_csv(cu_data_path)
+    merged = pd.merge(bre_df, cu_df, on="Timestamp", how="inner")
+    print("Data loading and merging done.")
+    return merged
+
 def data_preprocessing(config):
     """
     Full preprocessing pipeline for GDN:
@@ -174,19 +198,15 @@ def data_preprocessing(config):
     - devices list
     - timestamp arrays (for plotting/reference)
     """
-    project_root_dir = config["project_root_dir"]
-    dataset_name = config["dataset"]["dataset_name"]
-    dataset_folder = config["dataset"]["dataset_folder"]
-    filtered_columns_path = f"{project_root_dir}/{dataset_folder}/{dataset_name}_filtered_columns.txt"
+   
+    merge_bre_cu = config["dataset"]["merge_bre_cu"]
 
-    
     # 1. Load data
-    raw_data_path = f"{project_root_dir}/{dataset_folder}/{dataset_name}Master.csv"
-    df = pd.read_csv(raw_data_path)
-    print("Data loading done.")
-
+    if merge_bre_cu: df = load_and_merge_bre_cu(config) # both BRE and CU
+    else: df = load_one_data(config) # one data 
+    
     # 2. Keep selected columns only
-    df = filter_columns(df, filtered_columns_path)
+    df = filter_columns(df, config)
     print("Columns selection done.")
 
     # 2. Clean data
