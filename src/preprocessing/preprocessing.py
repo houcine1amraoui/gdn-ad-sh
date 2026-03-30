@@ -95,8 +95,7 @@ def clean_cu_data(df):
     # df = df.fillna(method="ffill")      # or interpolate
     return df
 
-def downsample_data(df, config):
-    downsample_freq = config["dataset"]["downsample_freq"]
+def downsample_data(df, downsample_freq):
     """
     Downsample data to target frequency while preserving events.
     continuous sensors → mean
@@ -270,8 +269,9 @@ def data_preprocessing(config):
     # 2. Clean CU data if loaded alone (otherwise it will cleaned in merging function)
     if not(merge_bre_cu) and dataset_name == "CU": df = clean_cu_data(df)
     
-    # 4. Downsample data to target frequency
-    df = downsample_data(df, config)
+    # 4. Downsample data to target frequency if not 1s
+    downsample_freq = config["dataset"]["downsample_freq"]
+    if downsample_freq != "1s": df = downsample_data(df, downsample_freq)
     
 
     # 5. Get device columns (exclude Timestamp)
