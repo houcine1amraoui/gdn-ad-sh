@@ -36,9 +36,10 @@ def main_train():
 
     project_root_dir = config["project_root_dir"]
     dataset_folder = config["dataset"]["dataset_folder"]
-    processed_data_folder = f"{project_root_dir}/{dataset_folder}/processed"
+    dataset_name = config["dataset"]["dataset_folder"]
+    processed_data_folder = f"{project_root_dir}/{dataset_folder}/{dataset_name}_processed"
 
-    train_experiments_main_folder = f"{project_root_dir}/train_experiments"
+    train_experiments_main_folder = f"{project_root_dir}/{dataset_name}_train_experiments"
     # Create a folder if it doesn't exist
     os.makedirs(train_experiments_main_folder, exist_ok=True)
 
