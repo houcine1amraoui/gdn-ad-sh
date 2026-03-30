@@ -3,7 +3,7 @@
 project_root_dir: .
 
 dataset:
-  merge_bre_cu: true # true or false
+  merge_bre_cu: false # true or false
   dataset_name: BRE # CU or BRE
   dataset_folder: data
   window_size: 50
