@@ -13,29 +13,31 @@ def main_preprocess():
     with open("configs/config.yaml") as f:
         config = yaml.safe_load(f)
 
-    # parse CLI args
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--project_root_dir", type=str)
-    parser.add_argument("--dataset_folder", type=str)
-    parser.add_argument("--dataset_name", type=str)
-    parser.add_argument("--merge_bre_cu", type=bool)
-    args = parser.parse_args()
+    root = config["project_root_dir"]
+    print(root)
+    # # parse CLI args
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument("--project_root_dir", type=str)
+    # parser.add_argument("--dataset_folder", type=str)
+    # parser.add_argument("--dataset_name", type=str)
+    # parser.add_argument("--merge_bre_cu", type=bool)
+    # args = parser.parse_args()
 
-    # override project_root_directory
-    if args.project_root_dir:
-        config["project_root_dir"] = args.project_root_dir
+    # # override project_root_directory
+    # if args.project_root_dir:
+    #     config["project_root_dir"] = args.project_root_dir
 
-    # override dataset folder
-    if args.dataset_folder:
-        config["dataset"]["dataset_folder"] = args.dataset_folder
+    # # override dataset folder
+    # if args.dataset_folder:
+    #     config["dataset"]["dataset_folder"] = args.dataset_folder
 
-    # override dataset name
-    if args.dataset_name:
-        config["dataset"]["dataset_name"] = args.dataset_name
+    # # override dataset name
+    # if args.dataset_name:
+    #     config["dataset"]["dataset_name"] = args.dataset_name
 
-    # override merge_bre_cu
-    if args.merge_bre_cu:
-        config["dataset"]["merge_bre_cu"] = args.merge_bre_cu
+    # # override merge_bre_cu
+    # if args.merge_bre_cu:
+    #     config["dataset"]["merge_bre_cu"] = args.merge_bre_cu
 
     (train_array, val_array, actor2_test_array, actor1_test_array, 
      scaler, devices, 
