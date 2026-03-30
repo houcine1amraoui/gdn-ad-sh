@@ -30,7 +30,7 @@ def main_train():
         config["dataset"]["dataset_folder"] = args.dataset_folder
 
     # Create a folder for experiments (per dataset, per model, per time)
-    create_train_experiments_folder(config)
+    train_experiments_time_folder = create_train_experiments_folder(config)
     
     # 2. Dataset/DataLoader creation
     train_loader, val_loader = create_train_val_loaders(config)
@@ -39,7 +39,7 @@ def main_train():
     model = build_model(config)
 
     # 3. Start training
-    train(model, train_loader, val_loader, config)
+    train(model, train_loader, val_loader, train_experiments_time_folder, config)
   
 if __name__ == "__main__":
     main_train()

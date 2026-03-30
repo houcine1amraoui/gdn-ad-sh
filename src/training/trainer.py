@@ -5,10 +5,8 @@ import yaml
 import torch.optim as optim
 
 from src.utils.device import get_device
-from src.utils.get_folders_utils import get_train_experiments_folder
 
-def train(model, train_loader, val_loader, config):
-    train_experiments_sub_folder = get_train_experiments_folder(config)
+def train(model, train_loader, val_loader, train_experiments_time_folder, config):
     
     epochs = config["training"]["epochs"]
     patience = config["training"]["patience"]
@@ -88,10 +86,10 @@ def train(model, train_loader, val_loader, config):
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
                 'val_loss': val_loss
-            }, f"{train_experiments_sub_folder}/best.pth")
+            }, f"{train_experiments_time_folder}/best.pth")
 
             # Save metric
-            with open(os.path.join(f"{train_experiments_sub_folder}/metrics.yaml"), "w") as f:
+            with open(os.path.join(f"{train_experiments_time_folder}/metrics.yaml"), "w") as f:
                 yaml.dump({"best_val_loss": float(best_val_loss)}, f)
 
         else:
@@ -107,4 +105,4 @@ def train(model, train_loader, val_loader, config):
         'epoch': epoch,
         'model_state_dict': model.state_dict(),
         'optimizer_state_dict': optimizer.state_dict(),
-    }, f"{train_experiments_sub_folder}/last_model.pth")
+    }, f"{train_experiments_time_folder}/last_model.pth")

@@ -14,6 +14,8 @@ def create_time_folder(config, parent_folder):
     with open(os.path.join(time_folder, "config.yaml"), "w") as f:
         yaml.dump(config, f)
 
+    return time_folder
+
 def create_train_experiments_folder(config):
     project_root_dir = config["project_root_dir"]
     dataset_name = config["dataset"]["dataset_name"]
@@ -24,7 +26,9 @@ def create_train_experiments_folder(config):
     if merge_bre_cu: name = "merged"
     else: name = dataset_name
 
-    train_experiments_folder = f"{project_root_dir}/train_experiments/{name}/{model_name}"
+    train_experiments_main_folder = f"{project_root_dir}/train_experiments/{name}/{model_name}"
     
-    create_time_folder(config, train_experiments_folder)
+    train_experiments_time_folder = create_time_folder(config, train_experiments_main_folder)
+
+    return 
     
