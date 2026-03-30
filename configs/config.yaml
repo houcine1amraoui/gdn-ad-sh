@@ -31,8 +31,8 @@ models:
     enabled: true
     params:
       kernel_size: 7
-      gru_hidden_dim: 100 # 100 prev
-      gat_heads: 2 # 2 prev
+      gru_hidden_dim: 150 # 100 prev
+      gat_heads: 3 # 2 prev
 
 training:
   model: mtad_gat

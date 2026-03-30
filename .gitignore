@@ -2,7 +2,7 @@ data
 train_experiments
 eval_results
 *.npy
-src/evaluation/
+# src/evaluation/
 
 # Python cache
 __pycache__/
