@@ -18,7 +18,7 @@ def save_processed_data(train_array, val_array, actor2_test_array,
     if merge_bre_cu: prefix = "merged"
     else: prefix = dataset_name
     
-    processed_data_folder = f"{project_root_dir}/{dataset_folder}/${prefix}_processed"
+    processed_data_folder = f"{project_root_dir}/{dataset_folder}/{prefix}_processed"
 
     # Create folder if it doesn't exist
     os.makedirs(processed_data_folder, exist_ok=True)

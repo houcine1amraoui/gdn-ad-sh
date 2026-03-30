@@ -26,7 +26,7 @@ def filter_columns_one_data(df, config):
     return df_filtered
 
 def filter_columns_merged_data(df, config):
-    print("Filterinf BRE+CU merged data...")
+    print("Filtering BRE+CU merged data...")
     project_root_dir = config["project_root_dir"]
     dataset_folder = config["dataset"]["dataset_folder"]
 
@@ -203,8 +203,6 @@ def load_one_data(config):
 
     print(f"Loading {dataset_name} data...")
     df = pd.read_csv(data_path)
-    print(f"Filtering {dataset_name} data...")
-    df = filter_columns_one_data(df, config)
     return df
 
 def load_and_merge_bre_cu(config):
@@ -229,7 +227,7 @@ def load_and_merge_bre_cu(config):
     bre_df = bre_df.sort_values("Timestamp")
     cu_df = cu_df.sort_values("Timestamp")
 
-    print("Merging time series...")
+    print("Merging data...")
 
     merged = pd.merge_asof(
         bre_df,
@@ -238,18 +236,13 @@ def load_and_merge_bre_cu(config):
         direction="nearest"
     )
 
-    print("Filtering merged data...")
-    merged_filtered = filter_columns_merged_data(merged, config)
-
-    print("Data loading and merging done.")
-
-    return merged_filtered
+    return merged
 
 def data_preprocessing(config):
     """
     Full preprocessing pipeline for GDN:
-    1. Load CSV data (either BRE or CU or both)
-    2. Filter: keep selected columns only 
+    1. Load CSV data (either BRE or CU or both merged)
+    2. Filter data: keep selected columns only 
     3. Clean data
     4. Downsample to 3s
     5. Split actor timelines
@@ -264,13 +257,13 @@ def data_preprocessing(config):
     merge_bre_cu = config["dataset"]["merge_bre_cu"]
     dataset_name = config["dataset"]["dataset_name"]
 
-    # 1. Load and filter data
+    # 1. Load CSV data (either BRE or CU or both merged)
     if merge_bre_cu: df = load_and_merge_bre_cu(config) # both BRE and CU
     else: df = load_one_data(config) # one data 
     
-    # 2. Filter: Keep selected columns only
+    # 2. Filter data: keep selected columns only
     if merge_bre_cu: df = filter_columns_merged_data(df, config)
-    else: df = filter_columns_one_data()
+    else: df = filter_columns_one_data(df, config)
 
     # 2. Clean CU data
     if dataset_name == "": df = clean_cu_data(df)
