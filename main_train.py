@@ -1,14 +1,12 @@
-import numpy as np
 import yaml
-import os
 
 from src.utils.create_train_val_loaders import create_train_val_loaders
 from src.utils.seed import set_seed
-from src.utils.device import get_device
-from src.utils.experiment import create_experiment_folder
 from src.models.builder import build_model
 from src.training.trainer import train
 import argparse
+from src.utils.create_folders_utils import create_train_experiments_folder
+from src.utils.get_folders_utils import get_processed_folder
 
 
 def main_train():
@@ -33,31 +31,20 @@ def main_train():
     if args.dataset_folder:
         config["dataset"]["dataset_folder"] = args.dataset_folder
 
-    project_root_dir = config["project_root_dir"]
-    dataset_folder = config["dataset"]["dataset_folder"]
-    dataset_name = config["dataset"]["dataset_name"]
-    processed_data_folder = f"{project_root_dir}/{dataset_folder}/{dataset_name}_processed"
-
-    train_experiments_main_folder = f"{project_root_dir}/{dataset_name}_train_experiments"
-    # Create a folder if it doesn't exist
-    os.makedirs(train_experiments_main_folder, exist_ok=True)
-
-    model_name = config["training"]["model"]
-    train_exeriments_per_model_folder = f"{train_experiments_main_folder}/{model_name}"
-    # Create a folder if it doesn't exist
-    os.makedirs(train_exeriments_per_model_folder, exist_ok=True)    
-
-    train_experiments_sub_folder = create_experiment_folder(config, train_exeriments_per_model_folder)
+    # Get processed_data_folder (per dataset)
+    processed_data_folder = get_processed_folder(config)
     
-
+    # Create a folder for experiments (per dataset, per model, per time)
+    train_experiments_folder = create_train_experiments_folder(config)
+    
     # 2. Dataset/DataLoader creation
     train_loader, val_loader = create_train_val_loaders(config)
 
     # 3. Model Initialization
-    model = build_model(processed_data_folder, model_name, config)
+    model = build_model(processed_data_folder, config)
 
     # 3. Start training
-    train(model, train_loader, val_loader, train_experiments_sub_folder, config)
+    train(model, train_loader, val_loader, train_experiments_folder, config)
   
 if __name__ == "__main__":
     main_train()

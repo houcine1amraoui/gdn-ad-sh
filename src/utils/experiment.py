@@ -5,19 +5,7 @@ import json
 import os
 import yaml
 
-def create_experiment_folder(config, train_exeriments_per_model_folder):
-    """
-    """
-    timestamp = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-    train_experiments_sub_folder = os.path.join(train_exeriments_per_model_folder, f"exp_{timestamp}")
 
-    os.makedirs(train_experiments_sub_folder, exist_ok=True)
-
-    # Save config for reproducibility
-    with open(os.path.join(train_experiments_sub_folder, "config.yaml"), "w") as f:
-        yaml.dump(config, f)
-
-    return train_experiments_sub_folder
 
 def get_best_experiment(train_experiments_per_model_folder, metric_name="best_val_loss", mode="min"):
     best_value = float("inf") if mode == "min" else -float("inf")

@@ -3,7 +3,9 @@ from src.models.gdn import GDN
 from src.models.mtad_gat import MTAD_GAT
 from src.utils.device import get_device 
     
-def build_model(processed_data_folder, model_name, config):
+def build_model(processed_data_folder, config):
+    model_name = config["training"]["model_name"]
+
     with open(f"{processed_data_folder}/devices.json") as f:
         devices = json.load(f)
 
