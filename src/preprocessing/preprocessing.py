@@ -306,7 +306,6 @@ def data_preprocessing(config):
     # 4. Downsample
     df = downsample_data(df, freq="3s")
     
-
     # 5. Get device columns (exclude Timestamp)
     devices = [c for c in df.columns if c != "Timestamp"]
     print("nbr of devices:", len(devices))
