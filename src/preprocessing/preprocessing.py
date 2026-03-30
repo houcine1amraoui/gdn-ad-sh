@@ -97,28 +97,37 @@ def downsample_data(df, freq="3s"):
     continuous sensors → mean
     binary/event sensors → max
     """
-    print("Downsampling data...")
-    # Detect devices type (binary/continuous)
-    binary_cols, continuous_cols = detect_sensor_types(df)
 
-    # Set datetime index for resampling
-    # parse timestamp
+    print("Downsampling data...")
+
+    # Ensure Timestamp exists
+    if "Timestamp" not in df.columns:
+        raise ValueError("Timestamp column not found in dataframe")
+
+    # Convert timestamp
     df["Timestamp"] = pd.to_datetime(df["Timestamp"])
+
+    # Set index
     df = df.set_index("Timestamp")
 
-    if continuous_cols is None:
-        continuous_cols = []
+    # Detect sensor types AFTER timestamp handling
+    binary_cols, continuous_cols = detect_sensor_types(df)
 
-    if binary_cols is None:
-        binary_cols = []
+    binary_cols = binary_cols or []
+    continuous_cols = continuous_cols or []
 
     # aggregation dictionary
     agg_dict = {}
-    for col in continuous_cols: agg_dict[col] = "mean"
-    for col in binary_cols: agg_dict[col] = "max"
+
+    for col in continuous_cols:
+        agg_dict[col] = "mean"
+
+    for col in binary_cols:
+        agg_dict[col] = "max"
 
     # downsample
     df_down = df.resample(freq).agg(agg_dict)
+
     df_down = df_down.reset_index()
 
     return df_down
