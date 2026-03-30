@@ -147,7 +147,7 @@ def split_actor_periods(df, config):
 
     # Load timelines and val_ratio from config
     timelines = load_actor_timelines(config)
-    val_ratio = config["dataset"]["val_ratio"]
+    val_ratio = config["preprocessing"]["val_ratio"]
 
     # Slice data according to timelines
     actor1_t1 = df[
@@ -274,7 +274,7 @@ def data_preprocessing(config):
         if not(merge_bre_cu) and dataset_name == "CU": df = clean_cu_data(df)
     
     # 4. Downsample data to target frequency if not 1s
-    downsample_freq = config["dataset"]["downsample_freq"]
+    downsample_freq = config["preprocessing"]["downsample_freq"]
     if downsample_freq != "1s": df = downsample_data(df, downsample_freq)
     
 
