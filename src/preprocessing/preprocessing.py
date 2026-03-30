@@ -64,6 +64,7 @@ def clean_data(df):
     CU dataset has the column "light.philips_hue_lightstrip_pid_146 " with all NaN
     By default, df.dropna() removes any row that has at least one NaN. (we dont want that)
     """
+    print("Cleaning data...")
     df.columns = df.columns.str.strip()
     
     # Replace fake values with NaN
@@ -98,6 +99,7 @@ def downsample_data(df, freq="3s"):
     continuous sensors → mean
     binary/event sensors → max
     """
+    print("Downsampling data...")
     # Detect devices type (binary/continuous)
     binary_cols, continuous_cols = detect_sensor_types(df)
 
@@ -236,7 +238,7 @@ def load_and_merge_bre_cu(config):
     dataset_folder = config["dataset"]["dataset_folder"]
 
     bre_data_path = f"{project_root_dir}/{dataset_folder}/BREMaster.csv"
-    cu_data_path = f"{project_root_dir}/{dataset_folder}/CUMaster2.csv"
+    cu_data_path = f"{project_root_dir}/{dataset_folder}/CUMaster.csv"
 
     print("Loading BRE dataset...")
     bre_df = pd.read_csv(bre_data_path)
@@ -297,14 +299,13 @@ def data_preprocessing(config):
 
     # 2. Clean data
     df = clean_data(df)
-    print("Data cleaning done.")
-
+    
     # 3. Convert Timestamp to datetime
     # df['Timestamp'] = pd.to_datetime(df['Timestamp'])
 
     # 4. Downsample
     df = downsample_data(df, freq="3s")
-    print("Downsampling done.")
+    
 
     # 5. Get device columns (exclude Timestamp)
     devices = [c for c in df.columns if c != "Timestamp"]
