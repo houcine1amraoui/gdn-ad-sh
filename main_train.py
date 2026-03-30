@@ -36,7 +36,7 @@ def main_train():
 
     project_root_dir = config["project_root_dir"]
     dataset_folder = config["dataset"]["dataset_folder"]
-    dataset_name = config["dataset"]["dataset_folder"]
+    dataset_name = config["dataset"]["dataset_name"]
     processed_data_folder = f"{project_root_dir}/{dataset_folder}/{dataset_name}_processed"
 
     train_experiments_main_folder = f"{project_root_dir}/{dataset_name}_train_experiments"
