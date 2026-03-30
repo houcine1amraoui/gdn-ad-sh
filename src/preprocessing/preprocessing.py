@@ -222,7 +222,9 @@ def load_one_data(config):
     dataset_folder = config["dataset"]["dataset_folder"]
     data_path = f"{project_root_dir}/{dataset_folder}/{dataset_name}Master.csv"
 
+    print(f"Loading {dataset_name} data...")
     df = pd.read_csv(data_path)
+    print(f"Filtering {dataset_name} data...")
     df = filter_columns_one_data(df, config)
     return df
 
