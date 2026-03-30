@@ -19,7 +19,7 @@ actor1_t2_end: "2022-11-17 23:59:59"
 
 preprocessing:
   apply_filtering: false
-  apply_cleaning: false
+  apply_cleaning: true
   downsample_freq: 3s
   val_ratio: 0.2
 
