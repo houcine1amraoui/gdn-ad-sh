@@ -21,7 +21,6 @@ def create_train_val_loaders(config):
     train_array = np.load(f"{processed_data_folder}/train_array.npy")
     val_array = np.load(f"{processed_data_folder}/val_array.npy")
 
-    train_loader, val_loader = create_train_val_loaders(config)
     train_dataset = TimeSeriesDataset(train_array, window_size)
     val_dataset = TimeSeriesDataset(val_array, window_size)
     

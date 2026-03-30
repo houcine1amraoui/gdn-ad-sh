@@ -5,8 +5,10 @@ import yaml
 import torch.optim as optim
 
 from src.utils.device import get_device
+from src.utils.get_folders_utils import get_train_experiments_folder
 
-def train(model, train_loader, val_loader, train_experiments_sub_folder, config):
+def train(model, train_loader, val_loader, config):
+    train_experiments_sub_folder = get_train_experiments_folder(config)
     
     epochs = config["training"]["epochs"]
     patience = config["training"]["patience"]

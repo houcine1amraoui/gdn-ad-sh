@@ -6,8 +6,6 @@ from src.models.builder import build_model
 from src.training.trainer import train
 import argparse
 from src.utils.create_folders_utils import create_train_experiments_folder
-from src.utils.get_folders_utils import get_processed_folder
-
 
 def main_train():
     # 1. Set configuration
@@ -31,20 +29,17 @@ def main_train():
     if args.dataset_folder:
         config["dataset"]["dataset_folder"] = args.dataset_folder
 
-    # Get processed_data_folder (per dataset)
-    processed_data_folder = get_processed_folder(config)
-    
     # Create a folder for experiments (per dataset, per model, per time)
-    train_experiments_folder = create_train_experiments_folder(config)
+    create_train_experiments_folder(config)
     
     # 2. Dataset/DataLoader creation
     train_loader, val_loader = create_train_val_loaders(config)
 
     # 3. Model Initialization
-    model = build_model(processed_data_folder, config)
+    model = build_model(config)
 
     # 3. Start training
-    train(model, train_loader, val_loader, train_experiments_folder, config)
+    train(model, train_loader, val_loader, config)
   
 if __name__ == "__main__":
     main_train()

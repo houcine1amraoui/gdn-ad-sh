@@ -2,8 +2,12 @@ import json
 from src.models.gdn import GDN
 from src.models.mtad_gat import MTAD_GAT
 from src.utils.device import get_device 
-    
-def build_model(processed_data_folder, config):
+from src.utils.get_folders_utils import get_processed_folder
+
+def build_model(config):
+
+    processed_data_folder = get_processed_folder(config)
+
     model_name = config["training"]["model_name"]
 
     with open(f"{processed_data_folder}/devices.json") as f:
