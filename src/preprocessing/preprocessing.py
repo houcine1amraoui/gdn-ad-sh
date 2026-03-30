@@ -57,14 +57,14 @@ def filter_columns_merged_data(df, config):
 
     return df_filtered
 
-def clean_data(df):
+def clean_cu_data(df):
     """
     CU dataset has the column "light.philips_hue_lightstrip_pid_146 " 
     with white sapce at the end
     CU dataset has the column "light.philips_hue_lightstrip_pid_146 " with all NaN
     By default, df.dropna() removes any row that has at least one NaN. (we dont want that)
     """
-    print("Cleaning data...")
+    print("Cleaning CU data...")
     df.columns = df.columns.str.strip()
     
     # Replace fake values with NaN
@@ -226,8 +226,8 @@ def load_one_data(config):
 
     print(f"Loading {dataset_name} data...")
     df = pd.read_csv(data_path)
-    print(f"Filtering {dataset_name} data...")
-    df = filter_columns_one_data(df, config)
+    # print(f"Filtering {dataset_name} data...")
+    # df = filter_columns_one_data(df, config)
     return df
 
 import pandas as pd
@@ -273,10 +273,9 @@ def load_and_merge_bre_cu(config):
 def data_preprocessing(config):
     """
     Full preprocessing pipeline for GDN:
-    1. Load CSV
-    2. Keep selected columns only 
-    2. Clean data
-    3. Convert Timestamp to datetime
+    1. Load CSV data
+    2. Filter: keep selected columns only 
+    3. Clean data
     4. Downsample to 3s
     5. Split actor timelines
     6. Normalize features
@@ -288,6 +287,7 @@ def data_preprocessing(config):
     """
    
     merge_bre_cu = config["dataset"]["merge_bre_cu"]
+    dataset_name = config["dataset"]["dataset_name"]
 
     # 1. Load data
     if merge_bre_cu: df = load_and_merge_bre_cu(config) # both BRE and CU
@@ -297,8 +297,8 @@ def data_preprocessing(config):
     # df = filter_columns(df, config)
     # print("Columns selection done.")
 
-    # 2. Clean data
-    df = clean_data(df)
+    # 2. Clean CU data
+    if dataset_name == "": df = clean_cu_data(df)
     
     # 3. Convert Timestamp to datetime
     # df['Timestamp'] = pd.to_datetime(df['Timestamp'])
