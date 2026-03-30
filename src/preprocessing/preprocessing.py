@@ -72,20 +72,22 @@ def clean_data(df):
     df.replace([-9.21, -9.68, -9.7, -9.81], pd.NA, inplace=True)
     
     # separate timestamp
-    # if "Timestamp" in df.columns:
-    #     timestamp_col = df["Timestamp"]
-    #     df = df.drop(columns=["Timestamp"])
+    timestamp_col = None
 
-    # # keep only numeric columns
-    # df = df.select_dtypes(include=['number'])
+    if "Timestamp" in df.columns:
+        timestamp_col = df["Timestamp"]
+        df = df.drop(columns=["Timestamp"])
 
-    # # remove near-constant sensors
-    # # e.g., switch.kasa_023 → std = 0, this brings ZERO information
-    # df = df.loc[:, df.std() > 1e-6]
+    # keep only numeric columns
+    df = df.select_dtypes(include=['number'])
 
-    # # restore timestamp
-    # if timestamp_col is not None:
-    #     df.insert(0, "Timestamp", timestamp_col)
+    # remove near-constant sensors
+    # e.g., switch.kasa_023 → std = 0, this brings ZERO information
+    df = df.loc[:, df.std() > 1e-6]
+
+    # restore timestamp
+    if timestamp_col is not None:
+        df.insert(0, "Timestamp", timestamp_col)
 
     df = df.dropna(axis=1, how="all")   # remove dead sensors
     # df = df.fillna(method="ffill")      # or interpolate
@@ -97,37 +99,28 @@ def downsample_data(df, freq="3s"):
     continuous sensors → mean
     binary/event sensors → max
     """
-
     print("Downsampling data...")
-
-    # Ensure Timestamp exists
-    if "Timestamp" not in df.columns:
-        raise ValueError("Timestamp column not found in dataframe")
-
-    # Convert timestamp
-    df["Timestamp"] = pd.to_datetime(df["Timestamp"])
-
-    # Set index
-    df = df.set_index("Timestamp")
-
-    # Detect sensor types AFTER timestamp handling
+    # Detect devices type (binary/continuous)
     binary_cols, continuous_cols = detect_sensor_types(df)
 
-    binary_cols = binary_cols or []
-    continuous_cols = continuous_cols or []
+    # Set datetime index for resampling
+    # parse timestamp
+    df["Timestamp"] = pd.to_datetime(df["Timestamp"])
+    df = df.set_index("Timestamp")
+
+    if continuous_cols is None:
+        continuous_cols = []
+
+    if binary_cols is None:
+        binary_cols = []
 
     # aggregation dictionary
     agg_dict = {}
-
-    for col in continuous_cols:
-        agg_dict[col] = "mean"
-
-    for col in binary_cols:
-        agg_dict[col] = "max"
+    for col in continuous_cols: agg_dict[col] = "mean"
+    for col in binary_cols: agg_dict[col] = "max"
 
     # downsample
     df_down = df.resample(freq).agg(agg_dict)
-
     df_down = df_down.reset_index()
 
     return df_down
@@ -313,6 +306,7 @@ def data_preprocessing(config):
     # 4. Downsample
     df = downsample_data(df, freq="3s")
     
+
     # 5. Get device columns (exclude Timestamp)
     devices = [c for c in df.columns if c != "Timestamp"]
     print("nbr of devices:", len(devices))

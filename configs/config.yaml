@@ -5,7 +5,7 @@ project_root_dir: .
 dataset:
   merge_bre_cu: false
   dataset_name: CU
-  dataset_folder: data/raw
+  dataset_folder: data
   window_size: 50 # set to 50 for mtad, 30 for gdn
   val_ratio: 0.2
 
