@@ -8,7 +8,7 @@ def build_model(config):
 
     processed_data_folder = get_processed_folder(config)
 
-    model_name = config["training"]["model_name"]
+    model_name = config["training"]["model"]
 
     with open(f"{processed_data_folder}/devices.json") as f:
         devices = json.load(f)
