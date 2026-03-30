@@ -10,6 +10,8 @@ import torch
 from src.utils.experiment import get_best_experiment
 from src.utils.device import get_device
 from src.models.builder import build_model
+from src.utils.get_folders_utils import get_train_experiments_main_folder
+from src.utils.create_folders_utils import create_eval_results_folder
 
 def load_checkpoint(model, path, optimizer):
     device = get_device()
@@ -128,25 +130,12 @@ def compute_errors_all_loaders(model, eval_results_per_model_folder, config):
     save_split("actor1_test", actor1_test_errors)
 
 def compute_errors(config):
-    project_root_dir = config["project_root_dir"]
-    dataset_name = config["dataset"]["dataset_name"]
-    model_name = config["evaluation"]["model"]
-
-    train_experiments_main_folder = f"{project_root_dir}/train_experiments/{dataset_name}"
-    train_experiments_per_model_folder = f"{train_experiments_main_folder}/{model_name}"
-    
-    eval_results_folder = f"{project_root_dir}/eval_results/{dataset_name}"
-    # Create a folder if it doesn't exist
-    os.makedirs(eval_results_folder, exist_ok=True)
-
-    eval_results_per_model_folder = f"{eval_results_folder}/{model_name}"
-    # Create a folder if it doesn't exist
-    os.makedirs(eval_results_per_model_folder, exist_ok=True)
-
-    best_exp_path, _ = get_best_experiment(train_experiments_per_model_folder)
+    train_experiments_main_folder = get_train_experiments_main_folder(config)
+    eval_results_folder = create_eval_results_folder(config)
+    best_exp_path, _ = get_best_experiment(train_experiments_main_folder)
 
     # Intitialize model
-    model_arch = build_model(model_name, config)
+    model_arch = build_model(config)
 
     # load best checkpoint
     optimizer = optim.Adam(model_arch.parameters(), lr=config["training"]["lr"])
@@ -157,4 +146,4 @@ def compute_errors(config):
     )
 
     # Compute errors for all loaders
-    compute_errors_all_loaders(model, eval_results_per_model_folder, config)
+    compute_errors_all_loaders(model, eval_results_folder, config)

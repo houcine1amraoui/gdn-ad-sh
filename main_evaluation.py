@@ -13,8 +13,8 @@ def main_evaluation():
         config = yaml.safe_load(f)
     set_seed(config["seed"])
 
-    # compute_errors(config)
-    scores = compute_scores(config)
+    compute_errors(config)
+    # scores = compute_scores(config)
     # evalutation_pipeline(config)
     # print("train mean and std: ", scores["train"].mean(), scores["train"].std())
     # print("val mean and std: ", scores["val"].mean(), scores["val"].std())

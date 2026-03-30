@@ -30,5 +30,21 @@ def create_train_experiments_folder(config):
     
     train_experiments_time_folder = create_time_folder(config, train_experiments_main_folder)
 
-    return 
+    return train_experiments_time_folder
     
+def create_eval_results_folder(config):
+    project_root_dir = config["project_root_dir"]
+    dataset_name = config["dataset"]["dataset_name"]
+    model_name = config["evaluation"]["model"]
+    merge_bre_cu = config["dataset"]["merge_bre_cu"]
+
+    name = ""
+    if merge_bre_cu: name = "merged"
+    else: name = dataset_name
+
+    eval_results_folder = f"{project_root_dir}/eval_results/{name}/{model_name}"
+
+    # Create a folder if it doesn't exist
+    os.makedirs(eval_results_folder, exist_ok=True)
+
+    return eval_results_folder
