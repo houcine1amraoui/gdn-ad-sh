@@ -3,10 +3,11 @@
 project_root_dir: .
 
 dataset:
-  merge_bre_cu: false
-  dataset_name: CU
+  merge_bre_cu: true # true or false
+  dataset_name: CU # CU or BRE
   dataset_folder: data
-  window_size: 50 # set to 50 for mtad, 30 for gdn
+  window_size: 50
+  downsample_freq: 3s
   val_ratio: 0.2
 
 # actor timelines

@@ -95,13 +95,14 @@ def clean_cu_data(df):
     # df = df.fillna(method="ffill")      # or interpolate
     return df
 
-def downsample_data(df, freq="3s"):
+def downsample_data(df, config):
+    downsample_freq = config["dataset"]["downsample_freq"]
     """
     Downsample data to target frequency while preserving events.
     continuous sensors → mean
     binary/event sensors → max
     """
-    print("Downsampling data...")
+    print(f"Downsampling data to {downsample_freq}...")
 
     # Ensure Timestamp exists
     if "Timestamp" not in df.columns:
@@ -129,7 +130,7 @@ def downsample_data(df, freq="3s"):
         agg_dict[col] = "max"
 
     # downsample
-    df_down = df.resample(freq).agg(agg_dict)
+    df_down = df.resample(downsample_freq).agg(agg_dict)
 
     df_down = df_down.reset_index()
 
@@ -219,6 +220,7 @@ def load_and_merge_bre_cu(config):
     print("Loading CU dataset...")
     cu_df = pd.read_csv(cu_data_path)
 
+    clean_cu_data(cu_df)
     # Convert timestamp
     bre_df["Timestamp"] = pd.to_datetime(bre_df["Timestamp"])
     cu_df["Timestamp"] = pd.to_datetime(cu_df["Timestamp"])
@@ -227,7 +229,7 @@ def load_and_merge_bre_cu(config):
     bre_df = bre_df.sort_values("Timestamp")
     cu_df = cu_df.sort_values("Timestamp")
 
-    print("Merging data...")
+    print("Merging BRE+CU data...")
 
     merged = pd.merge_asof(
         bre_df,
@@ -243,8 +245,8 @@ def data_preprocessing(config):
     Full preprocessing pipeline for GDN:
     1. Load CSV data (either BRE or CU or both merged)
     2. Filter data: keep selected columns only 
-    3. Clean data
-    4. Downsample to 3s
+    3. Clean data (CU only)
+    4. Downsample data to target frequency
     5. Split actor timelines
     6. Normalize features
     Returns:
@@ -265,11 +267,11 @@ def data_preprocessing(config):
     if merge_bre_cu: df = filter_columns_merged_data(df, config)
     else: df = filter_columns_one_data(df, config)
 
-    # 2. Clean CU data
-    if dataset_name == "": df = clean_cu_data(df)
+    # 2. Clean CU data if loaded alone (otherwise it will cleaned in merging function)
+    if not(merge_bre_cu) and dataset_name == "CU": df = clean_cu_data(df)
     
-    # 4. Downsample
-    df = downsample_data(df, freq="3s")
+    # 4. Downsample data to target frequency
+    df = downsample_data(df, config)
     
 
     # 5. Get device columns (exclude Timestamp)
