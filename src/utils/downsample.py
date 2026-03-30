@@ -6,6 +6,8 @@ def detect_sensor_types(df):
     """
     Automatically detect binary and continuous sensors in a CSV time-series dataset.
     """
+def detect_sensor_types(df):
+
     df_temp = df.copy()
 
     binary_cols = []
