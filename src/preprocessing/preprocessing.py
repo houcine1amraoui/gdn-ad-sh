@@ -72,22 +72,20 @@ def clean_data(df):
     df.replace([-9.21, -9.68, -9.7, -9.81], pd.NA, inplace=True)
     
     # separate timestamp
-    timestamp_col = None
+    # if "Timestamp" in df.columns:
+    #     timestamp_col = df["Timestamp"]
+    #     df = df.drop(columns=["Timestamp"])
 
-    if "Timestamp" in df.columns:
-        timestamp_col = df["Timestamp"]
-        df = df.drop(columns=["Timestamp"])
+    # # keep only numeric columns
+    # df = df.select_dtypes(include=['number'])
 
-    # keep only numeric columns
-    df = df.select_dtypes(include=['number'])
+    # # remove near-constant sensors
+    # # e.g., switch.kasa_023 → std = 0, this brings ZERO information
+    # df = df.loc[:, df.std() > 1e-6]
 
-    # remove near-constant sensors
-    # e.g., switch.kasa_023 → std = 0, this brings ZERO information
-    df = df.loc[:, df.std() > 1e-6]
-
-    # restore timestamp
-    if timestamp_col is not None:
-        df.insert(0, "Timestamp", timestamp_col)
+    # # restore timestamp
+    # if timestamp_col is not None:
+    #     df.insert(0, "Timestamp", timestamp_col)
 
     df = df.dropna(axis=1, how="all")   # remove dead sensors
     # df = df.fillna(method="ffill")      # or interpolate
