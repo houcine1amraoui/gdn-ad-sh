@@ -14,7 +14,7 @@ def build_model(processed_data_folder, model_name, config):
         params = config["models"][0]["params"]
         model = GDN(
             number_nodes=len(devices),
-            in_dim=config["dataset"]["window_size"],
+            in_dim=config["training"]["window_size"],
             hid_dim=params["hidden_dim"],
             topk=params["topk"],
             heads=params["heads"]
@@ -24,7 +24,7 @@ def build_model(processed_data_folder, model_name, config):
 
         model = MTAD_GAT(
             n_features=len(devices),
-            window_size=config["dataset"]["window_size"],
+            window_size=config["training"]["window_size"],
             out_dim=len(devices),
 
             kernel_size=params.get("kernel_size", 7),

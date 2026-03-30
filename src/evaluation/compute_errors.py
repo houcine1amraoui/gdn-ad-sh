@@ -24,7 +24,7 @@ def load_checkpoint(model, path, optimizer):
 def create_evaluation_dataloaders(config):
     # load config
     processed_data_folder = config["dataset"]["processed_data_folder"]
-    window_size = config["dataset"]["window_size"]
+    window_size = config["training"]["window_size"]
     batch_size = config["evaluation"]["batch_size"]
 
     train_array = np.load(f"{processed_data_folder}/train_array.npy")
@@ -129,12 +129,16 @@ def compute_errors_all_loaders(model, eval_results_per_model_folder, config):
 
 def compute_errors(config):
     project_root_dir = config["project_root_dir"]
+    dataset_name = config["dataset"]["dataset_name"]
     model_name = config["evaluation"]["model"]
 
-    train_experiments_main_folder = f"{project_root_dir}/train_experiments"
+    train_experiments_main_folder = f"{project_root_dir}/train_experiments/{dataset_name}"
     train_experiments_per_model_folder = f"{train_experiments_main_folder}/{model_name}"
     
-    eval_results_folder = f"{project_root_dir}/eval_results"
+    eval_results_folder = f"{project_root_dir}/eval_results/{dataset_name}"
+    # Create a folder if it doesn't exist
+    os.makedirs(eval_results_folder, exist_ok=True)
+
     eval_results_per_model_folder = f"{eval_results_folder}/{model_name}"
     # Create a folder if it doesn't exist
     os.makedirs(eval_results_per_model_folder, exist_ok=True)

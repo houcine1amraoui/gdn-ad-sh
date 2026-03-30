@@ -13,15 +13,17 @@ def compute_final_error(split_errors, alpha=0.5):
     
 def load_errors_all_splits(config):
     project_root_dir = config["project_root_dir"]
-    eval_results_folder = f"{project_root_dir}/eval_results"
+    dataset_name = config["dataset"]["dataset_name"]
+    eval_results_folder = f"{project_root_dir}/eval_results/{dataset_name}"
     model_name = config["evaluation"]["model"]
 
+    errors_folder = f"{eval_results_folder}/{model_name}/errors"
     splits = ["train", "val", "actor2_test", "actor1_test"]
 
     errors = {}
 
     for split in splits:
-        path = os.path.join(eval_results_folder, model_name, "errors", f"{split}.npz")
+        path = os.path.join(errors_folder, f"{split}.npz")
         data = np.load(path)
         errors[split] = compute_final_error(data, alpha=0.5)
 

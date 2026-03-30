@@ -2,10 +2,8 @@ import os
 from datetime import datetime
 import yaml
 import json
-import argparse
-from types import SimpleNamespace
-from src.utils.device import get_device
-from src.utils.seed import set_seed
+import os
+import yaml
 
 def create_experiment_folder(config, train_exeriments_per_model_folder):
     """
@@ -20,9 +18,6 @@ def create_experiment_folder(config, train_exeriments_per_model_folder):
         yaml.dump(config, f)
 
     return train_experiments_sub_folder
-
-import os
-import yaml
 
 def get_best_experiment(train_experiments_per_model_folder, metric_name="best_val_loss", mode="min"):
     best_value = float("inf") if mode == "min" else -float("inf")
@@ -67,86 +62,3 @@ def save_experiment_config(config, flat_config, args, exp_dir):
 
     with open(os.path.join(exp_dir, "cli_args.json"), "w") as f:
         json.dump(cli_args, f, indent=4)
-
-def flatten_dict(d, parent_key="", sep="."):
-    items = {}
-    for k, v in d.items():
-        new_key = f"{parent_key}{sep}{k}" if parent_key else k
-        if isinstance(v, dict):
-            items.update(flatten_dict(v, new_key, sep))
-        else:
-            items[new_key] = v
-    return items
-
-def set_nested_value(config, key, value, sep="."):
-    keys = key.split(sep)
-    d = config
-    for k in keys[:-1]:
-        d = d[k]
-    d[keys[-1]] = value
-
-def load_config_and_setup(config_path="configs/config.yaml"):
-    with open(config_path, "r") as f:
-        config = yaml.safe_load(f)
-
-    flat_config = flatten_dict(config)
-
-    parser = argparse.ArgumentParser()
-
-    for key, value in flat_config.items():
-        arg_type = type(value)
-
-        if arg_type is bool:
-            parser.add_argument(f"--{key}", type=str)
-        else:
-            parser.add_argument(f"--{key}", type=arg_type)
-
-    args = parser.parse_args()
-    print("args: ", args)
-    # Apply overrides
-    for key in flat_config.keys():
-        print("key:", key)
-        arg_name = key.replace(".", "_")
-        arg_value = getattr(args, arg_name, None)
-        
-        if arg_value is not None:
-            if isinstance(flat_config[key], bool):
-                arg_value = arg_value.lower() in ["true", "1", "yes"]
-
-            set_nested_value(config, key, arg_value)
-
-    # Setup
-    device = get_device()
-
-    raw_data_path = config["dataset"]["raw_data_path"]
-    processed_data_folder = config["dataset"]["processed_data_folder"]
-    experiments_folder = config["experiments_folder"]
-
-    exp_dir = create_experiment_folder(config, experiments_folder)
-
-    with open(os.path.join(processed_data_folder, "devices.json"), "r") as f:
-        devices = json.load(f)
-    
-    # after config is finalized (after CLI override)
-    seed = config.get("seed", 42)
-    set_seed(seed)
-
-    # Save experiment config
-    final_flat_config = flatten_dict(config)
-    save_experiment_config(config, final_flat_config, args, exp_dir)
-
-
-    setup = {
-        "raw_data_path": raw_data_path,
-        "processed_data_folder": processed_data_folder,
-        "experiments_folder": experiments_folder,
-        "device": device,
-        "exp_dir": exp_dir,
-        "devices": devices,
-        "window_size": config["dataset"]["window_size"],
-        "batch_size": config["training"]["batch_size"],
-        "epochs": config["training"]["epochs"],
-        "lr": config["training"]["lr"],
-    }
-
-    return SimpleNamespace(**setup)

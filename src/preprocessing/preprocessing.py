@@ -243,9 +243,9 @@ def data_preprocessing(config):
     """
     Full preprocessing pipeline for GDN:
     1. Load CSV data (either BRE or CU or both merged)
-    2. Filter data: keep selected columns only 
-    3. Clean data (CU only)
-    4. Downsample data to target frequency
+    2. OPTIONAL: Filter data: keep selected columns only 
+    3. OPTIONAL: Clean data (CU only)
+    4. OPTIONAL: Downsample data to target frequency
     5. Split actor timelines
     6. Normalize features
     Returns:
@@ -262,12 +262,16 @@ def data_preprocessing(config):
     if merge_bre_cu: df = load_and_merge_bre_cu(config) # both BRE and CU
     else: df = load_one_data(config) # one data 
     
-    # 2. Filter data: keep selected columns only
-    if merge_bre_cu: df = filter_columns_merged_data(df, config)
-    else: df = filter_columns_one_data(df, config)
+    # 2. Filter data (if enabled): keep selected columns only
+    apply_filtering = config["preprocessing"]["apply_filtering"]
+    if apply_filtering:
+        if merge_bre_cu: df = filter_columns_merged_data(df, config)
+        else: df = filter_columns_one_data(df, config)
 
     # 2. Clean CU data if loaded alone (otherwise it will cleaned in merging function)
-    if not(merge_bre_cu) and dataset_name == "CU": df = clean_cu_data(df)
+    apply_cleaning = config["preprocessing"]["apply_cleaning"]
+    if apply_cleaning:
+        if not(merge_bre_cu) and dataset_name == "CU": df = clean_cu_data(df)
     
     # 4. Downsample data to target frequency if not 1s
     downsample_freq = config["dataset"]["downsample_freq"]
