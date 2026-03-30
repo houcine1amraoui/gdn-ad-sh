@@ -6,7 +6,7 @@ seed: 42
 
 dataset:
   merge_bre_cu: false # true or false
-  dataset_name: BRE # CU or BRE
+  dataset_name: CU # CU or BRE
   dataset_folder: data
 
 # actor timelines
@@ -19,7 +19,7 @@ actor1_t2_end: "2022-11-17 23:59:59"
 
 preprocessing:
   apply_filtering: false
-  apply_cleaning: true
+  apply_cleaning: true # should be true for CU because it has NaN column
   downsample_freq: 3s
   val_ratio: 0.2
 
