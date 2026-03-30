@@ -5,10 +5,14 @@ from src.utils.downsample import detect_sensor_types
 from src.utils.load_actors_timelines import load_actor_timelines
 
 def filter_columns_one_data(df, config):
+
+    
     project_root_dir = config["project_root_dir"]
     dataset_name = config["dataset"]["dataset_name"]
     dataset_folder = config["dataset"]["dataset_folder"]
     filtered_columns_path = f"{project_root_dir}/{dataset_folder}/{dataset_name}_filtered_columns.txt"
+
+    print(f"Filtering {dataset_name} data...")
 
     # read column names from txt
     with open(filtered_columns_path, "r") as f:
@@ -22,7 +26,7 @@ def filter_columns_one_data(df, config):
     return df_filtered
 
 def filter_columns_merged_data(df, config):
-    
+    print("Filterinf BRE+CU merged data...")
     project_root_dir = config["project_root_dir"]
     dataset_folder = config["dataset"]["dataset_folder"]
 
@@ -52,8 +56,6 @@ def filter_columns_merged_data(df, config):
 
     # filter dataframe
     df_filtered = df[selected_columns]
-
-    print(f"Selected {len(selected_columns)} columns from merged dataset")
 
     return df_filtered
 
@@ -175,39 +177,6 @@ def split_actor_periods(df, config):
 
     return train_df, val_df, actor2_test_df, actor1_test_df
 
-# def split_actor_periods(df, val_ratio=0.2):
-#     """
-#     Split dataset into train/val/test according to actor timelines.
-#     - actor1_train (normal training from Actor 1 timeline 1 only)
-#     - actor1_val (normal validation from Actor 1 timeline 1 only)
-#     - actor2_test (test from Actor 2 timeline)
-#     - actor1_test (test from Actor 1 timeline 2)
-#     """
-#     # Define actor timelines
-#     actor1_t1_start = "2022-10-18 00:00:00"
-#     actor1_t1_end   = "2022-11-07 23:59:59"
-#     actor2_start    = "2022-11-08 00:00:00"
-#     actor2_end      = "2022-11-10 23:59:59"
-#     actor1_t2_start = "2022-11-11 00:00:00"
-#     actor1_t2_end   = "2022-11-17 23:59:59"
-
-#     # Split by index (DatetimeIndex)
-#     actor1_t1 = df[(df.index >= actor1_t1_start) & (df.index <= actor1_t1_end)]
-#     actor2    = df[(df.index >= actor2_start) & (df.index <= actor2_end)]
-#     actor1_t2 = df[(df.index >= actor1_t2_start) & (df.index <= actor1_t2_end)]
-
-#     # Sort by time
-#     actor1_t1 = actor1_t1.sort_index()
-#     actor2_test_df    = actor2.sort_index()
-#     actor1_test_df = actor1_t2.sort_index()
-
-#     # Train/Val split on Actor 1 timeline 1
-#     split_idx = int(len(actor1_t1) * (1 - val_ratio))
-#     train_df = actor1_t1.iloc[:split_idx]
-#     val_df   = actor1_t1.iloc[split_idx:]
-
-#     return train_df, val_df, actor2_test_df, actor1_test_df
-
 def normalize(train_df, val_df, actor2_test_df, actor1_test_df, devices):
     """
     Normalize data using ONLY train_df (Actor1 timeline1)
@@ -237,8 +206,6 @@ def load_one_data(config):
     print(f"Filtering {dataset_name} data...")
     df = filter_columns_one_data(df, config)
     return df
-
-import pandas as pd
 
 def load_and_merge_bre_cu(config):
     
@@ -281,7 +248,7 @@ def load_and_merge_bre_cu(config):
 def data_preprocessing(config):
     """
     Full preprocessing pipeline for GDN:
-    1. Load CSV data
+    1. Load CSV data (either BRE or CU or both)
     2. Filter: keep selected columns only 
     3. Clean data
     4. Downsample to 3s
@@ -297,13 +264,13 @@ def data_preprocessing(config):
     merge_bre_cu = config["dataset"]["merge_bre_cu"]
     dataset_name = config["dataset"]["dataset_name"]
 
-    # 1. Load data
+    # 1. Load and filter data
     if merge_bre_cu: df = load_and_merge_bre_cu(config) # both BRE and CU
     else: df = load_one_data(config) # one data 
     
-    # 2. Keep selected columns only
-    # df = filter_columns(df, config)
-    # print("Columns selection done.")
+    # 2. Filter: Keep selected columns only
+    if merge_bre_cu: df = filter_columns_merged_data(df, config)
+    else: df = filter_columns_one_data()
 
     # 2. Clean CU data
     if dataset_name == "": df = clean_cu_data(df)
