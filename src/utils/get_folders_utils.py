@@ -10,7 +10,7 @@ def get_dataset_path(config):
     if not path.is_file():
         raise FileNotFoundError(f"[ERROR] Data file does not exist. Please, place datasets into data folder first.")
 
-    print(f"Loading {dataset_name} data...")
+    return data_path
 
 def get_processed_folder(config):
     project_root_dir = config["project_root_dir"]
