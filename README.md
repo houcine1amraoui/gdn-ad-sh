@@ -67,26 +67,26 @@ home sensor data.
     |   └── plots/
     ├── train_experiments/
     │ ├── BRE/
-    │ │ ├── gdn/
-    │ │ │ ├── errors/
-    │ │ │ └── plots/
-    │ │ └── mtad-gat/
-    │ │ ├── errors/
-    │ │ └── plots/
+    │   ├── gdn/
+    │       ├── errors/
+    │       └── plots/
+    │   └── mtad-gat/
+    │       ├── errors/
+    │       └── plots/
     │ ├── CU/
-    │ │ ├── gdn/
-    │ │ │ ├── errors/
-    │ │ │ └── plots/
-    │ │ └── mtad-gat/
-    │ │   ├── errors/
-    │ │   └── plots/
+    │   ├── gdn/
+    │       ├── errors/
+    │       └── plots/
+    │   └── mtad-gat/
+    │       ├── errors/
+    │       └── plots/
     │ └── merged/
-    │ ├── gdn/
-    │   ├── errors/
-    │   └── plots/
-    │ └── mtad-gat/
-    │   ├── errors/
-    │   └── plots/
+    │   ├── gdn/
+    │       ├── errors/
+    │       └── plots/
+    │   └── mtad-gat/
+    │       ├── errors/
+    │       └── plots/
 
 ### 📌 Created Folders/Files Description
 
