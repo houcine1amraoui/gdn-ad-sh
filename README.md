@@ -36,6 +36,17 @@ home sensor data.
     ├── main.py
     └── README.md
 
+### 📌 Description
+
+- **configs/** → Configuration files and filtered sensor columns
+- **notebooks/** → Experimental and analysis notebooks
+- **src/** → Core implementation (preprocessing, models, training, evaluation, utils, visualization)
+- **main_preprocess.py** → Runs full preprocessing pipeline
+- **main_train.py** → Runs model training
+- **main_evaluation.py** → Runs evaluation and metrics generation
+- **main.py** → Full pipeline execution (preprocess → train → evaluate)
+- **README.md** → Project documentation
+
 ## 📁 Created folders/files After Running Full Pipeline
 
     gdn-ad-sh/
@@ -87,19 +98,11 @@ home sensor data.
     │ ├── errors/
     │ └── plots/
 
-### 📌 Description
+### 📌 Created Folders/Files Description
 
-- **configs/** → Configuration files and filtered sensor columns
-- **data/processed/** → Preprocessed datasets ready for training
-- **eval_results/** → Final evaluation outputs (errors and plots)
-- **notebooks/** → Experimental and analysis notebooks
-- **src/** → Core implementation (preprocessing, models, training, evaluation, utils, visualization)
+- **data/processed/** → Preprocessed data ready for training for each dataset (BRE, CU, BRE+CU merged)
+- **eval_results/** → Final evaluation outputs (errors and plots) for each dataset and model (GDN, MTAD-GAT)
 - **train_experiments/** → Training outputs for each dataset and model (GDN, MTAD-GAT)
-- **main_preprocess.py** → Runs full preprocessing pipeline
-- **main_train.py** → Runs model training
-- **main_evaluation.py** → Runs evaluation and metrics generation
-- **main.py** → Full pipeline execution (preprocess → train → evaluate)
-- **README.md** → Project documentation
 
 ## Pipeline Overview
 
