@@ -172,7 +172,7 @@ Files:
 
 Output:
 
-    experiments/
+    train_experiments/
 
 Each run contains:
 
