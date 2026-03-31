@@ -6,7 +6,7 @@ from pathlib import Path
 
 def create_processed_folder(config):
     project_root_dir = config["project_root_dir"]
-    dataset_folder = config["dataset"]["dataset_folder"]
+    dataset_folder = config["preprocessing"]["dataset_folder"]
     
     dataset_name = get_dataset_name(config)
 
@@ -36,8 +36,8 @@ def create_time_folder(config, parent_folder):
 
 def create_train_experiments_folder(config):
     project_root_dir = config["project_root_dir"]
-    dataset_name = config["dataset"]["dataset_name"]
-    merge_bre_cu = config["dataset"]["merge_bre_cu"]
+    dataset_name = config["preprocessing"]["dataset_name"]
+    merge_bre_cu = config["preprocessing"]["merge_bre_cu"]
     model_name = config["training"]["model"]
 
     name = ""
@@ -52,9 +52,9 @@ def create_train_experiments_folder(config):
     
 def create_eval_results_folder(config):
     project_root_dir = config["project_root_dir"]
-    dataset_name = config["dataset"]["dataset_name"]
+    dataset_name = config["preprocessing"]["dataset_name"]
     model_name = config["evaluation"]["model"]
-    merge_bre_cu = config["dataset"]["merge_bre_cu"]
+    merge_bre_cu = config["preprocessing"]["merge_bre_cu"]
 
     name = ""
     if merge_bre_cu: name = "merged"

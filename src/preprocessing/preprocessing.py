@@ -7,7 +7,7 @@ from src.utils.load_actors_timelines import load_actor_timelines
 from src.utils.get_folders_utils import get_dataset_path
 
 def filter_columns_one_data(df, config):
-    dataset_name = config["dataset"]["dataset_name"]
+    dataset_name = config["preprocessing"]["dataset_name"]
     filtered_columns_path = f"configs/{dataset_name}_filtered_columns.txt"
 
     print(f"Filtering {dataset_name} data...")
@@ -204,7 +204,7 @@ def normalize(splits, devices):
 
 def load_one_data(config):
     data_path = get_dataset_path(config)
-    dataset_name = config["dataset"]["dataset_name"]
+    dataset_name = config["preprocessing"]["dataset_name"]
     
     print(f"Loading {dataset_name} data...")
     df = pd.read_csv(data_path)
@@ -213,7 +213,7 @@ def load_one_data(config):
 def load_and_merge_bre_cu(config):
     
     project_root_dir = config["project_root_dir"]
-    dataset_folder = config["dataset"]["dataset_folder"]
+    dataset_folder = config["preprocessing"]["dataset_folder"]
 
     bre_data_path = f"{project_root_dir}/{dataset_folder}/BREMaster.csv"
     cu_data_path = f"{project_root_dir}/{dataset_folder}/CUMaster.csv"
@@ -268,8 +268,8 @@ def data_preprocessing(config):
     - timestamp arrays (for plotting/reference)
     """
    
-    merge_bre_cu = config["dataset"]["merge_bre_cu"]
-    dataset_name = config["dataset"]["dataset_name"]
+    merge_bre_cu = config["preprocessing"]["merge_bre_cu"]
+    dataset_name = config["preprocessing"]["dataset_name"]
 
     # 1. Load CSV data (either BRE or CU or both merged)
     if merge_bre_cu: df = load_and_merge_bre_cu(config) # both BRE and CU

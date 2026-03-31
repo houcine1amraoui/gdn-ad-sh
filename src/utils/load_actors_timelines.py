@@ -7,8 +7,11 @@ def load_actor_timelines(config):
 
     # Return as dictionary of tuples
     timelines = {
-        "actor1_t1": (parse_dt(config["actor1_t1_start"]), parse_dt(config["actor1_t1_end"])),
-        "actor2":    (parse_dt(config["actor2_start"]),    parse_dt(config["actor2_end"])),
-        "actor1_t2": (parse_dt(config["actor1_t2_start"]), parse_dt(config["actor1_t2_end"]))
+        "actor1_t1": (parse_dt(config["preprocessing"]["actors_timelines"]["actor1_t1_start"]), 
+                      parse_dt(config["preprocessing"]["actors_timelines"]["actor1_t1_end"])),
+        "actor2":    (parse_dt(config["preprocessing"]["actors_timelines"]["actor2_start"]),    
+                      parse_dt(config["preprocessing"]["actors_timelines"]["actor2_end"])),
+        "actor1_t2": (parse_dt(config["preprocessing"]["actors_timelines"]["actor1_t2_start"]), 
+                      parse_dt(config["preprocessing"]["actors_timelines"]["actor1_t2_end"]))
     }
     return timelines

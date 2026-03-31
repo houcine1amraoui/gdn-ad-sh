@@ -2,10 +2,10 @@ from pathlib import Path
 
 def get_dataset_path(config):
     project_root_dir = config["project_root_dir"]
-    dataset_name = config["dataset"]["dataset_name"]
-    dataset_folder = config["dataset"]["dataset_folder"]
+    dataset_name = config["preprocessing"]["dataset_name"]
+    dataset_folder = config["preprocessing"]["dataset_folder"]
     data_path = f"{project_root_dir}/{dataset_folder}/{dataset_name}Master.csv"
-    print("hhhh", data_path)
+
     path = Path(data_path)
     if not path.is_file():
         raise FileNotFoundError(f"[ERROR] Data file does not exist. Please, place datasets into data folder first.")
@@ -13,8 +13,8 @@ def get_dataset_path(config):
     return data_path
 
 def get_dataset_name(config):
-    merge_bre_cu = config["dataset"]["merge_bre_cu"]
-    dataset_name = config["dataset"]["dataset_name"]
+    merge_bre_cu = config["preprocessing"]["merge_bre_cu"]
+    dataset_name = config["preprocessing"]["dataset_name"]
 
     name = ""
     if merge_bre_cu: name = "merged"
@@ -24,7 +24,7 @@ def get_dataset_name(config):
 
 def get_processed_folder(config):
     project_root_dir = config["project_root_dir"]
-    dataset_folder = config["dataset"]["dataset_folder"]
+    dataset_folder = config["preprocessing"]["dataset_folder"]
     
     dataset_name = get_dataset_name(config)
 

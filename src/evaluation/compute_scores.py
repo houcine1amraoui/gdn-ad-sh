@@ -14,7 +14,7 @@ def compute_final_error(split_errors, alpha=0.5):
     
 def load_errors_all_splits(config):
     project_root_dir = config["project_root_dir"]
-    dataset_name = config["dataset"]["dataset_name"]
+    dataset_name = config["preprocessing"]["dataset_name"]
     eval_results_folder = f"{project_root_dir}/eval_results/{dataset_name}"
     model_name = config["evaluation"]["model"]
 
