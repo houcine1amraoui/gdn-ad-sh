@@ -5,12 +5,8 @@ from src.utils.downsample import detect_sensor_types
 from src.utils.load_actors_timelines import load_actor_timelines
 
 def filter_columns_one_data(df, config):
-
-    
-    project_root_dir = config["project_root_dir"]
     dataset_name = config["dataset"]["dataset_name"]
-    dataset_folder = config["dataset"]["dataset_folder"]
-    filtered_columns_path = f"{project_root_dir}/{dataset_folder}/{dataset_name}_filtered_columns.txt"
+    filtered_columns_path = f"configs/{dataset_name}_filtered_columns.txt"
 
     print(f"Filtering {dataset_name} data...")
 
@@ -25,13 +21,10 @@ def filter_columns_one_data(df, config):
     df_filtered = df[selected_columns]
     return df_filtered
 
-def filter_columns_merged_data(df, config):
+def filter_columns_merged_data(df):
     print("Filtering BRE+CU merged data...")
-    project_root_dir = config["project_root_dir"]
-    dataset_folder = config["dataset"]["dataset_folder"]
-
-    bre_filtered_columns_path = f"{project_root_dir}/{dataset_folder}/BRE_filtered_columns.txt"
-    cu_filtered_columns_path = f"{project_root_dir}/{dataset_folder}/CU_filtered_columns.txt"
+    bre_filtered_columns_path = "configs/BRE_filtered_columns.txt"
+    cu_filtered_columns_path = "configs/CU_filtered_columns.txt"
 
     # read BRE columns
     with open(bre_filtered_columns_path, "r") as f:
