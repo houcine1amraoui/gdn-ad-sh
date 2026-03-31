@@ -36,16 +36,9 @@ home sensor data.
     ├── main.py
     └── README.md
 
-## 📁 Project Structure After Running Full Pipeline
-
----
+## 📁 Created folders/files After Running Full Pipeline
 
     gdn-ad-sh/
-    │
-    ├── configs/
-    │ ├── BRE_filtered_columns.txt
-    │ ├── CU_filtered_columns.txt
-    │ └── config.yaml
     │
     ├── data/
     │ └── processed/
@@ -65,16 +58,6 @@ home sensor data.
     │ └── merged/
     │ ├── errors/
     │ └── plots/
-    │
-    ├── notebooks/
-    │
-    ├── src/
-    │ ├── preprocessing/
-    │ ├── models/
-    │ ├── training/
-    │ ├── evaluation/
-    │ ├── utils/
-    │ └── visualization/
     │
     ├── train_experiments/
     │ ├── BRE/
@@ -103,14 +86,6 @@ home sensor data.
     │ └── mtad-gat/
     │ ├── errors/
     │ └── plots/
-    │
-    ├── main_preprocess.py
-    ├── main_train.py
-    ├── main_evaluation.py
-    ├── main.py
-    └── README.md
-
----
 
 ### 📌 Description
 
