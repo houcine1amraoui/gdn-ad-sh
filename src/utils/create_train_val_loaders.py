@@ -10,11 +10,10 @@ def create_train_val_loaders(config):
     window_size = config["training"]["window_size"]
     batch_size = config["training"]["batch_size"]
 
-    train_array = np.load(f"{processed_data_folder}/train_array.npy")
-    val_array = np.load(f"{processed_data_folder}/val_array.npy")
+    arrays = np.load(f"{processed_data_folder}/arrays.npz")
 
-    train_dataset = TimeSeriesDataset(train_array, window_size)
-    val_dataset = TimeSeriesDataset(val_array, window_size)
+    train_dataset = TimeSeriesDataset(arrays["train"], window_size)
+    val_dataset = TimeSeriesDataset(arrays["val"], window_size)
     
     train_loader = DataLoader(train_dataset, batch_size, shuffle=True, num_workers=0)
     val_loader   = DataLoader(val_dataset, batch_size, shuffle=False, num_workers=0)
