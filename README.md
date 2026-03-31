@@ -46,6 +46,7 @@ home sensor data.
 - **main_evaluation.py** → Runs evaluation and metrics generation
 - **main.py** → Full pipeline execution (preprocess → train → evaluate)
 - **README.md** → Project documentation
+- **environment.yaml** → Contains all required dependencies and package versions used to run the project.
 
 ## 📁 Created folders/files After Running Full Pipeline
 
@@ -132,24 +133,6 @@ Key parameters:
 
 ---
 
-## 🧠 Models
-
-### GDN: Graph Deviation Network for anomaly detection in multivariate time-series
-
-#### GDN Features
-
-- Graph-based feature relationships
-- Sensor dependency modeling
-- Reconstruction error-based anomaly detection
-
-### MTAD-GAT: Multivariate Time-series Anomaly Detection with Graph Attention Network
-
-#### MTAD-GAT Features
-
-- Graph attention
-- Temporal modeling
-- Forecasting + reconstruction
-
 ## Installation
 
 ### Clone
@@ -227,19 +210,23 @@ preprocess → train → evaluate
 
 ---
 
-## Supported Models
+## 🧠 Supported Models
 
-### GDN
+### GDN: Graph Deviation Network for anomaly detection in multivariate time-series
 
-Graph Deviation Network based forecasting anomaly detection.
+#### GDN Features
 
-### MTAD-GAT
+- Graph-based feature relationships
+- Sensor dependency modeling
+- Reconstruction error-based anomaly detection
 
-Graph Attention based forecasting and reconstruction anomaly detection.
+### MTAD-GAT: Multivariate Time-series Anomaly Detection with Graph Attention Network
 
-Final error:
+#### MTAD-GAT Features
 
-    final_error = α * forecast + (1-α) * reconstruction
+- Graph attention
+- Temporal modeling
+- Forecasting + reconstruction
 
 ---
 
