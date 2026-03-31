@@ -17,15 +17,12 @@ def create_evaluation_dataloaders(config):
     window_size = config["training"]["window_size"]
     batch_size = config["evaluation"]["batch_size"]
 
-    train_array = np.load(f"{processed_data_folder}/train_array.npy")
-    val_array = np.load(f"{processed_data_folder}/val_array.npy")
-    actor2_test_array = np.load(f"{processed_data_folder}/actor2_test_array.npy")
-    actor1_test_array = np.load(f"{processed_data_folder}/actor1_test_array.npy")
-    
-    train_dataset = TimeSeriesDataset(train_array, window_size)
-    val_dataset = TimeSeriesDataset(val_array, window_size)
-    actor2_test_dataset = TimeSeriesDataset(actor2_test_array, window_size)
-    actor1_test_dataset = TimeSeriesDataset(actor1_test_array, window_size)
+    arrays = np.load(f"{processed_data_folder}/arrays.npy")
+
+    train_dataset = TimeSeriesDataset(arrays["train"], window_size)
+    val_dataset = TimeSeriesDataset(arrays["val"], window_size)
+    actor2_test_dataset = TimeSeriesDataset(arrays["actor2_test"], window_size)
+    actor1_test_dataset = TimeSeriesDataset(arrays["actor1_test"], window_size)
     
     train_loader = DataLoader(train_dataset, batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size, shuffle=True)
