@@ -17,17 +17,11 @@ def main_train():
     # parse CLI args
     parser = argparse.ArgumentParser()
     parser.add_argument("--project_root_dir", type=str)
-    parser.add_argument("--dataset_folder", type=str)
-    parser.add_argument("--dataset_name", type=str)
     args = parser.parse_args()
 
     # override project_root_directory
     if args.project_root_dir:
         config["project_root_dir"] = args.project_root_dir
-
-    # override data folder
-    if args.dataset_folder:
-        config["dataset"]["dataset_folder"] = args.dataset_folder
 
     # Create a folder for experiments (per dataset, per model, per time)
     train_experiments_time_folder = create_train_experiments_folder(config)
