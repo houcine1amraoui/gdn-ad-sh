@@ -95,14 +95,28 @@ home sensor data.
 - **eval_results/** → Final evaluation outputs (errors and plots) for each dataset and model (GDN, MTAD-GAT)
 - **train_experiments/** → Training outputs for each dataset and model (GDN, MTAD-GAT)
 
+## Installation
+
+### Clone
+
+    git clone https://github.com/houcine1amraoui/gdn-ad-sh.git
+    cd gdn-ad-sh
+
+### Create environment
+
+    conda env create -f environment.yml
+    conda activate gnn-env
+
+## Running the Project
+
 ## Pipeline Overview
 
-Raw Data → Preprocessing → Processed Data → Training → Experiments →
-Evaluation → Results
+Raw Data → Preprocessing → Processed Data → Training → Best Trained Models →
+Evaluation → Visualization
 
 ---
 
-## Dataset Setup
+## Step 0: Dataset Setup
 
 Create a folder:
 
@@ -112,8 +126,6 @@ Place inside:
 
     BREMaster.csv
     CUMaster.csv
-    BRE_filtered_columns.txt
-    CU_filtered_columns.txt
 
 ---
 
@@ -133,23 +145,9 @@ Key parameters:
 
 ---
 
-## Installation
-
-### Clone
-
-    git clone https://github.com/houcine1amraoui/gdn-ad-sh.git
-    cd gdn-ad-sh
-
-### Create environment
-
-    conda env create -f environment.yml
-    conda activate gnn-env
-
-## Running the Project
-
 ### Step 1: Preprocessing
 
-    python main_preprocess.py
+    python -m main_preprocess
 
 Output:
 
@@ -168,7 +166,7 @@ Files:
 
 ### Step 2: Training
 
-    python main_train.py
+    python -m main_train
 
 Output:
 
@@ -176,16 +174,17 @@ Output:
 
 Each run contains:
 
-- config.yaml
-- model.pt
-- logs
+- best.pth
+- last.pth
+- best_config.yaml
+- last_config.yaml
 - metrics
 
 ---
 
 ### Step 3: Evaluation
 
-    python main_evaluation.py
+    python -m main_evaluation
 
 Output:
 
@@ -200,13 +199,28 @@ Contains:
 
 ---
 
+### Step 4: Visualization
+
+    python -m main_visualization
+
+Output:
+
+    visualization/
+
+Contains:
+
+- anomaly scores distributions
+- learned graph
+
+---
+
 ## Full Pipeline
 
-    python main.py
+    python -m main
 
 Runs:
 
-preprocess → train → evaluate
+preprocess → train → evaluatation → visualization
 
 ---
 
@@ -227,21 +241,6 @@ preprocess → train → evaluate
 - Graph attention
 - Temporal modeling
 - Forecasting + reconstruction
-
----
-
-## Visualization
-
-Available in:
-
-    src/visualization/
-
-Includes:
-
-- anomaly scores
-- distributions
-- learned graph
-- plots
 
 ---
 
