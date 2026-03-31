@@ -15,17 +15,18 @@ def main_preprocess():
 
     root = config["project_root_dir"]
     print(root)
+
     # # parse CLI args
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument("--project_root_dir", type=str)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--project_root_dir", type=str)
     # parser.add_argument("--dataset_folder", type=str)
     # parser.add_argument("--dataset_name", type=str)
     # parser.add_argument("--merge_bre_cu", type=bool)
     # args = parser.parse_args()
 
-    # # override project_root_directory
-    # if args.project_root_dir:
-    #     config["project_root_dir"] = args.project_root_dir
+    # override project_root_directory
+    if args.project_root_dir:
+        config["project_root_dir"] = args.project_root_dir
 
     # # override dataset folder
     # if args.dataset_folder:
