@@ -4,24 +4,11 @@ import numpy as np
 import torch
 from tqdm import tqdm
 import os
-import torch.optim as optim
 import torch
 
-from src.utils.experiment import get_best_experiment
 from src.utils.device import get_device
-from src.models.builder import build_model
-from src.utils.get_folders_utils import get_train_experiments_main_folder
-from src.utils.create_folders_utils import create_eval_results_folder
-
-def load_checkpoint(model, path, optimizer):
-    device = get_device()
-    # if training was done on GPU but evaluation will be on CPU
-    # use map_location=torch.device('cpu')
-    checkpoint = torch.load(path, map_location=torch.device(device), weights_only=True)
-    model.load_state_dict(checkpoint['model_state_dict'])
-    optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-    start_epoch = checkpoint['epoch']
-    return model, optimizer, start_epoch
+from src.utils.experiment import load_best_checkpoint
+from src.utils.get_folders_utils import get_evaluation_results_main_folder
 
 def create_evaluation_dataloaders(config):
     # load config
@@ -97,7 +84,7 @@ def compute_errors_per_loader(model, dataloader):
         "reconstruction": recon_errors # shape [T, k] or None
     }
 
-def compute_errors_all_loaders(model, eval_results_per_model_folder, config):
+def compute_errors_all_loaders(model, config):
     data_loaders = create_evaluation_dataloaders(config)
 
     train_errors = compute_errors_per_loader(model, data_loaders["train_loader"])
@@ -105,7 +92,8 @@ def compute_errors_all_loaders(model, eval_results_per_model_folder, config):
     actor2_test_errors = compute_errors_per_loader(model, data_loaders["actor2_test_loader"])
     actor1_test_errors = compute_errors_per_loader(model, data_loaders["actor1_test_loader"])
 
-    errors_folder = f"{eval_results_per_model_folder}/errors"
+    evaluation_results_main_folder = get_evaluation_results_main_folder(config)
+    errors_folder = f"{evaluation_results_main_folder}/errors"
     os.makedirs(errors_folder, exist_ok=True)
 
     # Check once
@@ -130,20 +118,6 @@ def compute_errors_all_loaders(model, eval_results_per_model_folder, config):
     save_split("actor1_test", actor1_test_errors)
 
 def compute_errors(config):
-    train_experiments_main_folder = get_train_experiments_main_folder(config)
-    eval_results_folder = create_eval_results_folder(config)
-    best_exp_path, _ = get_best_experiment(train_experiments_main_folder)
-
-    # Intitialize model
-    model_arch = build_model(config)
-
-    # load best checkpoint
-    optimizer = optim.Adam(model_arch.parameters(), lr=config["training"]["lr"])
-    model, optimizer, _ = load_checkpoint(
-        model_arch,
-        f"{best_exp_path}/best.pth",
-        optimizer
-    )
-
+    model = load_best_checkpoint(config)
     # Compute errors for all loaders
-    compute_errors_all_loaders(model, eval_results_folder, config)
+    compute_errors_all_loaders(model, config)

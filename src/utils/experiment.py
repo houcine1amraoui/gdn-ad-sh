@@ -1,11 +1,42 @@
 import os
-from datetime import datetime
 import yaml
 import json
 import os
 import yaml
 
+import torch
+import torch.optim as optim
 
+from src.utils.model_registry import ModelRegistryManager
+from src.models.builder import build_model
+from src.utils.device import get_device
+
+def load_checkpoint(model, path, optimizer):
+    device = get_device()
+    
+    checkpoint = torch.load(path, map_location=torch.device(device), weights_only=True)
+    model.load_state_dict(checkpoint['model_state_dict'])
+    
+    optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+    start_epoch = checkpoint['epoch']
+    
+    return model, optimizer, start_epoch
+
+def load_best_checkpoint(config):
+    registry = ModelRegistryManager(config)
+
+    # Intitialize model
+    model_arch = build_model(config)
+
+    # load best checkpoint
+    optimizer = optim.Adam(model_arch.parameters(), lr=config["training"]["lr"])
+    model, _, _ = load_checkpoint(
+        model_arch,
+        registry.best_model_path,
+        optimizer
+    )
+
+    return model
 
 def get_best_experiment(train_experiments_per_model_folder, metric_name="best_val_loss", mode="min"):
     best_value = float("inf") if mode == "min" else -float("inf")

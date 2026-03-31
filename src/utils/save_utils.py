@@ -2,6 +2,7 @@ import numpy as np
 import joblib
 import json
 import os
+from src.utils.config_utils import get_dataset_name
 
 def save_processed_data(train_array, val_array, actor2_test_array, 
                    actor1_test_array, scaler, devices, 
@@ -11,14 +12,9 @@ def save_processed_data(train_array, val_array, actor2_test_array,
     
     project_root_dir = config["project_root_dir"]
     dataset_folder = config["dataset"]["dataset_folder"]
-    merge_bre_cu = config["dataset"]["merge_bre_cu"]
-    dataset_name = config["dataset"]["dataset_name"]
-
-    name = ""
-    if merge_bre_cu: name = "merged"
-    else: name = dataset_name
+    dataset_name = get_dataset_name(config)
     
-    processed_data_folder = f"{project_root_dir}/{dataset_folder}/processed/{name}"
+    processed_data_folder = f"{project_root_dir}/{dataset_folder}/processed/{dataset_name}"
 
     # Create folder if it doesn't exist
     os.makedirs(processed_data_folder, exist_ok=True)

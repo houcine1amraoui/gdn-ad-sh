@@ -5,7 +5,6 @@ from src.utils.seed import set_seed
 from src.models.builder import build_model
 from src.training.trainer import train
 import argparse
-from src.utils.create_folders_utils import create_train_experiments_folder
 
 def main_train():
     # 1. Set configuration
@@ -24,7 +23,7 @@ def main_train():
         config["project_root_dir"] = args.project_root_dir
 
     # Create a folder for experiments (per dataset, per model, per time)
-    train_experiments_time_folder = create_train_experiments_folder(config)
+    # train_experiments_time_folder = create_train_experiments_folder(config)
     
     # 2. Dataset/DataLoader creation
     train_loader, val_loader = create_train_val_loaders(config)
@@ -33,7 +32,7 @@ def main_train():
     model = build_model(config)
 
     # 3. Start training
-    train(model, train_loader, val_loader, train_experiments_time_folder, config)
+    train(model, train_loader, val_loader, config)
   
 if __name__ == "__main__":
     main_train()

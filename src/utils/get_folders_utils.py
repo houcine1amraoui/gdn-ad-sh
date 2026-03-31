@@ -26,3 +26,17 @@ def get_train_experiments_main_folder(config):
     train_experiments_main_folder = f"{project_root_dir}/train_experiments/{name}/{model_name}"
 
     return train_experiments_main_folder
+
+def get_evaluation_results_main_folder(config):
+    project_root_dir = config["project_root_dir"]
+    dataset_name = config["dataset"]["dataset_name"]
+    model_name = config["training"]["model"]
+    merge_bre_cu = config["dataset"]["merge_bre_cu"]
+
+    name = ""
+    if merge_bre_cu: name = "merged"
+    else: name = dataset_name
+
+    evaluation_results_main_folder = f"{project_root_dir}/eval_results/{name}/{model_name}"
+
+    return evaluation_results_main_folder

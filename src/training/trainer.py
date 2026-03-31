@@ -1,74 +1,86 @@
 import torch
 from tqdm import tqdm
-import os
-import yaml
 import torch.optim as optim
 
+from src.utils.model_registry import ModelRegistryManager
 from src.utils.device import get_device
 
-def train(model, train_loader, val_loader, train_experiments_time_folder, config):
-    
-    epochs = config["training"]["epochs"]
-    patience = config["training"]["patience"]
-    optimizer = optim.Adam(model.parameters(), lr=config["training"]["lr"])
+def train_one_epoch(model, train_loader, device, optimizer):
+    model.train()
+    train_loss = 0
 
-    optimizer = optim.Adam(model.parameters(), lr=config["training"]["lr"])
+    for x, y in train_loader:
 
-    scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer,
-        mode='min',        # minimize validation loss
-        factor=0.5,        # reduce LR by half
-        patience=3,        # wait 3 epochs
-        # verbose=True,
-        min_lr=1e-6
-    )
+        x = x.to(device)
+        y = y.to(device)
 
-    device = get_device()
+        batch = {"x": x, "y": y}
 
-    best_val_loss = float("inf")
-    patience_counter = 0
-    
-    for epoch in tqdm(range(epochs)):
-        # Training
-        model.train()
-        train_loss = 0
+        output = model(x)
+        loss = model.loss(batch, output)
 
-        for x, y in train_loader:
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+        train_loss += loss.item()
+
+    train_loss /= len(train_loader)
+    pass
+
+def validate(model, val_loader, device):
+    model.eval()
+    val_loss = 0
+
+    with torch.no_grad():
+        for x, y in val_loader:
+
             x = x.to(device)
             y = y.to(device)
 
             batch = {"x": x, "y": y}
+
             output = model(x)
             loss = model.loss(batch, output)
 
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
+            val_loss += loss.item()
 
-            train_loss += loss.item()
+    val_loss /= len(val_loader)
 
-        train_loss /= len(train_loader)
-        
-        # Validation
-        model.eval()
-        val_loss = 0
+def train(model, train_loader, val_loader, config):
 
-        with torch.no_grad():
-            for x, y in val_loader:
-                x = x.to(device)
-                y = y.to(device)
+    registry = ModelRegistryManager(config)
 
-                batch = {"x": x, "y": y}
-                output = model(x)
-                loss = model.loss(batch, output)
+    device = get_device()
+    model.to(device)
+    
+    epochs = config["training"]["epochs"]
+    patience = config["training"]["patience"]
+    lr = config["training"]["lr"]
 
-                val_loss += loss.item()
+    optimizer = optim.Adam(model.parameters(), lr=lr)
 
-        val_loss /= len(val_loader)
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer,
+        mode='min',
+        factor=0.5,
+        patience=3,
+        min_lr=1e-6
+    )
+
+    best_val_loss = float("inf")
+    patience_counter = 0
+
+    print("\n Training started...\n")
+
+    for epoch in tqdm(range(epochs)):
+
+        train_loss = train_one_epoch(model, train_loader, device, optimizer)
+        val_loss = validate(model, val_loader, device)
 
         scheduler.step(val_loss)
-        current_lr = optimizer.param_groups[0]['lr']
-        
+        current_lr = optimizer.param_groups[0]["lr"]
+
         print(
             f"Epoch {epoch+1} | "
             f"LR: {current_lr:.6f} | "
@@ -76,33 +88,37 @@ def train(model, train_loader, val_loader, train_experiments_time_folder, config
             f"Val Loss: {val_loss:.6f}"
         )
 
+        # -----------------------
+        # Save LAST model
+        # -----------------------
+        registry.save_last(
+            model=model,
+            val_loss=val_loss,
+            epoch=epoch + 1
+        )
+
+        # -----------------------
         # Save BEST model
+        # -----------------------
         if val_loss < best_val_loss:
+
             best_val_loss = val_loss
             patience_counter = 0
 
-            torch.save({
-                'epoch': epoch,
-                'model_state_dict': model.state_dict(),
-                'optimizer_state_dict': optimizer.state_dict(),
-                'val_loss': val_loss
-            }, f"{train_experiments_time_folder}/best.pth")
-
-            # Save metric
-            with open(os.path.join(f"{train_experiments_time_folder}/metrics.yaml"), "w") as f:
-                yaml.dump({"best_val_loss": float(best_val_loss)}, f)
+            registry.save_best_if_improved(
+                model=model,
+                val_loss=val_loss,
+                epoch=epoch + 1
+            )
 
         else:
             patience_counter += 1
 
+        # -----------------------
         # Early stopping
+        # -----------------------
         if patience_counter >= patience:
-            print(f"Early stopping at epoch {epoch+1}")
+            print(f"\n⛔ Early stopping at epoch {epoch+1}")
             break
 
-    # Save LAST model (optional)
-    torch.save({
-        'epoch': epoch,
-        'model_state_dict': model.state_dict(),
-        'optimizer_state_dict': optimizer.state_dict(),
-    }, f"{train_experiments_time_folder}/last_model.pth")
+    print("\n✅ Training completed\n")

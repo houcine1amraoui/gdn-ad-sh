@@ -2,18 +2,10 @@ import numpy as np
 from torch.utils.data import DataLoader
 
 from src.preprocessing.TimeSeriesDataset import TimeSeriesDataset
-
-def create_train_val_loaders(config):
-    project_root_dir = config["project_root_dir"]
-    dataset_folder = config["dataset"]["dataset_folder"]
-    dataset_name = config["dataset"]["dataset_name"]
-    merge_bre_cu = config["dataset"]["merge_bre_cu"]
-
-    name = ""
-    if merge_bre_cu: name = "merged"
-    else: name = dataset_name
+from src.utils.get_folders_utils import get_processed_folder
     
-    processed_data_folder = f"{project_root_dir}/{dataset_folder}/processed/{name}"
+def create_train_val_loaders(config):
+    processed_data_folder = get_processed_folder(config)
 
     window_size = config["training"]["window_size"]
     batch_size = config["training"]["batch_size"]
