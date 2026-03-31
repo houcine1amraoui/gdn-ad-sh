@@ -25,27 +25,16 @@ def main_preprocess():
     root = config["project_root_dir"]
     print(root)
     
-    (train_array, val_array, actor2_test_array, actor1_test_array, 
-     scaler, devices, 
-     timestamps_train, timestamps_val, 
-     timestamps_actor2_test, timestamps_actor1_test) = (data_preprocessing(config))
+    splits_norm, timestamps, scaler, devices = data_preprocessing(config)
 
-    print(len(train_array), len(val_array), len(actor2_test_array), len(actor1_test_array))
+    # print(len(splits_norm["train"]), 
+    # print(len(splits_norm["val"]), 
+    # print(len(splits_norm["actor2_test"]), 
+    # print(len(splits_norm["actor1_test"]), 
     
-    save_processed_data(
-        train_array,
-        val_array,
-        actor2_test_array,
-        actor1_test_array,
-        scaler,
-        devices,
-        timestamps_train, 
-        timestamps_val, 
-        timestamps_actor2_test, 
-        timestamps_actor1_test,
-        config
-    )
-    print("Preprocessing Done.")
+    save_processed_data(splits_norm, timestamps, scaler, devices, config)
+
+    print("Data preprocessing Done.")
 
 if __name__ == "__main__":
     main_preprocess()

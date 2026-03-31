@@ -1,33 +1,29 @@
 import numpy as np
 import joblib
 import json
-import os
-from src.utils.get_folders_utils import get_dataset_name
+from src.utils.get_folders_utils import get_processed_folder
 
-def save_processed_data(train_array, val_array, actor2_test_array, 
-                   actor1_test_array, scaler, devices, 
-                   timestamps_train, timestamps_val, 
-                   timestamps_actor2_test, timestamps_actor1_test,
-                   config):
+def save_processed_data(splits_norm, timestamps, scaler, devices, config):
     
-    project_root_dir = config["project_root_dir"]
-    dataset_folder = config["dataset"]["dataset_folder"]
-    dataset_name = get_dataset_name(config)
-    
-    processed_data_folder = f"{project_root_dir}/{dataset_folder}/processed/{dataset_name}"
+    processed_data_folder = get_processed_folder(config)
 
-    # Create folder if it doesn't exist
-    os.makedirs(processed_data_folder, exist_ok=True)
+    # Save arrays
+    np.savez(
+        f"{processed_data_folder}/arrays.npz",
+        train=splits_norm["train"],
+        val=splits_norm["val"],
+        actor2_test=splits_norm["actor2_test"],
+        actor1_test=splits_norm["actor2_test"]
+    )
 
-    np.save(f"{processed_data_folder}/train_array.npy", train_array)
-    np.save(f"{processed_data_folder}/val_array.npy", val_array)
-    np.save(f"{processed_data_folder}/actor2_test_array.npy", actor2_test_array)
-    np.save(f"{processed_data_folder}/actor1_test_array.npy", actor1_test_array)
-
-    np.save(f"{processed_data_folder}/train_timestamps.npy", timestamps_train)
-    np.save(f"{processed_data_folder}/val_timestamps.npy", timestamps_val)
-    np.save(f"{processed_data_folder}/actor2_test_timestamps.npy", timestamps_actor2_test)
-    np.save(f"{processed_data_folder}/actor1_test_timestamps.npy", timestamps_actor1_test)
+    # Save timestamps
+    np.savez(
+        f"{processed_data_folder}/timestamps.npz",
+        train=timestamps["train"],
+        val=timestamps["val"],
+        actor2_test=timestamps["actor2_test"],
+        actor1_test=timestamps["actor1_test"]
+    )
 
     joblib.dump(scaler, f"{processed_data_folder}/scaler.pkl")
 

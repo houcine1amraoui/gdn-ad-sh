@@ -170,9 +170,15 @@ def split_actor_periods(df, config):
     train_df = actor1_t1.iloc[:split_idx]
     val_df   = actor1_t1.iloc[split_idx:]
 
-    return train_df, val_df, actor2_test_df, actor1_test_df
+    splits = { "train": train_df, 
+               "val": val_df, 
+               "actor2_test": actor2_test_df, 
+               "actor1_test": actor1_test_df
+            }
+    
+    return splits
 
-def normalize(train_df, val_df, actor2_test_df, actor1_test_df, devices):
+def normalize(splits, devices):
     """
     Normalize data using ONLY train_df (Actor1 timeline1)
     Returns:
@@ -183,12 +189,18 @@ def normalize(train_df, val_df, actor2_test_df, actor1_test_df, devices):
 
     # Fit scaler only on training data (features only without timestamp)
     # .to_numpy() is safer than .values() which removes column structure
-    train_array = scaler.fit_transform(train_df[devices].to_numpy())
-    val_array   = scaler.transform(val_df[devices].to_numpy())
-    actor2_test_array = scaler.transform(actor2_test_df[devices].to_numpy())
-    actor1_test_array = scaler.transform(actor1_test_df[devices].to_numpy())
+    train_array_norm = scaler.fit_transform(splits["train"][devices].to_numpy())
+    val_array_norm   = scaler.transform(splits["val"][devices].to_numpy())
+    actor2_test_array_norm = scaler.transform(splits["actor2_test"][devices].to_numpy())
+    actor1_test_array_norm = scaler.transform(splits["actor1_test"][devices].to_numpy())
 
-    return train_array, val_array, actor2_test_array, actor1_test_array, scaler
+    splits_norm = {
+        "train":train_array_norm,
+        "val": val_array_norm,
+        "actor2_test":actor2_test_array_norm,
+        "actor1_test": actor1_test_array_norm
+    }
+    return splits_norm, scaler
 
 def load_one_data(config):
     data_path = get_dataset_path(config)
@@ -283,7 +295,7 @@ def data_preprocessing(config):
     devices = [c for c in df.columns if c != "Timestamp"]
     print("nbr of devices:", len(devices))
     # 6. Split actors / train-val-test
-    train_df, val_df, actor2_test_df, actor1_test_df = split_actor_periods(df, config)
+    splits = split_actor_periods(df, config)
     print("Actor split done.")
 
     # df.describe().to_csv("data/df_describe.csv")
@@ -291,17 +303,20 @@ def data_preprocessing(config):
     # actor2_test_df.describe().to_csv("data/actor2_test_describe.csv")
 
     # 7. Save timestamps for reference/plotting
-    timestamps_train = train_df['Timestamp'].to_numpy()
-    timestamps_val   = val_df['Timestamp'].to_numpy()
-    timestamps_actor2_test = actor2_test_df['Timestamp'].to_numpy()
-    timestamps_actor1_test = actor1_test_df['Timestamp'].to_numpy()
+    train_timestamps = splits["train"]['Timestamp'].to_numpy()
+    val_timestamps   = splits["val"]['Timestamp'].to_numpy()
+    actor2_test_timestamps = splits["actor2_test"]['Timestamp'].to_numpy()
+    actor1_test_timestamps = splits["actor1_test"]['Timestamp'].to_numpy()
 
+    timestamps = {
+        "train": train_timestamps,
+        "val": val_timestamps,
+        "actor2_test": actor2_test_timestamps,
+        "actor1_test": actor1_test_timestamps
+    }
+    
     # 8. Normalize features
-    train_array, val_array, actor2_test_array, actor1_test_array, scaler = normalize(
-        train_df, val_df, actor2_test_df, actor1_test_df, devices
-    )
+    splits_norm, scaler = normalize(splits, devices)
     print("Normalization done.")
 
-    return (train_array, val_array, actor2_test_array, actor1_test_array,
-            scaler, devices,
-            timestamps_train, timestamps_val, timestamps_actor2_test, timestamps_actor1_test)
+    return (splits_norm, timestamps, scaler, devices)
