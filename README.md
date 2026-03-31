@@ -169,7 +169,7 @@ Key parameters:
 ### Clone
 
     git clone https://github.com/houcine1amraoui/gdn-ad-sh.git
-    cd your-gnn-project
+    cd gdn-ad-sh
 
 ### Create environment
 
