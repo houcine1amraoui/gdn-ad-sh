@@ -26,7 +26,8 @@ def train_one_epoch(model, train_loader, device, optimizer):
         train_loss += loss.item()
 
     train_loss /= len(train_loader)
-    pass
+    
+    return train_loss
 
 def validate(model, val_loader, device):
     model.eval()
@@ -46,6 +47,8 @@ def validate(model, val_loader, device):
             val_loss += loss.item()
 
     val_loss /= len(val_loader)
+
+    return val_loss
 
 def train(model, train_loader, val_loader, config):
 
