@@ -8,11 +8,12 @@ import torch
 
 from src.utils.device import get_device
 from src.utils.experiment import load_best_checkpoint
-from src.utils.get_folders_utils import get_evaluation_results_main_folder
+from src.utils.get_folders_utils import get_processed_folder, get_evaluation_results_main_folder
 
 def create_evaluation_dataloaders(config):
+    processed_data_folder = get_processed_folder(config)
+    
     # load config
-    processed_data_folder = config["dataset"]["processed_data_folder"]
     window_size = config["training"]["window_size"]
     batch_size = config["evaluation"]["batch_size"]
 

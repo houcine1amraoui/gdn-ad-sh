@@ -12,18 +12,23 @@ def get_dataset_path(config):
 
     return data_path
 
-def get_processed_folder(config):
-    project_root_dir = config["project_root_dir"]
-    dataset_folder = config["dataset"]["dataset_folder"]
-    dataset_name = config["dataset"]["dataset_name"]
-    
+def get_dataset_name(config):
     merge_bre_cu = config["dataset"]["merge_bre_cu"]
+    dataset_name = config["dataset"]["dataset_name"]
 
     name = ""
     if merge_bre_cu: name = "merged"
     else: name = dataset_name
 
-    processed_data_folder = f"{project_root_dir}/{dataset_folder}/processed/{name}"
+    return name
+
+def get_processed_folder(config):
+    project_root_dir = config["project_root_dir"]
+    dataset_folder = config["dataset"]["dataset_folder"]
+    
+    dataset_name = get_dataset_name(config)
+
+    processed_data_folder = f"{project_root_dir}/{dataset_folder}/processed/{dataset_name}"
     
     path = Path(processed_data_folder)
     if not path.is_dir():
@@ -35,15 +40,11 @@ def get_processed_folder(config):
 
 def get_train_experiments_main_folder(config):
     project_root_dir = config["project_root_dir"]
-    dataset_name = config["dataset"]["dataset_name"]
     model_name = config["training"]["model"]
-    merge_bre_cu = config["dataset"]["merge_bre_cu"]
 
-    name = ""
-    if merge_bre_cu: name = "merged"
-    else: name = dataset_name
+    dataset_name = get_dataset_name(config)
 
-    train_experiments_main_folder = f"{project_root_dir}/train_experiments/{name}/{model_name}"
+    train_experiments_main_folder = f"{project_root_dir}/train_experiments/{model_name}/{dataset_name}/"
 
     path = Path(train_experiments_main_folder)
     if not path.is_dir():
@@ -54,15 +55,10 @@ def get_train_experiments_main_folder(config):
 
 def get_evaluation_results_main_folder(config):
     project_root_dir = config["project_root_dir"]
-    dataset_name = config["dataset"]["dataset_name"]
     model_name = config["training"]["model"]
-    merge_bre_cu = config["dataset"]["merge_bre_cu"]
 
-    name = ""
-    if merge_bre_cu: name = "merged"
-    else: name = dataset_name
-
-    evaluation_results_main_folder = f"{project_root_dir}/eval_results/{name}/{model_name}"
+    dataset_name = get_dataset_name(config)
+    evaluation_results_main_folder = f"{project_root_dir}/eval_results/{model_name}/{dataset_name}"
 
     path = Path(evaluation_results_main_folder)
     if not path.is_dir():

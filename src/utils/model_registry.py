@@ -2,7 +2,7 @@ import os
 import yaml
 import torch
 from datetime import datetime
-from src.utils.config_utils import get_dataset_name
+from src.utils.get_folders_utils import get_dataset_name
 
 class ModelRegistryManager:
     def __init__(self, config):
@@ -15,7 +15,7 @@ class ModelRegistryManager:
         self.model_name=model_name
         self.config = config
 
-        self.exp_dir = os.path.join(self.project_root_dir, "train_experiments", self.dataset_name, self.model_name)
+        self.exp_dir = os.path.join(self.project_root_dir, "train_experiments", self.model_name, self.dataset_name)
         
         os.makedirs(self.exp_dir, exist_ok=True)
 
