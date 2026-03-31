@@ -45,7 +45,7 @@ home sensor data.
 - **main_train.py** → Runs model training
 - **main_evaluation.py** → Runs evaluation and metrics generation
 - **main_visualization.py** → Runs visualization and plots generation
-- **main.py** → Full pipeline execution (preprocess → train → evaluate)
+- **main.py** → Full pipeline execution (preprocess → train → evaluate → visualize)
 - **README.md** → Project documentation
 - **environment.yaml** → Contains all required dependencies and package versions used to run the project.
 

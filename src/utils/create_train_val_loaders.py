@@ -6,7 +6,7 @@ from src.utils.get_folders_utils import get_processed_folder
     
 def create_train_val_loaders(config):
     processed_data_folder = get_processed_folder(config)
-
+    
     window_size = config["training"]["window_size"]
     batch_size = config["training"]["batch_size"]
 

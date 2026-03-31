@@ -1,8 +1,10 @@
 import pandas as pd
+from pathlib import Path
 from sklearn.preprocessing import MinMaxScaler
 
 from src.utils.downsample import detect_sensor_types
 from src.utils.load_actors_timelines import load_actor_timelines
+from src.utils.get_folders_utils import get_dataset_path
 
 def filter_columns_one_data(df, config):
     dataset_name = config["dataset"]["dataset_name"]
@@ -189,11 +191,9 @@ def normalize(train_df, val_df, actor2_test_df, actor1_test_df, devices):
     return train_array, val_array, actor2_test_array, actor1_test_array, scaler
 
 def load_one_data(config):
-    project_root_dir = config["project_root_dir"]
+    data_path = get_dataset_path(config)
     dataset_name = config["dataset"]["dataset_name"]
-    dataset_folder = config["dataset"]["dataset_folder"]
-    data_path = f"{project_root_dir}/{dataset_folder}/{dataset_name}Master.csv"
-
+    
     print(f"Loading {dataset_name} data...")
     df = pd.read_csv(data_path)
     return df
@@ -206,6 +206,14 @@ def load_and_merge_bre_cu(config):
     bre_data_path = f"{project_root_dir}/{dataset_folder}/BREMaster.csv"
     cu_data_path = f"{project_root_dir}/{dataset_folder}/CUMaster.csv"
 
+    path = Path(bre_data_path)
+    if not path.is_file():
+        raise FileNotFoundError(f"[ERROR] Data file does not exist. Please, place datasets into data folder first.")
+    
+    path = Path(cu_data_path)
+    if not path.is_file():
+        raise FileNotFoundError(f"[ERROR] Data file does not exist. Please, place datasets into data folder first.")
+    
     print("Loading BRE dataset...")
     bre_df = pd.read_csv(bre_data_path)
 
