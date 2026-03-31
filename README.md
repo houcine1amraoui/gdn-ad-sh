@@ -58,47 +58,32 @@ home sensor data.
     │   ├── CU/
     │   └── merged/
     ├── eval_results/
-    │ ├── BRE/
-    │   ├── errors/
-    │   └── plots/
-    │ ├── CU/
-    │   ├── errors/
-    │   └── plots/
-    │ └── merged/
-    |   ├── errors/
-    |   └── plots/
+    │ ├── gdn/
+    │   └── BRE/
+    │   └── CU/
+    │   └── merged/
+    │ ├── mtad_gat/
+    │   ├── BRE/
+    │   └── CU/
+    │   └── merged/
     ├── train_experiments/
-    │ ├── BRE/
-    │   ├── gdn/
-    │       ├── errors/
-    │       └── plots/
-    │   └── mtad-gat/
-    │       ├── errors/
-    │       └── plots/
-    │ ├── CU/
-    │   ├── gdn/
-    │       ├── errors/
-    │       └── plots/
-    │   └── mtad-gat/
-    │       ├── errors/
-    │       └── plots/
-    │ └── merged/
-    │   ├── gdn/
-    │       ├── errors/
-    │       └── plots/
-    │   └── mtad-gat/
-    │       ├── errors/
-    │       └── plots/
+    │ ├── gdn/
+    │   └── BRE/
+    │   └── CU/
+    │   └── merged/
+    │ ├── matad_gat/
+    │   └── BRE/
+    │   └── CU/
+    │   └── merged/
     ├── visualizations/
-    │ ├── BRE/
-    │   ├── gdn/
-    │   └── mtad-gat/
-    │ ├── CU/
-    │   ├── gdn/
-    │   └── mtad-gat/
-    │ └── merged/
-    │   ├── gdn/
-    │   └── mtad-gat/
+    │ ├── gdn/
+    │   └── BRE/
+    │   └── CU/
+    │   └── merged/
+    │ ├── mtad_gat/
+    │   ├── BRE/
+    │   └── CU/
+    │   └── merged/
 
 ### 📌 Created Folders/Files Description
 
