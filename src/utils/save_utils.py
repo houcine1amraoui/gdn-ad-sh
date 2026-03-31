@@ -1,11 +1,11 @@
 import numpy as np
 import joblib
 import json
-from src.utils.get_folders_utils import get_processed_folder
+from src.utils.create_folders_utils import create_processed_folder
 
 def save_processed_data(splits_norm, timestamps, scaler, devices, config):
     
-    processed_data_folder = get_processed_folder(config)
+    processed_data_folder = create_processed_folder(config)
 
     # Save arrays
     np.savez(

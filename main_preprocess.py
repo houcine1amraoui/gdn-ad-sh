@@ -27,10 +27,10 @@ def main_preprocess():
     
     splits_norm, timestamps, scaler, devices = data_preprocessing(config)
 
-    # print(len(splits_norm["train"]), 
-    # print(len(splits_norm["val"]), 
-    # print(len(splits_norm["actor2_test"]), 
-    # print(len(splits_norm["actor1_test"]), 
+    print(len(splits_norm["train"])) 
+    print(len(splits_norm["val"]))
+    print(len(splits_norm["actor2_test"])) 
+    print(len(splits_norm["actor1_test"])) 
     
     save_processed_data(splits_norm, timestamps, scaler, devices, config)
 

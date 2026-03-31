@@ -6,7 +6,7 @@ seed: 42
 
 dataset:
   merge_bre_cu: false # true or false
-  dataset_name: BRE # CU or BRE
+  dataset_name: CU # CU or BRE
   dataset_folder: data
 
 # actor timelines

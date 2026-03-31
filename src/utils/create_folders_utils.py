@@ -1,6 +1,24 @@
 import os
 from datetime import datetime
 import yaml
+from src.utils.get_folders_utils import get_dataset_name
+from pathlib import Path
+
+def create_processed_folder(config):
+    project_root_dir = config["project_root_dir"]
+    dataset_folder = config["dataset"]["dataset_folder"]
+    
+    dataset_name = get_dataset_name(config)
+
+    processed_data_folder = f"{project_root_dir}/{dataset_folder}/processed/{dataset_name}"
+    
+    folder_path = Path(processed_data_folder)
+
+    # create folder if it does not exist
+    folder_path.mkdir(parents=True, exist_ok=True)
+    
+    return processed_data_folder
+
 
 def create_time_folder(config, parent_folder):
     """

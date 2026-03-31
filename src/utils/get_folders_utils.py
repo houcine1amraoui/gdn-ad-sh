@@ -5,7 +5,7 @@ def get_dataset_path(config):
     dataset_name = config["dataset"]["dataset_name"]
     dataset_folder = config["dataset"]["dataset_folder"]
     data_path = f"{project_root_dir}/{dataset_folder}/{dataset_name}Master.csv"
-
+    print("hhhh", data_path)
     path = Path(data_path)
     if not path.is_file():
         raise FileNotFoundError(f"[ERROR] Data file does not exist. Please, place datasets into data folder first.")
