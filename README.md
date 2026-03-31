@@ -38,6 +38,8 @@ home sensor data.
 
 ## 📁 Project Structure After Running Full Pipeline
 
+---
+
     gdn-ad-sh/
     │
     ├── configs/
@@ -79,6 +81,7 @@ home sensor data.
     │ │ ├── gdn/
     │ │ │ ├── errors/
     │ │ │ └── plots/
+    │ │ │
     │ │ └── mtad-gat/
     │ │ ├── errors/
     │ │ └── plots/
@@ -87,6 +90,7 @@ home sensor data.
     │ │ ├── gdn/
     │ │ │ ├── errors/
     │ │ │ └── plots/
+    │ │ │
     │ │ └── mtad-gat/
     │ │ ├── errors/
     │ │ └── plots/
@@ -95,6 +99,7 @@ home sensor data.
     │ ├── gdn/
     │ │ ├── errors/
     │ │ └── plots/
+    │ │
     │ └── mtad-gat/
     │ ├── errors/
     │ └── plots/
@@ -104,6 +109,8 @@ home sensor data.
     ├── main_evaluation.py
     ├── main.py
     └── README.md
+
+---
 
 ### 📌 Description
 
