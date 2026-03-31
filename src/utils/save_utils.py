@@ -2,7 +2,7 @@ import numpy as np
 import joblib
 import json
 import os
-from src.utils.config_utils import get_dataset_name
+from src.utils.get_folders_utils import get_dataset_name
 
 def save_processed_data(train_array, val_array, actor2_test_array, 
                    actor1_test_array, scaler, devices, 
