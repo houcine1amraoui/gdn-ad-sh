@@ -144,7 +144,7 @@ Key parameters:
 
 ## 🧠 Models
 
-### GDN: Graph Deviation Network for anomaly detection in multivariate time-series.
+### GDN: Graph Deviation Network for anomaly detection in multivariate time-series
 
 #### GDN Features
 
@@ -152,7 +152,7 @@ Key parameters:
 - Sensor dependency modeling
 - Reconstruction error-based anomaly detection
 
-### MTAD-GAT: Multivariate Time-series Anomaly Detection with Graph Attention Network.
+### MTAD-GAT: Multivariate Time-series Anomaly Detection with Graph Attention Network
 
 #### MTAD-GAT Features
 
