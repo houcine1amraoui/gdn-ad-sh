@@ -50,53 +50,43 @@ home sensor data.
 ## 📁 Created folders/files After Running Full Pipeline
 
     gdn-ad-sh/
-    │
     ├── data/
     │ └── processed/
     │   ├── BRE/
     │   ├── CU/
     │   └── merged/
-    │
     ├── eval_results/
     │ ├── BRE/
-    │ │ ├── errors/
-    │ │ └── plots/
-    │ │
+    │   ├── errors/
+    │   └── plots/
     │ ├── CU/
-    │ │ ├── errors/
-    │ │ └── plots/
-    │ │
+    │   ├── errors/
+    │   └── plots/
     │ └── merged/
-    │ ├── errors/
-    │ └── plots/
-    │
+    |   ├── errors/
+    |   └── plots/
     ├── train_experiments/
     │ ├── BRE/
     │ │ ├── gdn/
     │ │ │ ├── errors/
     │ │ │ └── plots/
-    │ │ │
     │ │ └── mtad-gat/
     │ │ ├── errors/
     │ │ └── plots/
-    │ │
     │ ├── CU/
     │ │ ├── gdn/
     │ │ │ ├── errors/
     │ │ │ └── plots/
-    │ │ │
     │ │ └── mtad-gat/
-    │ │ ├── errors/
-    │ │ └── plots/
-    │ │
+    │ │   ├── errors/
+    │ │   └── plots/
     │ └── merged/
     │ ├── gdn/
-    │ │ ├── errors/
-    │ │ └── plots/
-    │ │
+    │   ├── errors/
+    │   └── plots/
     │ └── mtad-gat/
-    │ ├── errors/
-    │ └── plots/
+    │   ├── errors/
+    │   └── plots/
 
 ### 📌 Created Folders/Files Description
 
