@@ -22,7 +22,7 @@ def main_preprocess():
     # parser.add_argument("--dataset_folder", type=str)
     # parser.add_argument("--dataset_name", type=str)
     # parser.add_argument("--merge_bre_cu", type=bool)
-    # args = parser.parse_args()
+    args = parser.parse_args()
 
     # override project_root_directory
     if args.project_root_dir:
