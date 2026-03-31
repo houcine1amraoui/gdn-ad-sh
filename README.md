@@ -38,79 +38,72 @@ home sensor data.
 
 ## 📁 Project Structure After Running Full Pipeline
 
----
-
-gdn-ad-sh/
-│
-├── configs/
-│ ├── BRE_filtered_columns.txt
-│ ├── CU_filtered_columns.txt
-│ └── config.yaml
-│
-├── data/
-│ └── processed/
-│ ├── BRE/
-│ ├── CU/
-│ └── merged/
-│
-├── eval_results/
-│ ├── BRE/
-│ │ ├── errors/
-│ │ └── plots/
-│ │
-│ ├── CU/
-│ │ ├── errors/
-│ │ └── plots/
-│ │
-│ └── merged/
-│ ├── errors/
-│ └── plots/
-│
-├── notebooks/
-│
-├── src/
-│ ├── preprocessing/
-│ ├── models/
-│ ├── training/
-│ ├── evaluation/
-│ ├── utils/
-│ └── visualization/
-│
-├── train_experiments/
-│ ├── BRE/
-│ │ ├── gdn/
-│ │ │ ├── errors/
-│ │ │ └── plots/
-│ │ │
-│ │ └── mtad-gat/
-│ │ ├── errors/
-│ │ └── plots/
-│ │
-│ ├── CU/
-│ │ ├── gdn/
-│ │ │ ├── errors/
-│ │ │ └── plots/
-│ │ │
-│ │ └── mtad-gat/
-│ │ ├── errors/
-│ │ └── plots/
-│ │
-│ └── merged/
-│ ├── gdn/
-│ │ ├── errors/
-│ │ └── plots/
-│ │
-│ └── mtad-gat/
-│ ├── errors/
-│ └── plots/
-│
-├── main_preprocess.py
-├── main_train.py
-├── main_evaluation.py
-├── main.py
-└── README.md
-
----
+    gdn-ad-sh/
+    │
+    ├── configs/
+    │ ├── BRE_filtered_columns.txt
+    │ ├── CU_filtered_columns.txt
+    │ └── config.yaml
+    │
+    ├── data/
+    │ └── processed/
+    │ ├── BRE/
+    │ ├── CU/
+    │ └── merged/
+    │
+    ├── eval_results/
+    │ ├── BRE/
+    │ │ ├── errors/
+    │ │ └── plots/
+    │ │
+    │ ├── CU/
+    │ │ ├── errors/
+    │ │ └── plots/
+    │ │
+    │ └── merged/
+    │ ├── errors/
+    │ └── plots/
+    │
+    ├── notebooks/
+    │
+    ├── src/
+    │ ├── preprocessing/
+    │ ├── models/
+    │ ├── training/
+    │ ├── evaluation/
+    │ ├── utils/
+    │ └── visualization/
+    │
+    ├── train_experiments/
+    │ ├── BRE/
+    │ │ ├── gdn/
+    │ │ │ ├── errors/
+    │ │ │ └── plots/
+    │ │ └── mtad-gat/
+    │ │ ├── errors/
+    │ │ └── plots/
+    │ │
+    │ ├── CU/
+    │ │ ├── gdn/
+    │ │ │ ├── errors/
+    │ │ │ └── plots/
+    │ │ └── mtad-gat/
+    │ │ ├── errors/
+    │ │ └── plots/
+    │ │
+    │ └── merged/
+    │ ├── gdn/
+    │ │ ├── errors/
+    │ │ └── plots/
+    │ └── mtad-gat/
+    │ ├── errors/
+    │ └── plots/
+    │
+    ├── main_preprocess.py
+    ├── main_train.py
+    ├── main_evaluation.py
+    ├── main.py
+    └── README.md
 
 ### 📌 Description
 
