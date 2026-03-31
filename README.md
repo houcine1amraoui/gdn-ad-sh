@@ -13,14 +13,15 @@ home sensor data.
 
 ---
 
-## Project Structure Before Running Full Pipeline
+## 📁 Project Structure Before Running Full Pipeline
 
     gdn-ad-sh/
     │
     ├── configs/
+    │   └── BRE_filtered_columns.txt
     │   └── config.yaml
+    │   └── CU_filtered_columns.txt
     ├── data/
-    │   ├── raw/
     ├── notebooks/
     ├── src/
     │   ├── preprocessing/
@@ -35,38 +36,95 @@ home sensor data.
     ├── main.py
     └── README.md
 
----
-
-## Project Structure After Running Full Pipeline
-
-    gdn-ad-sh/
-    │
-    ├── configs/
-    │   └── config.yaml
-    ├── data/
-    │   ├── raw/
-    │   ├── processed/
-    ├── eval_results/
-    │   ├── errors/
-    │   ├── plots/
-    ├── notebooks/
-    ├── src/
-    │   ├── preprocessing/
-    │   ├── models/
-    │   ├── training/
-    │   ├── evaluation/
-    │   ├── utils/
-    │   └── visualization/
-    ├── train_experiments/
-    │   ├── gdn/
-    │   ├── matad_gat/
-    ├── main_preprocess.py
-    ├── main_train.py
-    ├── main_evaluation.py
-    ├── main.py
-    └── README.md
+## 📁 Project Structure After Running Full Pipeline
 
 ---
+
+gdn-ad-sh/
+│
+├── configs/
+│ ├── BRE_filtered_columns.txt
+│ ├── CU_filtered_columns.txt
+│ └── config.yaml
+│
+├── data/
+│ └── processed/
+│ ├── BRE/
+│ ├── CU/
+│ └── merged/
+│
+├── eval_results/
+│ ├── BRE/
+│ │ ├── errors/
+│ │ └── plots/
+│ │
+│ ├── CU/
+│ │ ├── errors/
+│ │ └── plots/
+│ │
+│ └── merged/
+│ ├── errors/
+│ └── plots/
+│
+├── notebooks/
+│
+├── src/
+│ ├── preprocessing/
+│ ├── models/
+│ ├── training/
+│ ├── evaluation/
+│ ├── utils/
+│ └── visualization/
+│
+├── train_experiments/
+│ ├── BRE/
+│ │ ├── gdn/
+│ │ │ ├── errors/
+│ │ │ └── plots/
+│ │ │
+│ │ └── mtad-gat/
+│ │ ├── errors/
+│ │ └── plots/
+│ │
+│ ├── CU/
+│ │ ├── gdn/
+│ │ │ ├── errors/
+│ │ │ └── plots/
+│ │ │
+│ │ └── mtad-gat/
+│ │ ├── errors/
+│ │ └── plots/
+│ │
+│ └── merged/
+│ ├── gdn/
+│ │ ├── errors/
+│ │ └── plots/
+│ │
+│ └── mtad-gat/
+│ ├── errors/
+│ └── plots/
+│
+├── main_preprocess.py
+├── main_train.py
+├── main_evaluation.py
+├── main.py
+└── README.md
+
+---
+
+### 📌 Description
+
+- **configs/** → Configuration files and filtered sensor columns
+- **data/processed/** → Preprocessed datasets ready for training
+- **eval_results/** → Final evaluation outputs (errors and plots)
+- **notebooks/** → Experimental and analysis notebooks
+- **src/** → Core implementation (preprocessing, models, training, evaluation, utils, visualization)
+- **train_experiments/** → Training outputs for each dataset and model (GDN, MTAD-GAT)
+- **main_preprocess.py** → Runs full preprocessing pipeline
+- **main_train.py** → Runs model training
+- **main_evaluation.py** → Runs evaluation and metrics generation
+- **main.py** → Full pipeline execution (preprocess → train → evaluate)
+- **README.md** → Project documentation
 
 ## Pipeline Overview
 
