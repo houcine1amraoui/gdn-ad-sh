@@ -53,9 +53,9 @@ home sensor data.
     │
     ├── data/
     │ └── processed/
-    │ ├── BRE/
-    │ ├── CU/
-    │ └── merged/
+    │   ├── BRE/
+    │   ├── CU/
+    │   └── merged/
     │
     ├── eval_results/
     │ ├── BRE/
