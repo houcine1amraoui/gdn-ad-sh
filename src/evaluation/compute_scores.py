@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import os
 from scipy.stats import ks_2samp
 import matplotlib.pyplot as plt
@@ -114,7 +115,14 @@ def compute_segment_metrics(pred, start, end):
 
     return SDR, coverage, delay
 
-def segment_evaluation(scores, threshold):
+def segment_evaluation(config):
+    errors = load_errors_all_splits(config)
+    errors_norm, _, iqr = normalize_errors_all_splits(errors)
+    scores = compute_scores_all_splits(errors_norm, iqr)
+    
+    threshold = np.percentile(scores["train"], 95)
+    # threshold = 0.5
+
     start_actor2 = len(scores["train"])
     end_actor2 = start_actor2 + len(scores["actor2_test"])
 
@@ -143,7 +151,7 @@ def segment_evaluation(scores, threshold):
     # plt.title("Full Timeline")
     # plt.show()
 
-import pandas as pd
+
 
 def smooth_scores(scores, window=5):
     return pd.Series(scores).rolling(window=window, center=True).mean().fillna(method="bfill").fillna(method="ffill").values
@@ -157,61 +165,3 @@ def evalutation_pipeline(config):
     # threshold = 0.5
     
     segment_evaluation(scores, threshold)
-    # KS Test
-    # ks_actor2 = ks_2samp(train_scores, actor2_scores)
-    # ks_actor1 = ks_2samp(train_scores, actor1_scores)
-    # print("KS Train vs Actor2:", ks_actor2)
-    # print("KS Train vs Actor1:", ks_actor1)
-
-    # detection_rate = np.mean(actor2_scores > threshold)
-    # fp_rate = np.mean(actor1_scores > threshold)
-    # print("Detection rate:", detection_rate)
-    # print("False positive rate:", fp_rate)
-
-    # Aggregation
-    # train_scores = errors["train"].mean(axis=1)
-    # val_scores = errors["val"].mean(axis=1)
-    # actor2_test_scores = errors["actor2_test"].mean(axis=1)
-    # actor1_test_scores = errors["actor1_test"].mean(axis=1)
-    
-    # Normalization
-    # val_scores = normalize(train_scores, val_scores)
-    # actor2_test_scores = normalize(train_scores, actor2_test_scores)
-    # actor1_test_scores = normalize(train_scores, actor1_test_scores)
-
-    # scores = {
-    #     "train": train_scores,
-    #     "val": val_scores,
-    #     "actor2_test": actor2_test_scores,
-    #     "actor1_test": actor1_test_scores
-    # }
-
-    # return scores
-    # Aggregate errors
-    # forecast = 
-    # Normalize
-    # train_scores = normalize()
-    # # Robust Stats
-    # median = np.median(train_errors, axis=0)
-    # iqr = np.percentile(train_errors, 75, axis=0) - np.percentile(train_errors, 25, axis=0)
-    # iqr[iqr == 0] = 1e-6  # avoid division by zero
-
-    # # --- Normalize ---
-    # train_norm = (train_errors - median) / iqr
-    # val_norm = (val_errors - median) / iqr
-    # actor2_test_norm = (actor2_test_errors - median) / iqr
-    # actor1_test_norm = (actor1_test_errors - median) / iqr
-
-    # train_scores = np.mean(train_norm, axis=1)
-    # val_scores = np.mean(val_norm, axis=1)
-    # actor2_test_scores = np.mean(actor2_test_norm, axis=1)
-    # actor1_test_scores = np.mean(actor1_test_norm, axis=1)
-    
-    # scores = {
-    #     "train": train_scores,
-    #     "val": val_scores,
-    #     "actor2_test": actor2_test_scores,
-    #     "actor1_test": actor1_test_scores
-    # }
-
-    # return scores

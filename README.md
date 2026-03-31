@@ -44,6 +44,7 @@ home sensor data.
 - **main_preprocess.py** → Runs full preprocessing pipeline
 - **main_train.py** → Runs model training
 - **main_evaluation.py** → Runs evaluation and metrics generation
+- **main_visualization.py** → Runs visualization and plots generation
 - **main.py** → Full pipeline execution (preprocess → train → evaluate)
 - **README.md** → Project documentation
 - **environment.yaml** → Contains all required dependencies and package versions used to run the project.
@@ -94,6 +95,7 @@ home sensor data.
 - **data/processed/** → Preprocessed data ready for training for each dataset (BRE, CU, BRE+CU merged)
 - **eval_results/** → Final evaluation outputs (errors and plots) for each dataset and model (GDN, MTAD-GAT)
 - **train_experiments/** → Training outputs for each dataset and model (GDN, MTAD-GAT)
+- **visualizations/** → Visualization outputs for each dataset and model (GDN, MTAD-GAT)
 
 ## Installation
 
@@ -109,16 +111,11 @@ home sensor data.
 
 ## Running the Project
 
-## Pipeline Overview
-
-Raw Data → Preprocessing → Processed Data → Training → Best Trained Models →
-Evaluation → Visualization
-
 ---
 
 ## Step 0: Dataset Setup
 
-Create a folder:
+In the root directory create a folder:
 
     data
 
