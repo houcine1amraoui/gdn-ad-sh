@@ -13,9 +13,6 @@ def main_preprocess():
     with open("configs/config.yaml") as f:
         config = yaml.safe_load(f)
 
-    root = config["project_root_dir"]
-    print(root)
-
     # # parse CLI args
     parser = argparse.ArgumentParser()
     parser.add_argument("--project_root_dir", type=str)
@@ -25,6 +22,9 @@ def main_preprocess():
     if args.project_root_dir:
         config["project_root_dir"] = args.project_root_dir
 
+    root = config["project_root_dir"]
+    print(root)
+    
     (train_array, val_array, actor2_test_array, actor1_test_array, 
      scaler, devices, 
      timestamps_train, timestamps_val, 

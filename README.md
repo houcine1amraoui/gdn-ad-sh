@@ -77,9 +77,9 @@ Evaluation → Results
 
 ## Dataset Setup
 
-Create:
+Create a folder:
 
-    data/raw/
+    data
 
 Place inside:
 
@@ -111,22 +111,12 @@ Key parameters:
 ### Clone
 
     git clone https://github.com/houcine1amraoui/gdn-ad-sh.git
-    cd gdn-ad-sh
+    cd your-gnn-project
 
 ### Create environment
 
-    python -m venv venv
-    source venv/bin/activate
-
-Windows:
-
-    venv\Scripts\activate
-
-### Install dependencies
-
-    pip install torch numpy pandas scikit-learn matplotlib scipy tqdm pyyaml joblib
-
----
+    conda env create -f environment.yml
+    conda activate gnn-env
 
 ## Running the Project
 
