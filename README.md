@@ -34,6 +34,7 @@ home sensor data.
     ├── main_evaluation.py
     ├── main_visualization.py
     ├── main.py
+    ├── environment.yaml
     └── README.md
 
 ### 📌 Description

@@ -134,7 +134,7 @@ dependencies:
       - psutil==7.2.2
       - pyparsing==3.3.2
       - seaborn==0.13.2
-      - torch-cluster==1.6.3+pt25cpu
+      # - torch-cluster==1.6.3+pt25cpu
       - torch-geometric==2.7.0
       - tqdm==4.67.3
       - xxhash==3.6.0
