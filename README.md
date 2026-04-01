@@ -49,7 +49,7 @@ home sensor data.
 - **README.md** → Project documentation
 - **environment.yaml** → Contains all required dependencies and package versions used to run the project.
 
-## 📁 Created folders/files After Running Full Pipeline
+## 📁 Automatically Created folders/files After Running Full Pipeline
 
     gdn-ad-sh/
     │
@@ -86,13 +86,13 @@ home sensor data.
     │   └── CU/
     │   └── merged/
 
-### 📌 Created Folders/Files Description
+### 📌 Automatically Created Folders/Files Description
 
-- **data/** → You should manually create this folder and place BRE and CU datasets inside.
-- **data/processed/** → This will folder will be automatically created and will contains preprocessed data ready for training for each dataset (BRE, CU, BRE+CU merged)
-- **eval_results/** → This will folder will be automatically created and will contains final evaluation outputs (errors and scores) for each dataset and model (GDN, MTAD-GAT)
-- **train_experiments/** → This will folder will be automatically created and will contains training outputs for each dataset and model (GDN, MTAD-GAT)
-- **visualizations/** → This will folder will be automatically created and will contains visualization outputs for each dataset and model (GDN, MTAD-GAT)
+- **data/** → You should **manually** create this folder and place BRE and CU datasets inside.
+- **data/processed/** → Contains preprocessed data ready for training for each dataset (BRE, CU, BRE+CU merged)
+- **eval_results/** → Contains final evaluation outputs (errors and scores) for each dataset and model (GDN, MTAD-GAT)
+- **train_experiments/** → Contains training outputs for each dataset and model (GDN, MTAD-GAT)
+- **visualizations/** →Contains visualization outputs for each dataset and model (GDN, MTAD-GAT)
 
 ## Installation
 
