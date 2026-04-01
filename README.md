@@ -121,10 +121,10 @@ Key parameters:
 - training parameters
 - model selection
 
-You can also edit default selected columns to filter BRE and CU dataset inside the following text files:
+You can also edit default selected devices/sensors to keep in BRE and CU datasets inside the following text files:
 
-    configs/BRE_filtered_columns.txt
-    configs/CU_filtered_columns.txt
+    configs/BRE_selected_devices.txt
+    configs/CU_selected_devices.txt
 
 ---
 

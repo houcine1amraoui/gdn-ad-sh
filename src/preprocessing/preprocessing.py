@@ -8,46 +8,51 @@ from src.utils.get_folders_utils import get_dataset_path
 
 def filter_columns_one_data(df, config):
     dataset_name = config["preprocessing"]["dataset_name"]
-    filtered_columns_path = f"configs/{dataset_name}_filtered_columns.txt"
+    selected_devices_path = f"configs/{dataset_name}_selected_devices.txt"
 
     print(f"Filtering {dataset_name} data...")
 
-    # read column names from txt
-    with open(filtered_columns_path, "r") as f:
-        filtered_columns = [line.strip() for line in f if line.strip()]
+    # read selected devices from txt
+    with open(selected_devices_path, "r") as f:
+        selected_devices_names = [line.strip() for line in f if line.strip()]
 
-    # keep only existing columns
-    selected_columns = [c for c in filtered_columns if c in df.columns]
-
+    # keep only selected devices
+    selected_devices = [c for c in selected_devices_names if c in df.columns]
+    
+    # keep timestamp
+    if "Timestamp" not in selected_devices:
+        selected_devices.append("Timestamp")
+    
     # filter dataframe
-    df_filtered = df[selected_columns]
+    df_filtered = df[selected_devices]
+
     return df_filtered
 
 def filter_columns_merged_data(df):
     print("Filtering BRE+CU merged data...")
-    bre_filtered_columns_path = "configs/BRE_filtered_columns.txt"
-    cu_filtered_columns_path = "configs/CU_filtered_columns.txt"
+    bre_selected_devices_path = "configs/BRE_selected_devices.txt"
+    cu_selected_devices_path = "configs/CU_selected_devices.txt"
 
-    # read BRE columns
-    with open(bre_filtered_columns_path, "r") as f:
-        bre_filtered_columns = [line.strip() for line in f if line.strip()]
+    # read BRE selected devices
+    with open(bre_selected_devices_path, "r") as f:
+        bre_selected_devices_names = [line.strip() for line in f if line.strip()]
 
-    # read CU columns
-    with open(cu_filtered_columns_path, "r") as f:
-        cu_filtered_columns = [line.strip() for line in f if line.strip()]
+    # read CU selected devices
+    with open(cu_selected_devices_path, "r") as f:
+        cu_selected_devices_names = [line.strip() for line in f if line.strip()]
 
-    # merge column lists correctly
-    all_filtered_columns = bre_filtered_columns + cu_filtered_columns
+    # merge devices lists
+    all_selected_devices = bre_selected_devices_names + cu_selected_devices_names
 
     # remove duplicates
-    all_filtered_columns = list(set(all_filtered_columns))
+    all_selected_devices = list(set(all_selected_devices))
 
     # keep timestamp
-    if "Timestamp" not in all_filtered_columns:
-        all_filtered_columns.append("Timestamp")
+    if "Timestamp" not in all_selected_devices:
+        all_selected_devices.append("Timestamp")
 
-    # keep only existing columns
-    selected_columns = [c for c in all_filtered_columns if c in df.columns]
+    # keep only actuall existing devices in the raw data
+    selected_columns = [c for c in all_selected_devices if c in df.columns]
 
     # filter dataframe
     df_filtered = df[selected_columns]
@@ -252,20 +257,21 @@ def load_and_merge_bre_cu(config):
 
     return merged
 
-def data_preprocessing(config):
+def preprocessing_pipeline(config):
     """
     Full preprocessing pipeline for GDN:
     1. Load CSV data (either BRE or CU or both merged)
     2. OPTIONAL: Filter data: keep selected columns only 
     3. OPTIONAL: Clean data (CU only)
     4. OPTIONAL: Downsample data to target frequency
-    5. Split actor timelines
-    6. Normalize features
+    5. Split actors timelines
+    6. Normalize/Scale features (devices)
+    
     Returns:
-    - train/val/test arrays (features only)
+    - arrays.npz: contains train/val/actor2_test/actor1_test splits (features only)
+    - timestamps.npz: timestamps arrays for each split (for plotting/reference)
     - scaler
-    - devices list
-    - timestamp arrays (for plotting/reference)
+    - devices.json: contains devices list
     """
    
     merge_bre_cu = config["preprocessing"]["merge_bre_cu"]

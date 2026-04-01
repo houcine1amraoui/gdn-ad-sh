@@ -1,4 +1,3 @@
-Timestamp
 OC-02-S1_temperature
 OC-02-S1_contact
 OC-01-HWA_temperature

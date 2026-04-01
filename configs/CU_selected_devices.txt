@@ -1,4 +1,3 @@
-Timestamp
 binary_sensor.smartthings_contact_sensor_pid_004_contact
 binary_sensor.smartthings_contact_sensor_pid_006_contact
 binary_sensor.smartthings_contact_sensor_pid_003_contact

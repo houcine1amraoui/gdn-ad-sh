@@ -1,4 +1,4 @@
-from src.preprocessing.preprocessing import data_preprocessing
+from src.preprocessing.preprocessing import preprocessing_pipeline
 from src.utils.save_utils import save_processed_data
 import yaml
 import argparse
@@ -25,7 +25,7 @@ def main_preprocess():
     root = config["project_root_dir"]
     print(root)
     
-    splits_norm, timestamps, scaler, devices = data_preprocessing(config)
+    splits_norm, timestamps, scaler, devices = preprocessing_pipeline(config)
 
     print("Train split:", len(splits_norm["train"])) 
     print("Validation split:",len(splits_norm["val"]))
