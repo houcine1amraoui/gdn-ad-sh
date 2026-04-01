@@ -49,7 +49,7 @@ home sensor data.
 - **README.md** → Project documentation
 - **environment.yaml** → Contains all required dependencies and package versions used to run the project.
 
-## 📁 Automatically Created folders/files After Running Full Pipeline
+## 📁 Automatically Created Folders After Running Full Pipeline
 
     gdn-ad-sh/
     │
