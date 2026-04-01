@@ -9,7 +9,7 @@ def get_dataset_path(config):
 
     path = Path(data_path)
     if not path.is_file():
-        raise FileNotFoundError(f"[ERROR] Data file does not exist. Please, place datasets into data folder first.")
+        raise FileNotFoundError(f"[ERROR] {dataset_name} dataset file does not exist. Please, place datasets into data folder first.")
 
     return data_path
 

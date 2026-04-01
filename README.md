@@ -18,9 +18,9 @@ home sensor data.
     gdn-ad-sh/
     │
     ├── configs/
-    │   └── BRE_filtered_columns.txt
+    │   └── BRE_selected_devices.txt
     │   └── config.yaml
-    │   └── CU_filtered_columns.txt
+    │   └── CU_selected_devices.txt
     ├── notebooks/
     ├── src/
     │   ├── preprocessing/
