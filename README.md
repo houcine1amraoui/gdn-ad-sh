@@ -55,44 +55,17 @@ home sensor data.
     │
     ├── data/
     │ └── processed/
-    │   ├── BRE/
-    │   ├── CU/
-    │   └── merged/
     ├── eval_results/
-    │ ├── gdn/
-    │   └── BRE/
-    │   └── CU/
-    │   └── merged/
-    │ ├── mtad_gat/
-    │   ├── BRE/
-    │   └── CU/
-    │   └── merged/
     ├── train_experiments/
-    │ ├── gdn/
-    │   └── BRE/
-    │   └── CU/
-    │   └── merged/
-    │ ├── matad_gat/
-    │   └── BRE/
-    │   └── CU/
-    │   └── merged/
     ├── visualizations/
-    │ ├── gdn/
-    │   └── BRE/
-    │   └── CU/
-    │   └── merged/
-    │ ├── mtad_gat/
-    │   ├── BRE/
-    │   └── CU/
-    │   └── merged/
 
 ### 📌 Automatically Created Folders/Files Description
 
 - **data/** → You should **manually** create this folder and place BRE and CU datasets inside.
 - **data/processed/** → Contains preprocessed data ready for training for each dataset (BRE, CU, BRE+CU merged)
-- **eval_results/** → Contains final evaluation outputs (errors and scores) for each dataset and model (GDN, MTAD-GAT)
-- **train_experiments/** → Contains training outputs for each dataset and model (GDN, MTAD-GAT)
-- **visualizations/** →Contains visualization outputs for each dataset and model (GDN, MTAD-GAT)
+- **eval_results/** → Contains final evaluation outputs (errors and scores) for each dataset (BRE, CU, BRE+CU merged) and model (GDN, MTAD-GAT)
+- **train_experiments/** → Contains training outputs for each dataset (BRE, CU, BRE+CU merged) and model (GDN, MTAD-GAT)
+- **visualizations/** →Contains visualization outputs for each dataset (BRE, CU, BRE+CU merged) and model (GDN, MTAD-GAT)
 
 ## Installation
 
