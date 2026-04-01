@@ -48,7 +48,8 @@ home sensor data.
 - **main_visualization.py** → Runs visualization and plots generation
 - **main.py** → Full pipeline execution (preprocess → train → evaluate → visualize)
 - **README.md** → Project documentation
-- **environment.yaml** → Contains all required dependencies and package versions used to run the project.
+- **environment_cpu.yaml** → Contains all required dependencies and package versions used to run the project (for CPU users).
+- **environment_gpu.yaml** → Contains all required dependencies and package versions used to run the project (for GPU users).
 
 ## 📁 Automatically Created Folders After Running Full Pipeline
 
@@ -87,7 +88,7 @@ home sensor data.
 
     conda env create -f environment_gpu.yml
     conda activate gnn-env
-    pip install torch-cluster -f <https://data.pyg.org/whl/torch-2.5.1+cpu.html>
+    pip install torch-cluster -f <https://data.pyg.org/whl/torch-2.5.1+cu124.html>
 
 ---
 
@@ -120,7 +121,7 @@ Key parameters:
 - training parameters
 - model selection
 
-You can also edit default selected columns to filter BRE and CU dataset inside:
+You can also edit default selected columns to filter BRE and CU dataset inside the following text files:
 
     configs/BRE_filtered_columns.txt
     configs/CU_filtered_columns.txt
