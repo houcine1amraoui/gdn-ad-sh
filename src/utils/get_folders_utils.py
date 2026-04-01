@@ -1,4 +1,5 @@
 from pathlib import Path
+import joblib
 
 def get_dataset_path(config):
     project_root_dir = config["project_root_dir"]
@@ -66,3 +67,8 @@ def get_evaluation_results_main_folder(config):
                                 Please, make sure to run evaluation first.")
     
     return evaluation_results_main_folder
+
+def get_train_data_saler(config):
+    processed_data_folder = get_processed_folder(config)
+    scaler = joblib.load(f"{processed_data_folder}/scaler.pkl")
+    return scaler
