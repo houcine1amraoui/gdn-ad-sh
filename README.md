@@ -127,12 +127,10 @@ Output:
 
 Files:
 
-- train_array.npy
-- val_array.npy
-- actor1_test_array.npy
-- actor2_test_array.npy
+- arrays.npz
+- timestamps.npz
+- devices.json
 - scaler.joblib
-- timestamps.json
 
 ---
 
@@ -144,7 +142,7 @@ Output:
 
     train_experiments/
 
-Each run contains:
+Each run (per dataset/model) contains:
 
 - best.pth
 - last.pth
@@ -167,7 +165,6 @@ Contains:
 - errors
 - scores
 - metrics
-- plots
 
 ---
 
