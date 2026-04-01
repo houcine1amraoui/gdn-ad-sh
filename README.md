@@ -59,7 +59,7 @@ home sensor data.
     ├── train_experiments/
     ├── visualizations/
 
-### 📌 Automatically Created Folders/Files Description
+### 📌 Automatically Created Folders Description
 
 - **data/** → You should **manually** create this folder and place BRE and CU datasets inside.
 - **data/processed/** → Contains preprocessed data ready for training for each dataset (BRE, CU, BRE+CU merged)
@@ -83,7 +83,7 @@ home sensor data.
 
 ---
 
-## Step 0: Dataset Setup
+## Step 1: Setup and Configuration
 
 In the root directory create a folder:
 
@@ -98,7 +98,7 @@ Place inside:
 
 ## Configuration
 
-Edit:
+You can edit default preprocessing/training/evaluation parameters inside:
 
     configs/config.yaml
 
@@ -112,7 +112,12 @@ Key parameters:
 
 ---
 
-### Step 1: Preprocessing
+You can also edit default selected columns to filter BRE and CU dataset inside:
+
+    configs/BRE_filtered_columns.txt
+    configs/CU_filtered_columns.txt
+
+### Step 2: Preprocessing
 
     python -m main_preprocess
 
@@ -131,7 +136,7 @@ Files:
 
 ---
 
-### Step 2: Training
+### Step 3: Training
 
     python -m main_train
 
@@ -149,7 +154,7 @@ Each run contains:
 
 ---
 
-### Step 3: Evaluation
+### Step 4: Evaluation
 
     python -m main_evaluation
 
@@ -166,7 +171,7 @@ Contains:
 
 ---
 
-### Step 4: Visualization
+### Step 5: Visualization
 
     python -m main_visualization
 
