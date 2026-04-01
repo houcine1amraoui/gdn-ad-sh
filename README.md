@@ -68,6 +68,8 @@ home sensor data.
 - **train_experiments/** → Contains training outputs for each dataset (BRE, CU, BRE+CU merged) and model (GDN, MTAD-GAT)
 - **visualizations/** →Contains visualization outputs for each dataset (BRE, CU, BRE+CU merged) and model (GDN, MTAD-GAT)
 
+---
+
 ## Installation
 
 ### Clone
@@ -75,14 +77,21 @@ home sensor data.
     git clone https://github.com/houcine1amraoui/gdn-ad-sh.git
     cd gdn-ad-sh
 
-### Create environment
+### Create Conda environment (for CPU users)
 
-    conda env create -f environment.yml
+    conda env create -f environment_cpu.yml
     conda activate gnn-env
+    pip install torch-cluster -f <https://data.pyg.org/whl/torch-2.5.1+cpu.html>
 
-## Running the Project
+### Create Conda environment (for GPU users)
+
+    conda env create -f environment_gpu.yml
+    conda activate gnn-env
+    pip install torch-cluster -f <https://data.pyg.org/whl/torch-2.5.1+cpu.html>
 
 ---
+
+## Running the Project
 
 ### Step 1: Data Setup
 

@@ -1,4 +1,4 @@
-name: gnn-project
+name: gnn-env
 channels:
   - defaults
   - pytorch
