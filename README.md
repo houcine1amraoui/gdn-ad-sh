@@ -82,13 +82,13 @@ home sensor data.
 
     conda env create -f environment_cpu.yml
     conda activate gnn-env
-    pip install torch-cluster -f <https://data.pyg.org/whl/torch-2.5.1+cpu.html>
+    pip install torch-cluster -f https://data.pyg.org/whl/torch-2.5.1+cpu.html
 
 ### Create Conda environment (for GPU users)
 
     conda env create -f environment_gpu.yml
     conda activate gnn-env
-    pip install torch-cluster -f <https://data.pyg.org/whl/torch-2.5.1+cu121.html>
+    pip install torch-cluster -f https://data.pyg.org/whl/torch-2.5.1+cu121.html
 
 ---
 
