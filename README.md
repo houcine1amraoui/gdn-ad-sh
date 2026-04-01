@@ -83,7 +83,7 @@ home sensor data.
 
 ---
 
-## Step 1: Setup and Configuration
+### Step 1: Data Setup
 
 In the root directory create a folder:
 
@@ -96,7 +96,7 @@ Place inside:
 
 ---
 
-## Configuration
+### Step 2: Configuration
 
 You can edit default preprocessing/training/evaluation parameters inside:
 
@@ -117,7 +117,7 @@ You can also edit default selected columns to filter BRE and CU dataset inside:
     configs/BRE_filtered_columns.txt
     configs/CU_filtered_columns.txt
 
-### Step 2: Preprocessing
+### Step 3: Preprocessing
 
     python -m main_preprocess
 
@@ -136,7 +136,7 @@ Files:
 
 ---
 
-### Step 3: Training
+### Step 4: Training
 
     python -m main_train
 
@@ -154,7 +154,7 @@ Each run contains:
 
 ---
 
-### Step 4: Evaluation
+### Step 5: Evaluation
 
     python -m main_evaluation
 
@@ -171,7 +171,7 @@ Contains:
 
 ---
 
-### Step 5: Visualization
+### Step 6: Visualization
 
     python -m main_visualization
 
