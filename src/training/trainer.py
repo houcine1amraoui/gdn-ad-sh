@@ -4,6 +4,7 @@ import torch.optim as optim
 
 from src.utils.model_registry import ModelRegistryManager
 from src.utils.device import get_device
+from src.utils.get_folders_utils import get_dataset_name
 
 def train_one_epoch(model, train_loader, device, optimizer):
     model.train()
@@ -74,7 +75,9 @@ def train(model, train_loader, val_loader, config):
     best_val_loss = float("inf")
     patience_counter = 0
 
-    print("\n Training started...\n")
+    model_name = config["training"]["model"]
+    dataset_name = get_dataset_name(config)
+    print(f"\n {model_name} training on {dataset_name} started...\n")
 
     for epoch in tqdm(range(epochs)):
 
