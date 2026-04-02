@@ -17,11 +17,11 @@ home sensor data.
 
     gdn-ad-sh/
     │
+    ├── colab_launcher/
     ├── configs/
     │   └── BRE_selected_devices.txt
     │   └── config.yaml
     │   └── CU_selected_devices.txt
-    ├── colab_luncher/
     ├── src/
     │   ├── preprocessing/
     │   ├── models/
@@ -39,8 +39,8 @@ home sensor data.
 
 ### 📌 Description
 
+- **colab_launcher/** → Contains a .npy notebook to run the project remotly on Google Colab.
 - **configs/** → Configuration files and filtered sensor columns
-- **colab_luncher/** → Contains a .npy notebook to run the project remotly on Google Colab.
 - **src/** → Core implementation (preprocessing, models, training, evaluation, utils, visualization)
 - **main_preprocess.py** → Runs full preprocessing pipeline
 - **main_train.py** → Runs model training
