@@ -51,12 +51,12 @@ def compute_errors_per_loader(model, dataloader):
 
             output = model(x)
 
-            # 🔵 Case 1: MTAD-GAT (dict output)
+            # Case 1: MTAD-GAT (dict output)
             if isinstance(output, dict):
                 pred = output["pred"]
                 recon = output.get("recon", None)
             else:
-                # 🔵 Case 2: GDN (tensor output)
+                # Case 2: GDN (tensor output)
                 pred = output
                 recon = None
 
@@ -67,7 +67,7 @@ def compute_errors_per_loader(model, dataloader):
             # --- Reconstruction error (if exists) ---
             if recon is not None:
                 r_err = torch.abs(recon - x)  # (B, W, N)
-                r_err_last = r_err[:, -1, :]  # align with forcast to become [B, N]
+                r_err_last = r_err[:, -1, :]  # align with forcast to become (B, N)
                 recon_errors.append(r_err_last.cpu().numpy())
 
     forecast_errors = np.concatenate(forecast_errors, axis=0)
@@ -78,8 +78,8 @@ def compute_errors_per_loader(model, dataloader):
         recon_errors = None
 
     return {
-        "forecast": forecast_errors,   # shape [W, N]
-        "reconstruction": recon_errors # shape [W, N] or None
+        "forecast": forecast_errors,   # shape [T, N]
+        "reconstruction": recon_errors # shape [T, N] or None
     }
 
 def compute_errors_all_loaders(model, config):

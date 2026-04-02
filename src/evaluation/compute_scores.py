@@ -37,26 +37,51 @@ def load_errors_all_splits(config):
 
 def normalize_errors_all_splits(errors):
     """
-    Normalize errors using train statistics only
+    Normalize errors using train statistics only (robust)
     """
-    median = np.median(errors["train"], axis=0)
-    iqr = np.percentile(errors["train"], 75, axis=0) - np.percentile(errors["train"], 25, axis=0)
-    # stabilize
-    iqr = np.maximum(iqr, 0.05)
+    train_err = errors["train"]
 
-    # norm and clip
-    train_norm = np.abs((errors["train"] - median) / iqr)
-    val_norm = np.abs((errors["val"] - median) / iqr)
-    actor2_test_norm = np.abs((errors["actor2_test"] - median) / iqr)
-    actor1_test_norm = np.abs((errors["actor1_test"] - median) / iqr)
-    
-    # clip
-    errors["train"] = np.clip(train_norm, 0, 10)
-    errors["val"] = np.clip(val_norm, 0, 10)
-    errors["actor2_test"] = np.clip(actor2_test_norm, 0, 10)
-    errors["actor1_test"] = np.clip(actor1_test_norm, 0, 10)
+    median = np.median(train_err, axis=0)
+    iqr = np.percentile(train_err, 75, axis=0) - np.percentile(train_err, 25, axis=0)
+
+    # ✅ adaptive stabilization
+    iqr_floor = 0.1 * np.median(iqr)
+    iqr = np.maximum(iqr, iqr_floor)
+
+    def normalize(e):
+        return np.abs((e - median) / iqr)
+
+    # ❗ NO CLIPPING HERE
+    errors["train"] = normalize(errors["train"])
+    errors["val"] = normalize(errors["val"])
+    errors["actor2_test"] = normalize(errors["actor2_test"])
+    errors["actor1_test"] = normalize(errors["actor1_test"])
 
     return errors, median, iqr
+
+# def normalize_errors_all_splits(errors):
+#     """
+#     Normalize errors using train statistics only
+#     """
+#     median = np.median(errors["train"], axis=0)
+#     iqr = np.percentile(errors["train"], 75, axis=0) - np.percentile(errors["train"], 25, axis=0)
+#     # stabilize
+#     # iqr = np.maximum(iqr, 0.05)
+#     iqr = np.maximum(iqr, 0.1 * np.median(iqr))
+
+#     # norm and clip
+#     train_norm = np.abs((errors["train"] - median) / iqr)
+#     val_norm = np.abs((errors["val"] - median) / iqr)
+#     actor2_test_norm = np.abs((errors["actor2_test"] - median) / iqr)
+#     actor1_test_norm = np.abs((errors["actor1_test"] - median) / iqr)
+    
+#     # clip
+#     errors["train"] = np.clip(train_norm, 0, 10)
+#     errors["val"] = np.clip(val_norm, 0, 10)
+#     errors["actor2_test"] = np.clip(actor2_test_norm, 0, 10)
+#     errors["actor1_test"] = np.clip(actor1_test_norm, 0, 10)
+
+#     return errors, median, iqr
 
 def compute_scores(norm_errors, iqr, topk_ratio=0.4):
     n_sensors = norm_errors.shape[1]
