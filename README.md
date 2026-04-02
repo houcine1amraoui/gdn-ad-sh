@@ -21,7 +21,7 @@ home sensor data.
     │   └── BRE_selected_devices.txt
     │   └── config.yaml
     │   └── CU_selected_devices.txt
-    ├── notebooks/
+    ├── colab_luncher/
     ├── src/
     │   ├── preprocessing/
     │   ├── models/
@@ -40,7 +40,7 @@ home sensor data.
 ### 📌 Description
 
 - **configs/** → Configuration files and filtered sensor columns
-- **notebooks/** → Experimental and analysis notebooks
+- **colab_luncher/** → Contains a .npy notebook to run the project remotly on Google Colab.
 - **src/** → Core implementation (preprocessing, models, training, evaluation, utils, visualization)
 - **main_preprocess.py** → Runs full preprocessing pipeline
 - **main_train.py** → Runs model training
