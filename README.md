@@ -1,4 +1,4 @@
-# Graph Neural Network-Based Anomaly Detection for Smart Homes
+# Graph Neural Networks-based Anomaly Detection in Smart Home Multivariate Timeseries
 
 This project implements a **Graph Neural Network-based anomaly detection
 framework** for smart home environments using:
@@ -39,7 +39,7 @@ home sensor data.
 
 ### 📌 Description
 
-- **colab_launcher/** → Contains a .npy notebook to run the project remotly on Google Colab.
+- **colab_launcher/** → Contains a .npy notebook to run the project remotely on Google Colab.
 - **configs/** → Configuration files and filtered sensor columns
 - **src/** → Core implementation (preprocessing, models, training, evaluation, utils, visualization)
 - **main_preprocess.py** → Runs full preprocessing pipeline
@@ -136,7 +136,7 @@ Output:
 
     data/processed/
 
-Files:
+Files for each dataset (BRE, CU, or merged):
 
 - arrays.npz
 - timestamps.npz
@@ -171,7 +171,7 @@ Output:
 
     eval_results/
 
-Contains:
+Contains outputs per model and dataset:
 
 - errors
 - scores
@@ -187,7 +187,7 @@ Output:
 
     visualization/
 
-Contains:
+Contains outputs per model and dataset:
 
 - anomaly scores distributions
 - learned graph
@@ -226,7 +226,7 @@ preprocess → train → evaluatation → visualization
 
 ## Colab Support
 
-Notebook:
+colab_launcher:
 
     notebooks/colab_launcher.ipynb
 
@@ -239,7 +239,8 @@ Notebook:
 3. Run preprocessing
 4. Run training
 5. Run evaluation
-6. Analyze results
+6. Run visualization
+7. Analyze results
 
 ---
 
@@ -247,7 +248,7 @@ Notebook:
 
 Noureddine Amraoui
 
-Graph Neural Networks & Smart Home Anomaly Detection
+Graph Neural Networks-based Anomaly Detection in Smart Home Multivariate Timeseries
 
 ---
 
