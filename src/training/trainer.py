@@ -5,19 +5,6 @@ import torch.optim as optim
 from src.utils.model_registry import ModelRegistryManager
 from src.utils.device import get_device
 from src.utils.get_folders_utils import get_dataset_name
-from src.evaluation.compute_errors import compute_errors_per_loader
-from src.evaluation.compute_scores import compute_scores
-from src.evaluation.compute_scores import normalize_errors_all_splits
-
-import numpy as np
-
-def compute_threshold(scores, q=0.99):
-    return np.quantile(scores, q)
-
-def compute_fpr(scores, threshold):
-    preds = scores > threshold
-    fpr = preds.mean()  # since all are normal
-    return fpr
 
 def train_one_epoch(model, train_loader, device, optimizer):
     model.train()
@@ -126,24 +113,6 @@ def train(model, train_loader, val_loader, config):
                 epoch=epoch + 1
             )
 
-            # Compute train/val errors
-            train_errors = compute_errors_per_loader(model, train_loader)
-            val_errors = compute_errors_per_loader(model, val_loader)
-
-            errors = {
-                "train": train_errors,
-                "val": val_errors,
-            }
-
-            # --- normalize using TRAIN ONLY ---
-            errors, _, iqr = normalize_errors_all_splits(errors)
-
-            # --- compute scores ---
-            val_scores = compute_scores(errors["val"], iqr)
-
-            threshold = compute_threshold(val_scores)
-            fpr = compute_fpr(val_scores, threshold)
-            print("FPR: ", fpr)
         else:
             patience_counter += 1
 
