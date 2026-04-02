@@ -23,6 +23,8 @@ class TimeSeriesDataset(Dataset):
         y = self.data[idx+self.window_size]
 
         # transpose to [N, window] only for GDN
+        # but we don't do this since MTAD-GAT expects [W, N]
+        # and we modify GDN code to do transpose
         # x = torch.tensor(x.T, dtype=torch.float32)
 
         x = torch.tensor(x, dtype=torch.float32)

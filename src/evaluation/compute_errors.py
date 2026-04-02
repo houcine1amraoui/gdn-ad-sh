@@ -61,13 +61,13 @@ def compute_errors_per_loader(model, dataloader):
                 recon = None
 
             # --- Forecast error ---
-            f_err = torch.abs(pred - y)   # (B, k)
+            f_err = torch.abs(pred - y)   # (B, N)
             forecast_errors.append(f_err.cpu().numpy())
 
             # --- Reconstruction error (if exists) ---
             if recon is not None:
-                r_err = torch.abs(recon - x)      # (B, n, k)
-                r_err_last = r_err[:, -1, :]      # align with prediction
+                r_err = torch.abs(recon - x)  # (B, W, N)
+                r_err_last = r_err[:, -1, :]  # align with forcast to become [B, N]
                 recon_errors.append(r_err_last.cpu().numpy())
 
     forecast_errors = np.concatenate(forecast_errors, axis=0)
@@ -78,8 +78,8 @@ def compute_errors_per_loader(model, dataloader):
         recon_errors = None
 
     return {
-        "forecast": forecast_errors,   # shape [T, k]
-        "reconstruction": recon_errors # shape [T, k] or None
+        "forecast": forecast_errors,   # shape [W, N]
+        "reconstruction": recon_errors # shape [W, N] or None
     }
 
 def compute_errors_all_loaders(model, config):
