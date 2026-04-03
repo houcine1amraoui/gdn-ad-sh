@@ -39,7 +39,7 @@ home sensor data.
 
 ### 📌 Description
 
-- **colab_launcher/** → Contains a .npy notebook to run the project remotely on Google Colab.
+- **colab_launcher/** → Contains a .ipynb notebook to run the project remotely on Google Colab.
 - **configs/** → Configuration files and filtered sensor columns
 - **src/** → Core implementation (preprocessing, models, training, evaluation, utils, visualization)
 - **main_preprocess.py** → Runs full preprocessing pipeline
@@ -212,7 +212,7 @@ preprocess → train → evaluatation → visualization
 
 - Graph-based feature relationships
 - Sensor dependency modeling
-- Reconstruction error-based anomaly detection
+- Forecasting error-based anomaly detection
 
 ### MTAD-GAT: Multivariate Time-series Anomaly Detection with Graph Attention Network
 
@@ -220,7 +220,7 @@ preprocess → train → evaluatation → visualization
 
 - Graph attention
 - Temporal modeling
-- Forecasting + reconstruction
+- Forecasting + reconstruction-based anomaly detection
 
 ---
 
@@ -228,7 +228,7 @@ preprocess → train → evaluatation → visualization
 
 colab_launcher:
 
-    notebooks/colab_launcher.ipynb
+    colab_launcher/colab_launcher.ipynb
 
 ---
 
