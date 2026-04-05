@@ -321,9 +321,9 @@ def preprocessing_pipeline(config):
     splits_norm, scaler = normalize(splits, devices)
     print("Normalization done.")
 
-    print("Train split:", len(splits_norm["train"]), f"% {len(splits_norm["train"])/len(df)*100}") 
-    print("Validation split:",len(splits_norm["val"]), f"% {len(splits_norm["val"])/len(df)*100}")
-    print("Actor 2 test split:",len(splits_norm["actor2_test"]), f"% {len(splits_norm["actor2_test"])/len(df)*100}")
-    print("Actor 1 test split:",len(splits_norm["actor1_test"]), f"% {len(splits_norm["actor1_test"])/len(df)*100}")
+    print("Train split:", len(splits_norm["train"]), f"% {len(splits_norm["train"])/len(df)*100:.2f}") 
+    print("Validation split:",len(splits_norm["val"]), f"% {len(splits_norm["val"])/len(df)*100:.2f}")
+    print("Actor 2 test split:",len(splits_norm["actor2_test"]), f"% {len(splits_norm["actor2_test"])/len(df)*100:.2f}")
+    print("Actor 1 test split:",len(splits_norm["actor1_test"]), f"% {len(splits_norm["actor1_test"])/len(df)*100:.2f}")
 
     return (splits_norm, timestamps, scaler, devices)
