@@ -264,7 +264,7 @@ def preprocessing_pipeline(config):
     2. OPTIONAL: Filter data: keep selected columns only 
     3. OPTIONAL: Clean data (CU only)
     4. OPTIONAL: Downsample data to target frequency
-    5. Split actors timelines
+    5. Split actors timelines (train/val/test)
     6. Normalize/Scale features (devices)
     
     Returns:
@@ -296,17 +296,13 @@ def preprocessing_pipeline(config):
     downsample_freq = config["preprocessing"]["downsample_freq"]
     if downsample_freq != "1s": df = downsample_data(df, downsample_freq)
     
-
     # 5. Get device columns (exclude Timestamp)
     devices = [c for c in df.columns if c != "Timestamp"]
     print("nbr of devices:", len(devices))
+
     # 6. Split actors / train-val-test
     splits = split_actor_periods(df, config)
     print("Actor split done.")
-
-    # df.describe().to_csv("data/df_describe.csv")
-    # train_df.describe().to_csv("data/train_describe.csv")
-    # actor2_test_df.describe().to_csv("data/actor2_test_describe.csv")
 
     # 7. Save timestamps for reference/plotting
     train_timestamps = splits["train"]['Timestamp'].to_numpy()
