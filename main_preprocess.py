@@ -25,12 +25,7 @@ def main_preprocess():
     root = config["project_root_dir"]
     print(root)
     
-    splits_norm, timestamps, scaler, devices = preprocessing_pipeline(config)
-
-    print("Train split:", len(splits_norm["train"])) 
-    print("Validation split:",len(splits_norm["val"]))
-    print("Actor 2 test split:",len(splits_norm["actor2_test"])) 
-    print("Actor 1 test split:",len(splits_norm["actor1_test"])) 
+    splits_norm, timestamps, scaler, devices = preprocessing_pipeline(config) 
     
     save_processed_data(splits_norm, timestamps, scaler, devices, config)
 
