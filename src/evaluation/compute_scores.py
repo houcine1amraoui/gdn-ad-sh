@@ -75,8 +75,8 @@ def compute_scores(config, topk_ratio=0.4, combine_errors=True, alpha=0.5):
 
     eval_results_folder = get_evaluation_results_main_folder(config)
 
-    norm_errors = np.load(f"{eval_results_folder}/errors/norm_errors.npz", allow_pickle=True)
-    # norm_errors = data["arr_0"].item()  # dict
+    data = np.load(f"{eval_results_folder}/errors/norm_errors.npz", allow_pickle=True)
+    norm_errors = data["arr_0"].item()  # dict
 
     scores = {}
     iqr_dict = {}  # optional: return for analysis
