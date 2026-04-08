@@ -19,7 +19,7 @@ def load_checkpoint(model, path, optimizer):
 
 def load_best_checkpoint(config):
     registry = ModelRegistryManager(config)
-
+    print("hhhhh", registry.best_model_path)
     # Intitialize model
     model_arch = build_model(config)
 
