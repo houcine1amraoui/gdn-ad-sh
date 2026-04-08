@@ -56,14 +56,14 @@ def get_train_experiments_main_folder(config):
 
 def get_evaluation_results_main_folder(config):
     project_root_dir = config["project_root_dir"]
-    model_name = config["training"]["model"]
+    model_name = config["evaluation"]["model"]
 
     dataset_name = get_dataset_name(config)
     evaluation_results_main_folder = f"{project_root_dir}/eval_results/{model_name}/{dataset_name}"
 
     path = Path(evaluation_results_main_folder)
     if not path.is_dir():
-        raise FileNotFoundError(f"[ERROR] Processed data folder does not exist. \
+        raise FileNotFoundError(f"[ERROR] Evaluation results data folder does not exist. \
                                 Please, make sure to run evaluation first.")
     
     return evaluation_results_main_folder

@@ -9,6 +9,7 @@ import torch
 from src.utils.device import get_device
 from src.utils.experiment import load_best_checkpoint
 from src.utils.get_folders_utils import get_processed_folder, get_evaluation_results_main_folder
+from src.utils.create_folders_utils import create_eval_results_folder
 
 def create_evaluation_dataloaders(config):
     processed_data_folder = get_processed_folder(config)
@@ -90,8 +91,10 @@ def compute_errors_all_loaders(model, config):
     actor2_test_errors = compute_errors_per_loader(model, data_loaders["actor2_test_loader"])
     actor1_test_errors = compute_errors_per_loader(model, data_loaders["actor1_test_loader"])
 
-    evaluation_results_main_folder = get_evaluation_results_main_folder(config)
-    errors_folder = f"{evaluation_results_main_folder}/errors"
+    eval_results_folder = create_eval_results_folder(config)
+
+    # create errors folders
+    errors_folder = f"{eval_results_folder}/errors"
     os.makedirs(errors_folder, exist_ok=True)
 
     # Check once
@@ -117,5 +120,6 @@ def compute_errors_all_loaders(model, config):
 
 def compute_errors(config):
     model = load_best_checkpoint(config)
+    
     # Compute errors for all loaders
     compute_errors_all_loaders(model, config)
