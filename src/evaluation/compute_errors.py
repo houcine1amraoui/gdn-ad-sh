@@ -17,7 +17,7 @@ def create_evaluation_dataloaders(config):
     window_size = config["training"]["window_size"]
     batch_size = config["evaluation"]["batch_size"]
 
-    arrays = np.load(f"{processed_data_folder}/arrays.npy")
+    arrays = np.load(f"{processed_data_folder}/arrays.npz")
 
     train_dataset = TimeSeriesDataset(arrays["train"], window_size)
     val_dataset = TimeSeriesDataset(arrays["val"], window_size)
