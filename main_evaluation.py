@@ -3,8 +3,8 @@ import argparse
 
 from src.utils.seed import set_seed
 from src.evaluation.compute_errors import compute_errors
-from src.evaluation.compute_scores import compute_scores, evalutation_pipeline
-from src.evaluation.compute_metrics import compute_metrics
+# from src.evaluation.compute_scores import compute_scores, evalutation_pipeline
+# from src.evaluation.compute_metrics import compute_metrics
 
 def main_evaluation():
     # 1. Set configuration
