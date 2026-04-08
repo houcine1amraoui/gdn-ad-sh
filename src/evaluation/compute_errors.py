@@ -124,41 +124,52 @@ def compute_raw_errors_all_splits(model, config):
     
     np.savez(f"{errors_folder}/raw_errors.npz", raw_errros)
     
+def normalize_raw_errors_all_splits(config):
+    """
+    Normalize raw errors using train statistics only (robust, per error type)
+    """
 
-# def normalize_raw_errors_all_splits(config):
-#     """
-#     Normalize raw errors using train statistics only (robust)
-#     """
+    eval_results_folder = get_evaluation_results_main_folder(config)
 
-#     eval_results_folder = get_evaluation_results_main_folder(config)
+    # ⚠️ IMPORTANT: allow_pickle=True for dict
+    data = np.load(f"{eval_results_folder}/errors/raw_errors.npz", allow_pickle=True)
 
-#     errors = np.load(f"{processed_data_folder}/arrays.npz")
+    errors = data["arr_0"].item()  # recover dict
 
-#     train_err = errors["train"]
+    normalized = {}
 
-#     median = np.median(train_err, axis=0)
-#     iqr = np.percentile(train_err, 75, axis=0) - np.percentile(train_err, 25, axis=0)
+    # Loop over error types (forecast, reconstruction)
+    for error_type in errors["train"].keys():
 
-#     # ✅ adaptive stabilization
-#     iqr_floor = 0.1 * np.median(iqr)
-#     iqr = np.maximum(iqr, iqr_floor)
+        train_err = errors["train"][error_type]
 
-#     def normalize(e):
-#         return np.abs((e - median) / iqr)
+        # --- robust stats ---
+        median = np.median(train_err, axis=0)
+        iqr = np.percentile(train_err, 75, axis=0) - np.percentile(train_err, 25, axis=0)
 
-#     errors["train"] = normalize(errors["train"])
-#     errors["val"] = normalize(errors["val"])
-#     errors["actor2_test"] = normalize(errors["actor2_test"])
-#     errors["actor1_test"] = normalize(errors["actor1_test"])
+        # adaptive stabilization
+        iqr_floor = 0.1 * np.median(iqr)
+        iqr = np.maximum(iqr, iqr_floor)
 
-#     return errors, median, iqr
+        def normalize(e):
+            return np.abs((e - median) / iqr)
+
+        # Apply to all splits
+        for split in ["train", "val", "actor2_test", "actor1_test"]:
+            if split not in normalized:
+                normalized[split] = {}
+
+            normalized[split][error_type] = normalize(errors[split][error_type])
+
+    eval_results_folder = get_evaluation_results_main_folder(config)
+    errors_folder = f"{eval_results_folder}/errors"
+    np.savez(f"{errors_folder}/norm_errors.npz", normalized)
 
 def compute_errors(config):
-    model = load_best_checkpoint(config)
+    # model = load_best_checkpoint(config)
     
     # Compute errors for all loaders
-    compute_raw_errors_all_splits(model, config)
+    # compute_raw_errors_all_splits(model, config)
 
-    # save_raw_errors(raw_errors)
-    # normalize computer raw errors
-    # normalize_raw_errors_all_splits()
+    # normalize computed raw errors
+    normalize_raw_errors_all_splits(config)
