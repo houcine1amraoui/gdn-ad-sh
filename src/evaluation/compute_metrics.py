@@ -119,68 +119,68 @@ def compute_segment_metrics(config):
 
 
 
-def compute_segment_metrics(pred, start, end):
-    segment = pred[start:end]
+# def compute_segment_metrics(pred, start, end):
+#     segment = pred[start:end]
 
-    # SDR
-    SDR = int(np.any(segment))
+#     # SDR
+#     SDR = int(np.any(segment))
 
-    # Coverage
-    coverage = np.mean(segment)
+#     # Coverage
+#     coverage = np.mean(segment)
 
-    # Delay
-    if SDR:
-        delay = np.argmax(segment)
-    else:
-        delay = np.inf
+#     # Delay
+#     if SDR:
+#         delay = np.argmax(segment)
+#     else:
+#         delay = np.inf
 
-    return SDR, coverage, delay
+#     return SDR, coverage, delay
 
-def fit_pot_threshold(train_scores, q=0.98, alpha=1e-3):
-    """
-    Fit POT (Peaks Over Threshold)
+# def fit_pot_threshold(train_scores, q=0.98, alpha=1e-3):
+#     """
+#     Fit POT (Peaks Over Threshold)
 
-    Args:
-        train_scores: np.array (normal training scores)
-        q: initial threshold quantile (e.g., 0.98)
-        alpha: risk level (smaller = stricter threshold)
+#     Args:
+#         train_scores: np.array (normal training scores)
+#         q: initial threshold quantile (e.g., 0.98)
+#         alpha: risk level (smaller = stricter threshold)
 
-    Returns:
-        final_threshold
-    """
+#     Returns:
+#         final_threshold
+#     """
 
-    train_scores = np.asarray(train_scores)
+#     train_scores = np.asarray(train_scores)
 
-    # Step 1: initial threshold u
-    u = np.quantile(train_scores, q)
+#     # Step 1: initial threshold u
+#     u = np.quantile(train_scores, q)
 
-    # Step 2: excesses over threshold
-    excesses = train_scores[train_scores > u] - u
+#     # Step 2: excesses over threshold
+#     excesses = train_scores[train_scores > u] - u
 
-    if len(excesses) < 10:
-        raise ValueError("Not enough tail samples for POT. Increase dataset or lower q.")
+#     if len(excesses) < 10:
+#         raise ValueError("Not enough tail samples for POT. Increase dataset or lower q.")
 
-    # Step 3: fit GPD
-    # shape (xi), loc, scale (beta)
-    xi, loc, beta = genpareto.fit(excesses, floc=0)
+#     # Step 3: fit GPD
+#     # shape (xi), loc, scale (beta)
+#     xi, loc, beta = genpareto.fit(excesses, floc=0)
 
-    # Step 4: compute final threshold τ
-    n = len(train_scores)
-    nu = len(excesses)
+#     # Step 4: compute final threshold τ
+#     n = len(train_scores)
+#     nu = len(excesses)
 
-    # POT formula
-    tau = u + (beta / xi) * (((n / nu) * alpha) ** (-xi) - 1)
+#     # POT formula
+#     tau = u + (beta / xi) * (((n / nu) * alpha) ** (-xi) - 1)
 
-    return tau, {"u": u, "xi": xi, "beta": beta, "n_tail": nu}
+#     return tau, {"u": u, "xi": xi, "beta": beta, "n_tail": nu}
 
-def compute_metrics_with_pot_thresholding(scores):
-    # Fit POT
-    threshold, info = fit_pot_threshold(scores["train"], q=0.98, alpha=1e-3)
+# def compute_metrics_with_pot_thresholding(scores):
+#     # Fit POT
+#     threshold, info = fit_pot_threshold(scores["train"], q=0.98, alpha=1e-3)
 
-    print("Threshold:", threshold)
-    print("GPD params:", info)
+#     print("Threshold:", threshold)
+#     print("GPD params:", info)
 
-    detection_rate = np.mean(scores["actor2_test"] > threshold)
-    false_positive_rate = np.mean(scores["actor1_test"] > threshold)
+#     detection_rate = np.mean(scores["actor2_test"] > threshold)
+#     false_positive_rate = np.mean(scores["actor1_test"] > threshold)
 
-    print(detection_rate, false_positive_rate)
+#     print(detection_rate, false_positive_rate)
