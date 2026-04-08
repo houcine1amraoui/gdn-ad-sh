@@ -83,7 +83,7 @@ def compute_errors_per_loader(model, dataloader):
         "reconstruction": recon_errors # shape [T, N] or None
     }
 
-def compute_errors_all_loaders(model, config):
+def compute_raw_errors_all_splits(model, config):
     data_loaders = create_evaluation_dataloaders(config)
 
     train_errors = compute_errors_per_loader(model, data_loaders["train_loader"])
@@ -91,35 +91,74 @@ def compute_errors_all_loaders(model, config):
     actor2_test_errors = compute_errors_per_loader(model, data_loaders["actor2_test_loader"])
     actor1_test_errors = compute_errors_per_loader(model, data_loaders["actor1_test_loader"])
 
+    # Check once
+    has_recon = train_errors["reconstruction"] is not None
+
+    if has_recon:
+        train = {"forecast": train_errors["forecast"], 
+                 "reconstruction": train_errors["reconstruction"]}
+        val = {"forecast": val_errors["forecast"], 
+                 "reconstruction": val_errors["reconstruction"]}
+        actor2_test = {"forecast": actor2_test_errors["forecast"], 
+                 "reconstruction": actor2_test_errors["reconstruction"]}
+        actor1_test = {"forecast": actor1_test_errors["forecast"], 
+                 "reconstruction": actor1_test_errors["reconstruction"]}
+    else:
+        train = {"forecast": train_errors["forecast"]}
+        val = {"forecast": val["forecast"]}
+        actor2_test = {"forecast": actor2_test["forecast"]}
+        actor1_test = {"forecast": actor1_test["forecast"]}
+        
+    raw_errros = {
+        "train": train,
+        "val": val,
+        "actor2_test": actor2_test,
+        "actor1_test": actor1_test,
+    }
+
     eval_results_folder = create_eval_results_folder(config)
 
     # create errors folders
     errors_folder = f"{eval_results_folder}/errors"
     os.makedirs(errors_folder, exist_ok=True)
+    
+    np.savez(f"{errors_folder}/raw_errors.npz", raw_errros)
+    
 
-    # Check once
-    has_recon = train_errors["reconstruction"] is not None
+# def normalize_raw_errors_all_splits(config):
+#     """
+#     Normalize raw errors using train statistics only (robust)
+#     """
 
-    def save_split(name, errors):
-        if has_recon:
-            np.savez(
-                f"{errors_folder}/{name}.npz",
-                forecast=errors["forecast"],
-                reconstruction=errors["reconstruction"]
-            )
-        else:
-            np.savez(
-                f"{errors_folder}/{name}.npz",
-                forecast=errors["forecast"]
-            )
+#     eval_results_folder = get_evaluation_results_main_folder(config)
 
-    save_split("train", train_errors)
-    save_split("val", val_errors)
-    save_split("actor2_test", actor2_test_errors)
-    save_split("actor1_test", actor1_test_errors)
+#     errors = np.load(f"{processed_data_folder}/arrays.npz")
+
+#     train_err = errors["train"]
+
+#     median = np.median(train_err, axis=0)
+#     iqr = np.percentile(train_err, 75, axis=0) - np.percentile(train_err, 25, axis=0)
+
+#     # ✅ adaptive stabilization
+#     iqr_floor = 0.1 * np.median(iqr)
+#     iqr = np.maximum(iqr, iqr_floor)
+
+#     def normalize(e):
+#         return np.abs((e - median) / iqr)
+
+#     errors["train"] = normalize(errors["train"])
+#     errors["val"] = normalize(errors["val"])
+#     errors["actor2_test"] = normalize(errors["actor2_test"])
+#     errors["actor1_test"] = normalize(errors["actor1_test"])
+
+#     return errors, median, iqr
 
 def compute_errors(config):
     model = load_best_checkpoint(config)
     
     # Compute errors for all loaders
-    compute_errors_all_loaders(model, config)
+    compute_raw_errors_all_splits(model, config)
+
+    # save_raw_errors(raw_errors)
+    # normalize computer raw errors
+    # normalize_raw_errors_all_splits()

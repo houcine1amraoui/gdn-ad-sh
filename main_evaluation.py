@@ -22,7 +22,7 @@ def main_evaluation():
         config["project_root_dir"] = args.project_root_dir
 
     compute_errors(config)
-    scores = compute_scores(config)
+    # scores = compute_scores(config)
     # evalutation_pipeline(config)
     # print("train mean and std: ", scores["train"].mean(), scores["train"].std())
     # print("val mean and std: ", scores["val"].mean(), scores["val"].std())

@@ -35,29 +35,7 @@ def load_errors_all_splits(config):
 #     max_v = train_scores.max()
 #     return (scores - min_v) / (max_v - min_v + 1e-8)
 
-def normalize_errors_all_splits(errors):
-    """
-    Normalize errors using train statistics only (robust)
-    """
-    train_err = errors["train"]
 
-    median = np.median(train_err, axis=0)
-    iqr = np.percentile(train_err, 75, axis=0) - np.percentile(train_err, 25, axis=0)
-
-    # ✅ adaptive stabilization
-    iqr_floor = 0.1 * np.median(iqr)
-    iqr = np.maximum(iqr, iqr_floor)
-
-    def normalize(e):
-        return np.abs((e - median) / iqr)
-
-    # ❗ NO CLIPPING HERE
-    errors["train"] = normalize(errors["train"])
-    errors["val"] = normalize(errors["val"])
-    errors["actor2_test"] = normalize(errors["actor2_test"])
-    errors["actor1_test"] = normalize(errors["actor1_test"])
-
-    return errors, median, iqr
 
 # def normalize_errors_all_splits(errors):
 #     """
@@ -140,53 +118,53 @@ def compute_segment_metrics(pred, start, end):
 
     return SDR, coverage, delay
 
-def segment_evaluation(config):
-    errors = load_errors_all_splits(config)
-    errors_norm, _, iqr = normalize_errors_all_splits(errors)
-    scores = compute_scores_all_splits(errors_norm, iqr)
+# def segment_evaluation(config):
+#     errors = load_errors_all_splits(config)
+#     errors_norm, _, iqr = normalize_errors_all_splits(errors)
+#     scores = compute_scores_all_splits(errors_norm, iqr)
     
-    threshold = np.percentile(scores["train"], 95)
-    # threshold = 0.5
+#     threshold = np.percentile(scores["train"], 95)
+#     # threshold = 0.5
 
-    start_actor2 = len(scores["train"])
-    end_actor2 = start_actor2 + len(scores["actor2_test"])
+#     start_actor2 = len(scores["train"])
+#     end_actor2 = start_actor2 + len(scores["actor2_test"])
 
-    full_scores = np.concatenate([
-        scores["train"],
-        scores["actor2_test"],
-        # scores["actor1_test"]
-    ])
+#     full_scores = np.concatenate([
+#         scores["train"],
+#         scores["actor2_test"],
+#         # scores["actor1_test"]
+#     ])
 
-    pred = (full_scores > threshold).astype(int)
+#     pred = (full_scores > threshold).astype(int)
 
-    SDR, coverage, delay = compute_segment_metrics(pred, start_actor2, end_actor2)
+#     SDR, coverage, delay = compute_segment_metrics(pred, start_actor2, end_actor2)
 
-    print("SDR: ", SDR, "coverage: ", coverage, "delay: ", delay)
+#     print("SDR: ", SDR, "coverage: ", coverage, "delay: ", delay)
 
-    normal_mask = np.ones_like(full_scores, dtype=bool)
-    normal_mask[start_actor2:end_actor2] = False
+#     normal_mask = np.ones_like(full_scores, dtype=bool)
+#     normal_mask[start_actor2:end_actor2] = False
 
-    fp_rate = np.mean(pred[normal_mask])
-    print("FPR: ", fp_rate)
+#     fp_rate = np.mean(pred[normal_mask])
+#     print("FPR: ", fp_rate)
 
-    # plt.figure(figsize=(14,4))
-    # plt.plot(full_scores)
-    # plt.axhline(threshold)
-    # plt.axvspan(start_actor2, end_actor2, alpha=0.2)
-    # plt.title("Full Timeline")
-    # plt.show()
+#     # plt.figure(figsize=(14,4))
+#     # plt.plot(full_scores)
+#     # plt.axhline(threshold)
+#     # plt.axvspan(start_actor2, end_actor2, alpha=0.2)
+#     # plt.title("Full Timeline")
+#     # plt.show()
 
 
 
-def smooth_scores(scores, window=5):
-    return pd.Series(scores).rolling(window=window, center=True).mean().fillna(method="bfill").fillna(method="ffill").values
+# def smooth_scores(scores, window=5):
+#     return pd.Series(scores).rolling(window=window, center=True).mean().fillna(method="bfill").fillna(method="ffill").values
 
-def evalutation_pipeline(config):
-    errors = load_errors_all_splits(config)
-    errors_norm, _, iqr = normalize_errors_all_splits(errors)
-    scores = compute_scores_all_splits(errors_norm, iqr)
+# def evalutation_pipeline(config):
+#     errors = load_errors_all_splits(config)
+#     errors_norm, _, iqr = normalize_errors_all_splits(errors)
+#     scores = compute_scores_all_splits(errors_norm, iqr)
     
-    threshold = np.percentile(scores["train"], 95)
-    # threshold = 0.5
+#     threshold = np.percentile(scores["train"], 95)
+#     # threshold = 0.5
     
-    segment_evaluation(scores, threshold)
+#     segment_evaluation(scores, threshold)
