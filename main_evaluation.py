@@ -3,7 +3,7 @@ import argparse
 
 from src.utils.seed import set_seed
 from src.evaluation.compute_errors import compute_errors
-# from src.evaluation.compute_scores import compute_scores, evalutation_pipeline
+from src.evaluation.compute_scores import compute_scores
 # from src.evaluation.compute_metrics import compute_metrics
 
 def main_evaluation():
@@ -21,8 +21,8 @@ def main_evaluation():
     if args.project_root_dir:
         config["project_root_dir"] = args.project_root_dir
 
-    compute_errors(config)
-    # scores = compute_scores(config)
+    # compute_errors(config)
+    compute_scores(config)
     # evalutation_pipeline(config)
     # print("train mean and std: ", scores["train"].mean(), scores["train"].std())
     # print("val mean and std: ", scores["val"].mean(), scores["val"].std())

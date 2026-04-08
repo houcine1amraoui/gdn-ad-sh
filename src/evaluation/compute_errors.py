@@ -83,7 +83,11 @@ def compute_errors_per_loader(model, dataloader):
         "reconstruction": recon_errors # shape [T, N] or None
     }
 
-def compute_raw_errors_all_splits(model, config):
+def compute_raw_errors_all_splits(config):
+    """Compute raw errors for all splits and save them in eval results folder"""
+    
+    model = load_best_checkpoint(config)
+
     data_loaders = create_evaluation_dataloaders(config)
 
     train_errors = compute_errors_per_loader(model, data_loaders["train_loader"])
@@ -166,10 +170,8 @@ def normalize_raw_errors_all_splits(config):
     np.savez(f"{errors_folder}/norm_errors.npz", normalized)
 
 def compute_errors(config):
-    # model = load_best_checkpoint(config)
-    
     # Compute errors for all loaders
-    # compute_raw_errors_all_splits(model, config)
+    compute_raw_errors_all_splits(config)
 
     # normalize computed raw errors
     normalize_raw_errors_all_splits(config)
