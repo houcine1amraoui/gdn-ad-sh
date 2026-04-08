@@ -9,17 +9,19 @@ from src.utils.device import get_device
 def load_checkpoint(model, path, optimizer):
     device = get_device()
     
-    checkpoint = torch.load(path, map_location=torch.device(device), weights_only=True)
+    # checkpoint = torch.load(path, map_location=torch.device(device), weights_only=True)
+    checkpoint = torch.load(path, map_location=device)
     model.load_state_dict(checkpoint['model_state_dict'])
     
-    optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-    start_epoch = checkpoint['epoch']
+    # optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+    # start_epoch = checkpoint['epoch']
     
-    return model, optimizer, start_epoch
+    # return model, optimizer, start_epoch
+    return model, None, None
 
 def load_best_checkpoint(config):
     registry = ModelRegistryManager(config)
-    print("hhhhh", registry.best_model_path)
+    
     # Intitialize model
     model_arch = build_model(config)
 

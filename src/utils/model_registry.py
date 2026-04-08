@@ -35,6 +35,13 @@ class ModelRegistryManager:
     def save_last(self, model, val_loss, epoch):
         torch.save(model.state_dict(), self.last_model_path)
 
+        torch.save({
+            'model_state_dict': model.state_dict(),
+            # 'optimizer_state_dict': optimizer.state_dict(),
+            # 'epoch': epoch,
+            # 'config': config
+        }, self.last_model_path)
+
         self._save_yaml(self.last_config_path, self.config)
 
         self._update_metrics(last_val_loss=val_loss, last_epoch=epoch)
@@ -51,6 +58,12 @@ class ModelRegistryManager:
             print(f"New best model found: {val_loss:.4f}")
 
             torch.save(model.state_dict(), self.best_model_path)
+            torch.save({
+                'model_state_dict': model.state_dict(),
+                # 'optimizer_state_dict': optimizer.state_dict(),
+                # 'epoch': epoch,
+                # 'config': config
+            }, self.last_model_path)
 
             self._save_yaml(self.best_config_path, self.config)
 
