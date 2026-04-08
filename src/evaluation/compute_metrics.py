@@ -70,8 +70,8 @@ def compute_segment_metrics(config):
     score_type = config["evaluation"].get("score_type", "combined")
 
     train_scores = scores["train"][score_type]
-    # actor2_scores = scores["actor2_test"][score_type]
-    # actor1_scores = scores["actor1_test"][score_type]
+    actor2_scores = scores["actor2_test"][score_type]
+    actor1_scores = scores["actor1_test"][score_type]
 
     # 🔹 threshold from NORMAL data only
     threshold = np.percentile(train_scores, threshold_percentile)
@@ -93,7 +93,7 @@ def compute_segment_metrics(config):
         return segments
 
     # --- Actor2 (anomalous) ---
-    pred_actor2 = scores["actor2_test"] > threshold
+    pred_actor2 = actor2_scores > threshold
     seg_actor2 = extract_segments(pred_actor2)
 
     detection_rate = 1.0 if len(seg_actor2) > 0 else 0.0
@@ -101,7 +101,7 @@ def compute_segment_metrics(config):
     detection_delay = np.argmax(pred_actor2) if np.any(pred_actor2) else -1
 
     # --- Actor1 (normal) ---
-    pred_actor1 = scores["actor1_test"] > threshold
+    pred_actor1 = actor1_scores > threshold
     seg_actor1 = extract_segments(pred_actor1)
 
     false_positive_rate = len(seg_actor1) / len(pred_actor1)
