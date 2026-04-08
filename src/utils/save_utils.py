@@ -13,7 +13,7 @@ def save_processed_data(splits_norm, timestamps, scaler, devices, config):
         train=splits_norm["train"],
         val=splits_norm["val"],
         actor2_test=splits_norm["actor2_test"],
-        actor1_test=splits_norm["actor2_test"]
+        actor1_test=splits_norm["actor1_test"]
     )
 
     # Save timestamps
