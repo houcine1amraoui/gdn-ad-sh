@@ -54,6 +54,71 @@ def compute_metrics(config):
 
     return metrics
 
+def compute_segment_metrics(config):
+    
+    print("Computing metrics...")
+
+    eval_results_folder = get_evaluation_results_main_folder(config)
+    scores_path = f"{eval_results_folder}/scores/scores.npz"
+
+    data = np.load(scores_path, allow_pickle=True)
+    scores = data["scores"].item()
+
+    threshold_percentile = config["evaluation"]["threshold_percentile"]
+
+    # 🔹 choose which score to use
+    score_type = config["evaluation"].get("score_type", "combined")
+
+    train_scores = scores["train"][score_type]
+    # actor2_scores = scores["actor2_test"][score_type]
+    # actor1_scores = scores["actor1_test"][score_type]
+
+    # 🔹 threshold from NORMAL data only
+    threshold = np.percentile(train_scores, threshold_percentile)
+
+    def extract_segments(binary_seq):
+        segments = []
+        start = None
+
+        for i, val in enumerate(binary_seq):
+            if val and start is None:
+                start = i
+            elif not val and start is not None:
+                segments.append((start, i - 1))
+                start = None
+
+        if start is not None:
+            segments.append((start, len(binary_seq) - 1))
+
+        return segments
+
+    # --- Actor2 (anomalous) ---
+    pred_actor2 = scores["actor2_test"] > threshold
+    seg_actor2 = extract_segments(pred_actor2)
+
+    detection_rate = 1.0 if len(seg_actor2) > 0 else 0.0
+    coverage = np.mean(pred_actor2)
+    detection_delay = np.argmax(pred_actor2) if np.any(pred_actor2) else -1
+
+    # --- Actor1 (normal) ---
+    pred_actor1 = scores["actor1_test"] > threshold
+    seg_actor1 = extract_segments(pred_actor1)
+
+    false_positive_rate = len(seg_actor1) / len(pred_actor1)
+
+    
+    metrics = {
+        "detection_rate": detection_rate,
+        "coverage": coverage,
+        "detection_delay": detection_delay,
+        "false_positive_rate": false_positive_rate,
+    }
+    print(metrics)
+
+    return metrics
+
+
+
 def compute_segment_metrics(pred, start, end):
     segment = pred[start:end]
 

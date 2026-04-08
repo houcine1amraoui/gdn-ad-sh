@@ -4,7 +4,7 @@ import argparse
 from src.utils.seed import set_seed
 from src.evaluation.compute_errors import compute_errors
 from src.evaluation.compute_scores import compute_scores
-from src.evaluation.compute_metrics import compute_metrics
+from src.evaluation.compute_metrics import compute_metrics, compute_segment_metrics
 
 def main_evaluation():
     # 1. Set configuration
@@ -21,9 +21,10 @@ def main_evaluation():
     if args.project_root_dir:
         config["project_root_dir"] = args.project_root_dir
 
-    compute_errors(config)
-    compute_scores(config)
-    compute_metrics(config)
+    # compute_errors(config)
+    # compute_scores(config)
+    # compute_metrics(config)
+    compute_segment_metrics(config)
     # evalutation_pipeline(config)
     # print("train mean and std: ", scores["train"].mean(), scores["train"].std())
     # print("val mean and std: ", scores["val"].mean(), scores["val"].std())
