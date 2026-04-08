@@ -140,8 +140,12 @@ def compute_scores(config, topk_ratio=0.4, combine_errors=True, alpha=0.5):
             "combined": combined,
         }
 
+    # create errors folders
+    scores_folder = f"{eval_results_folder}/scores"
+    os.makedirs(scores_folder, exist_ok=True)
+    
     np.savez(
-        f"{eval_results_folder}/scores/scores.npz",
+        f"{scores_folder}/scores.npz",
             scores=scores,
             iqr_dict=iqr_dict
         )
