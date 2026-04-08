@@ -4,65 +4,72 @@ import yaml
 import numpy as np
 from scipy.stats import genpareto
 
-def compute_metrics(scores, config):
+from src.utils.get_folders_utils import get_evaluation_results_main_folder
+
+def compute_metrics(config):
     """
-    Detection rate (Actor2) Expect: HIGH (~1.0)
-    False positive rate (Actor1 Test) LOW (~0.05)
+    Detection rate (Actor2) → expect HIGH
+    False positive rate (Actor1) → expect LOW
     """
-    eval_results_folder = config["evaluation"]["eval_results_folder"]
-    model_name = config["evaluation"]["model"]
-    eval_results_per_model = f"{eval_results_folder}/{model_name}"
-    
+
+    print("Computing metrics...")
+
+    eval_results_folder = get_evaluation_results_main_folder(config)
+    scores_path = f"{eval_results_folder}/scores/scores.npz"
+
+    data = np.load(scores_path, allow_pickle=True)
+    scores = data["scores"].item()
+
     threshold_percentile = config["evaluation"]["threshold_percentile"]
 
-    # --- Threshold ---
-    threshold = np.percentile(scores["train"], threshold_percentile)
-    # actor2_test_threshold = np.percentile(scores["actor2_test"], threshold_percentile)
-    # actor1_test_threshold = np.percentile(scores["actor1_test"], threshold_percentile)
-    # stat, p = ks_2samp(scores["train"], scores["actor2_test"])
+    # 🔹 choose which score to use
+    score_type = config["evaluation"].get("score_type", "combined")
 
-    threshold = 0.2
-    detection_rate = np.mean(scores["actor2_test"] > threshold)
-    false_positive_rate = np.mean(scores["actor1_test"] > threshold)
-    print(detection_rate, false_positive_rate)
-    with open(os.path.join(f"{eval_results_per_model}/metrics.yaml"), "w") as f:
-         yaml.dump({"detection_rate": float(detection_rate)}, f)
-         yaml.dump({"false_positive_rate": float(false_positive_rate)}, f)
+    train_scores = scores["train"][score_type]
+    actor2_scores = scores["actor2_test"][score_type]
+    actor1_scores = scores["actor1_test"][score_type]
 
+    # 🔹 threshold from NORMAL data only
+    threshold = np.percentile(train_scores, threshold_percentile)
 
-def compute_anomaly_scores(config):
-    eval_results_folder = config["evaluation"]["eval_results_folder"]
+    # 🔹 metrics
+    detection_rate = np.mean(actor2_scores > threshold)
+    false_positive_rate = np.mean(actor1_scores > threshold)
 
-    # --- Load errors ---
-    train_errors = np.load(f"{eval_results_folder}/errors/train_errors.npy")
-    val_errors = np.load(f"{eval_results_folder}/errors/val_errors.npy")
-    actor2_test_errors = np.load(f"{eval_results_folder}/errors/actor2_test_errors.npy")
-    actor1_test_errors = np.load(f"{eval_results_folder}/errors/actor1_test_errors.npy")
+    print(f"Threshold: {threshold:.4f}")
+    print(f"Detection Rate (Actor2): {detection_rate:.4f}")
+    print(f"False Positive Rate (Actor1): {false_positive_rate:.4f}")
 
-    # Robust Stats
-    median = np.median(train_errors, axis=0)
-    iqr = np.percentile(train_errors, 75, axis=0) - np.percentile(train_errors, 25, axis=0)
-    iqr[iqr == 0] = 1e-6  # avoid division by zero
-
-    # --- Normalize ---
-    train_norm = (train_errors - median) / iqr
-    val_norm = (val_errors - median) / iqr
-    actor2_test_norm = (actor2_test_errors - median) / iqr
-    actor1_test_norm = (actor1_test_errors - median) / iqr
-
-    train_scores = np.mean(train_norm, axis=1)
-    val_scores = np.mean(val_norm, axis=1)
-    actor2_test_scores = np.mean(actor2_test_norm, axis=1)
-    actor1_test_scores = np.mean(actor1_test_norm, axis=1)
-    
-    scores = {
-        "train": train_scores,
-        "val": val_scores,
-        "actor2_test": actor2_test_scores,
-        "actor1_test": actor1_test_scores
+    # 🔹 save properly
+    metrics = {
+        "threshold": float(threshold),
+        "threshold_percentile": threshold_percentile,
+        "score_type": score_type,
+        "detection_rate": float(detection_rate),
+        "false_positive_rate": float(false_positive_rate),
     }
 
-    return scores
+    with open(os.path.join(eval_results_folder, "metrics.yaml"), "w") as f:
+        yaml.dump(metrics, f)
+
+    return metrics
+
+def compute_segment_metrics(pred, start, end):
+    segment = pred[start:end]
+
+    # SDR
+    SDR = int(np.any(segment))
+
+    # Coverage
+    coverage = np.mean(segment)
+
+    # Delay
+    if SDR:
+        delay = np.argmax(segment)
+    else:
+        delay = np.inf
+
+    return SDR, coverage, delay
 
 def fit_pot_threshold(train_scores, q=0.98, alpha=1e-3):
     """
