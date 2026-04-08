@@ -85,7 +85,8 @@ def compute_errors_per_loader(model, dataloader):
 
 def compute_raw_errors_all_splits(config):
     """Compute raw errors for all splits and save them in eval results folder"""
-    
+    print("Computing raw errors for all splits...")
+
     model = load_best_checkpoint(config)
 
     data_loaders = create_evaluation_dataloaders(config)
@@ -132,7 +133,8 @@ def normalize_raw_errors_all_splits(config):
     """
     Normalize raw errors using train statistics only (robust, per error type)
     """
-
+    print("Normalizing raw errors for all splits...")
+    
     eval_results_folder = get_evaluation_results_main_folder(config)
 
     # ⚠️ IMPORTANT: allow_pickle=True for dict

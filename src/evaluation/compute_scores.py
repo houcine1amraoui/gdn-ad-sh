@@ -72,6 +72,7 @@ def compute_scores(config, topk_ratio=0.4, combine_errors=True, alpha=0.5):
     - combine_errors: if True, combine forecast + reconstruction
     - alpha: weight for forecast when combining
     """
+    print("Computing scores...")
 
     eval_results_folder = get_evaluation_results_main_folder(config)
 
@@ -139,26 +140,33 @@ def compute_scores(config, topk_ratio=0.4, combine_errors=True, alpha=0.5):
             "combined": combined,
         }
 
-    return scores, iqr_dict
+    np.savez(
+        f"{eval_results_folder}/scores/scores.npz",
+            scores=scores,
+            iqr_dict=iqr_dict
+        )
+    # return scores, iqr_dict
 
-def compute_scores_all_splits(errors_norm, iqr):
-    train_scores = compute_scores(errors_norm["train"], iqr)
-    val_scores = compute_scores(errors_norm["val"], iqr)
-    actor2_test_scores = compute_scores(errors_norm["actor2_test"], iqr)
-    actor1_test_scores = compute_scores(errors_norm["actor1_test"], iqr)
 
-    # soomthing
-    train_scores = smooth_scores(train_scores)
-    val_scores = smooth_scores(val_scores)
-    actor2_test_scores = smooth_scores(actor2_test_scores)
-    actor1_test_scores = smooth_scores(actor1_test_scores)
 
-    return {
-        "train": train_scores,
-        "val": val_scores,
-        "actor2_test": actor2_test_scores,
-        "actor1_test": actor1_test_scores,
-    }
+# def compute_scores_all_splits(errors_norm, iqr):
+#     train_scores = compute_scores(errors_norm["train"], iqr)
+#     val_scores = compute_scores(errors_norm["val"], iqr)
+#     actor2_test_scores = compute_scores(errors_norm["actor2_test"], iqr)
+#     actor1_test_scores = compute_scores(errors_norm["actor1_test"], iqr)
+
+#     # soomthing
+#     train_scores = smooth_scores(train_scores)
+#     val_scores = smooth_scores(val_scores)
+#     actor2_test_scores = smooth_scores(actor2_test_scores)
+#     actor1_test_scores = smooth_scores(actor1_test_scores)
+
+#     return {
+#         "train": train_scores,
+#         "val": val_scores,
+#         "actor2_test": actor2_test_scores,
+#         "actor1_test": actor1_test_scores,
+#     }
 
 def compute_segment_metrics(pred, start, end):
     segment = pred[start:end]
