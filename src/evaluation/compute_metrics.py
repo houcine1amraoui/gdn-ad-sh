@@ -55,7 +55,7 @@ def compute_point_wise_metrics(config):
 
     return metrics
 
-def compute_segment_metrics(config):
+def compute_segment_wise_metrics(config):
     
     print("Computing metrics...")
 

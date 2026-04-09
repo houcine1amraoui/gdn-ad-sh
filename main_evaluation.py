@@ -4,7 +4,7 @@ import argparse
 from src.utils.seed import set_seed
 from src.evaluation.compute_errors import compute_errors
 from src.evaluation.compute_scores import compute_scores
-from src.evaluation.compute_metrics import compute_point_wise_metrics, compute_segment_metrics
+from src.evaluation.compute_metrics import compute_point_wise_metrics, compute_segment_wise_metrics
 
 def main_evaluation():
     # 1. Set configuration
@@ -22,11 +22,14 @@ def main_evaluation():
         config["project_root_dir"] = args.project_root_dir
 
     # Pipeline: 
-    # raw errors → normalized erros → scores (aggregated errors per timestamp) → metrics
+    # raw errors 
+    # → normalized erros 
+    # → scores (aggregated errors per timestamp) 
+    # → metrics (point-wise or segment-wise)
     compute_errors(config)
     compute_scores(config)
     compute_point_wise_metrics(config)
-    compute_segment_metrics(config)
+    compute_segment_wise_metrics(config)
 
 
     # print("train mean and std: ", scores["train"].mean(), scores["train"].std())
