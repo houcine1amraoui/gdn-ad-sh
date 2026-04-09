@@ -12,10 +12,10 @@ def compute_point_wise_metrics(config):
     False positive rate (Actor1) → expect LOW
     """
 
-    print("Computing metrics...")
+    print("Computing point-wise metrics...")
 
     eval_results_folder = get_evaluation_results_main_folder(config)
-    scores_path = f"{eval_results_folder}/scores/scores.npz"
+    scores_path = f"{eval_results_folder}/scores.npz"
 
     data = np.load(scores_path, allow_pickle=True)
     scores = data["scores"].item()
@@ -57,7 +57,7 @@ def compute_point_wise_metrics(config):
 
 def compute_segment_wise_metrics(config):
     
-    print("Computing metrics...")
+    print("Computing segment-wise metrics...")
 
     eval_results_folder = get_evaluation_results_main_folder(config)
     scores_path = f"{eval_results_folder}/scores.npz"
