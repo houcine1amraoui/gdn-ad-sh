@@ -7,7 +7,7 @@ from src.evaluation.compute_scores import compute_scores
 from src.evaluation.compute_metrics import compute_point_wise_metrics, compute_segment_wise_metrics
 
 def main_evaluation():
-    # 1. Set configuration
+    # Set configuration
     with open("configs/config.yaml") as f:
         config = yaml.safe_load(f)
     set_seed(config["seed"])
@@ -21,7 +21,7 @@ def main_evaluation():
     if args.project_root_dir:
         config["project_root_dir"] = args.project_root_dir
 
-    # Pipeline: 
+    # Evaluation pipeline: 
     # raw errors 
     # → normalized erros 
     # → scores (aggregated errors per timestamp) 

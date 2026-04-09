@@ -102,17 +102,15 @@ def train(model, train_loader, val_loader, config):
         )
 
         # Save BEST model
-        if val_loss < best_val_loss:
+        improved = registry.save_best_if_improved(
+            model=model,
+            val_loss=val_loss,
+            epoch=epoch + 1
+        )
 
-            best_val_loss = val_loss
+        if improved:
             patience_counter = 0
-
-            registry.save_best_if_improved(
-                model=model,
-                val_loss=val_loss,
-                epoch=epoch + 1
-            )
-
+            print("New best model saved")
         else:
             patience_counter += 1
 
