@@ -21,9 +21,9 @@ def main_evaluation():
     if args.project_root_dir:
         config["project_root_dir"] = args.project_root_dir
 
-    # compute_errors(config)
-    # compute_scores(config)
-    # compute_metrics(config)
+    compute_errors(config)
+    compute_scores(config)
+    compute_metrics(config)
     compute_segment_metrics(config)
     # evalutation_pipeline(config)
     # print("train mean and std: ", scores["train"].mean(), scores["train"].std())
