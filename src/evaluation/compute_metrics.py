@@ -6,7 +6,7 @@ from scipy.stats import genpareto
 
 from src.utils.get_folders_utils import get_evaluation_results_main_folder
 
-def compute_metrics(config):
+def compute_point_wise_metrics(config):
     """
     Detection rate (Actor2) → expect HIGH
     False positive rate (Actor1) → expect LOW
@@ -48,8 +48,9 @@ def compute_metrics(config):
         "detection_rate": float(detection_rate),
         "false_positive_rate": float(false_positive_rate),
     }
+    print(metrics)
 
-    with open(os.path.join(eval_results_folder, "metrics.yaml"), "w") as f:
+    with open(os.path.join(eval_results_folder, "point_wise_metrics.yaml"), "w") as f:
         yaml.dump(metrics, f)
 
     return metrics
@@ -115,6 +116,9 @@ def compute_segment_metrics(config):
         "false_positive_rate": false_positive_rate,
     }
     print(metrics)
+
+    with open(os.path.join(eval_results_folder, "segment_metrics.yaml"), "w") as f:
+        yaml.dump(metrics, f)
 
     return metrics
 
