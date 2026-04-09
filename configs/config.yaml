@@ -46,5 +46,5 @@ training:
 evaluation:
   model: mtad_gat
   batch_size: 32
-  combine_errors: true
+  score_type: combined
   threshold_percentile: 99

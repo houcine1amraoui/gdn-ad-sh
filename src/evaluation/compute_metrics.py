@@ -59,7 +59,7 @@ def compute_segment_metrics(config):
     print("Computing metrics...")
 
     eval_results_folder = get_evaluation_results_main_folder(config)
-    scores_path = f"{eval_results_folder}/scores/scores.npz"
+    scores_path = f"{eval_results_folder}/scores.npz"
 
     data = np.load(scores_path, allow_pickle=True)
     scores = data["scores"].item()
@@ -74,7 +74,8 @@ def compute_segment_metrics(config):
     actor1_scores = scores["actor1_test"][score_type]
 
     # 🔹 threshold from NORMAL data only
-    threshold = np.percentile(train_scores, threshold_percentile)
+    # threshold = np.percentile(train_scores, threshold_percentile)
+    threshold = 0.5
 
     def extract_segments(binary_seq):
         segments = []

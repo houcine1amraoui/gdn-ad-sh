@@ -15,7 +15,7 @@ def compute_scores(config, topk_ratio=0.4, combine_errors=True, alpha=0.5):
 
     eval_results_folder = get_evaluation_results_main_folder(config)
 
-    data = np.load(f"{eval_results_folder}/errors/norm_errors.npz", allow_pickle=True)
+    data = np.load(f"{eval_results_folder}/norm_errors.npz", allow_pickle=True)
     norm_errors = data["arr_0"].item()  # dict
 
     scores = {}
@@ -79,11 +79,4 @@ def compute_scores(config, topk_ratio=0.4, combine_errors=True, alpha=0.5):
             "combined": combined,
         }
 
-    # create errors folders
-    scores_folder = f"{eval_results_folder}/scores"
-    os.makedirs(scores_folder, exist_ok=True)
-    
-    np.savez(
-        f"{scores_folder}/scores.npz",
-            scores=scores,
-        )
+    np.savez(f"{eval_results_folder}/scores.npz", scores=scores)

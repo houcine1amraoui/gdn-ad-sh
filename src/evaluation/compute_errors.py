@@ -123,11 +123,7 @@ def compute_raw_errors_all_splits(config):
 
     eval_results_folder = create_eval_results_folder(config)
 
-    # create errors folders
-    errors_folder = f"{eval_results_folder}/errors"
-    os.makedirs(errors_folder, exist_ok=True)
-    
-    np.savez(f"{errors_folder}/raw_errors.npz", raw_errros)
+    np.savez(f"{eval_results_folder}/raw_errors.npz", raw_errros)
     
 def normalize_raw_errors_all_splits(config):
     """
@@ -138,7 +134,7 @@ def normalize_raw_errors_all_splits(config):
     eval_results_folder = get_evaluation_results_main_folder(config)
 
     # ⚠️ IMPORTANT: allow_pickle=True for dict
-    data = np.load(f"{eval_results_folder}/errors/raw_errors.npz", allow_pickle=True)
+    data = np.load(f"{eval_results_folder}/raw_errors.npz", allow_pickle=True)
 
     errors = data["arr_0"].item()  # recover dict
 
@@ -168,8 +164,7 @@ def normalize_raw_errors_all_splits(config):
             normalized[split][error_type] = normalize(errors[split][error_type])
 
     eval_results_folder = get_evaluation_results_main_folder(config)
-    errors_folder = f"{eval_results_folder}/errors"
-    np.savez(f"{errors_folder}/norm_errors.npz", normalized)
+    np.savez(f"{eval_results_folder}/norm_errors.npz", normalized)
 
 def compute_errors(config):
     # Compute errors for all loaders
