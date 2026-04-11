@@ -49,6 +49,7 @@ def compute_scores(config, combine_errors=True, alpha=0.5):
             "combined": combined,
         }
 
+    # optionally smooth scores
     score_smoothing_enabled = config["evaluation"].get("score_smoothing_enabled", False)
     if score_smoothing_enabled:
         window = config["evaluation"].get("score_smoothing_window", 5)
