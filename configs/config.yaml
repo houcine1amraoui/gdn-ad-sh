@@ -47,4 +47,7 @@ evaluation:
   model: mtad_gat
   batch_size: 32
   score_type: combined
-  threshold_percentile: 99
+  score_aggregation: max # mean or max
+  score_smoothing_enabled: true
+  score_smoothing_window: 5
+  threshold_percentile: 90

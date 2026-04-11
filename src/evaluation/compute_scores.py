@@ -1,9 +1,8 @@
 import numpy as np
-import os
 
 from src.utils.get_folders_utils import get_evaluation_results_main_folder
 
-def compute_scores(config, topk_ratio=0.4, combine_errors=True, alpha=0.5):
+def compute_scores(config, combine_errors=True, alpha=0.5):
     """
     Compute anomaly scores from normalized errors.
 
@@ -19,49 +18,21 @@ def compute_scores(config, topk_ratio=0.4, combine_errors=True, alpha=0.5):
     norm_errors = data["arr_0"].item()  # dict
 
     scores = {}
-    iqr_dict = {}  # optional: return for analysis
-
-    # 🔹 compute IQR from TRAIN ONLY
-    for error_type in norm_errors["train"].keys():
-        train_err = norm_errors["train"][error_type]
-
-        iqr = np.percentile(train_err, 75, axis=0) - np.percentile(train_err, 25, axis=0)
-
-        # stabilization
-        iqr_floor = 0.1 * np.median(iqr)
-        iqr = np.maximum(iqr, iqr_floor)
-
-        iqr_dict[error_type] = iqr
+    score_aggregation = config["evaluation"].get("score_aggregation", "mean")
 
     # 🔹 compute scores per split
     for split in ["train", "val", "actor2_test", "actor1_test"]:
-
+        print("Processing split:", split)
         split_scores = {}
 
         for error_type in norm_errors[split].keys():
-
-            e = norm_errors[split][error_type]  # (T, n_sensors)
-            iqr = iqr_dict[error_type]
-
-            n_sensors = e.shape[1]
-            k = max(1, int(topk_ratio * n_sensors))
-
-            # weights (stable sensors ↑)
-            weights = 1 / (iqr + 1e-6)
-            weights = weights / np.sum(weights)
-
-            # top-k
-            idx = np.argsort(e, axis=1)[:, -k:]
-
-            topk_vals = np.take_along_axis(e, idx, axis=1)
-            topk_weights = np.take_along_axis(weights[None, :], idx, axis=1)
-
-            s = np.sum(topk_vals * topk_weights, axis=1)
-
-            # log compression
-            s = np.log1p(s)
-
-            split_scores[error_type] = s
+            e = norm_errors[split][error_type]  # (T, N)
+            if score_aggregation == "mean":
+                split_scores[error_type] = np.mean(e, axis=1)
+            elif score_aggregation == "max":
+                split_scores[error_type] = np.max(e, axis=1)
+            else:
+                split_scores[error_type] = 0.5 * np.mean(e, axis=1) + 0.5 * np.max(e, axis=1)
 
         # 🔥 optional combination
         # combine_errors = config["evaluation"].get("combine_errors", False)
@@ -79,4 +50,31 @@ def compute_scores(config, topk_ratio=0.4, combine_errors=True, alpha=0.5):
             "combined": combined,
         }
 
+    score_smoothing_enabled = config["evaluation"].get("score_smoothing_enabled", False)
+    if score_smoothing_enabled:
+        window = config["evaluation"].get("score_smoothing_window", 5)
+        smooth_scores(config, window=window)
+        
     np.savez(f"{eval_results_folder}/scores.npz", scores=scores)
+
+
+def smooth_scores(config, window=5):
+    """
+    smooth anomaly scores.
+
+    Parameters:
+    - window: size of the smoothing window (in timestamps)
+    """
+    print("Smoothing scores...")
+
+    eval_results_folder = get_evaluation_results_main_folder(config)
+
+    data = np.load(f"{eval_results_folder}/scores.npz", allow_pickle=True)
+    scores = data["scores"].item()  # dict
+
+    # 🔹 smooth scores
+    for split in scores:
+        for score_type in scores[split]:
+            scores[split][score_type] = np.convolve(scores[split][score_type], np.ones(window)/window, mode='same')
+
+    np.savez(f"{eval_results_folder}/smooth_scores.npz", scores=scores)

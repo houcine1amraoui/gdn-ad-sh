@@ -3,7 +3,6 @@ from torch.utils.data import DataLoader
 import numpy as np
 import torch
 from tqdm import tqdm
-import os
 import torch
 
 from src.utils.device import get_device
@@ -133,7 +132,7 @@ def normalize_raw_errors_all_splits(config):
     
     eval_results_folder = get_evaluation_results_main_folder(config)
 
-    # ⚠️ IMPORTANT: allow_pickle=True for dict
+    # IMPORTANT: allow_pickle=True for dict
     data = np.load(f"{eval_results_folder}/raw_errors.npz", allow_pickle=True)
 
     errors = data["arr_0"].item()  # recover dict
@@ -150,11 +149,12 @@ def normalize_raw_errors_all_splits(config):
         iqr = np.percentile(train_err, 75, axis=0) - np.percentile(train_err, 25, axis=0)
 
         # adaptive stabilization
-        iqr_floor = 0.1 * np.median(iqr)
-        iqr = np.maximum(iqr, iqr_floor)
+        iqr = np.maximum(iqr, 1.0)
 
         def normalize(e):
-            return np.abs((e - median) / iqr)
+            norm = (e - median) / iqr
+            norm = np.clip(norm, -5, 5)
+            return np.abs(norm)
 
         # Apply to all splits
         for split in ["train", "val", "actor2_test", "actor1_test"]:
