@@ -22,8 +22,9 @@ def main_evaluation():
         config["project_root_dir"] = args.project_root_dir
 
     # Evaluation pipeline: 
-    # raw errors → normalized erros → scores (aggregated errors per timestamp) 
-    # → smoothed scores (optional) → metrics (point-wise or segment-wise)
+    # raw errors → normalize errors 
+    # → scores (aggregated errors per timestamp) → smoothed scores
+    # → metrics (point-wise)
     compute_errors(config)
     compute_scores(config)
     compute_point_wise_metrics(config)
