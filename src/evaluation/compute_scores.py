@@ -22,7 +22,6 @@ def compute_scores(config, combine_errors=True, alpha=0.5):
 
     # 🔹 compute scores per split
     for split in ["train", "val", "actor2_test", "actor1_test"]:
-        print("Processing split:", split)
         split_scores = {}
 
         for error_type in norm_errors[split].keys():
@@ -53,12 +52,12 @@ def compute_scores(config, combine_errors=True, alpha=0.5):
     score_smoothing_enabled = config["evaluation"].get("score_smoothing_enabled", False)
     if score_smoothing_enabled:
         window = config["evaluation"].get("score_smoothing_window", 5)
-        smooth_scores(config, window=window)
-        
+        smooth_scores(scores, window=window)
+
     np.savez(f"{eval_results_folder}/scores.npz", scores=scores)
 
 
-def smooth_scores(config, window=5):
+def smooth_scores(scores, window=5):
     """
     smooth anomaly scores.
 
@@ -67,14 +66,9 @@ def smooth_scores(config, window=5):
     """
     print("Smoothing scores...")
 
-    eval_results_folder = get_evaluation_results_main_folder(config)
-
-    data = np.load(f"{eval_results_folder}/scores.npz", allow_pickle=True)
-    scores = data["scores"].item()  # dict
-
     # 🔹 smooth scores
     for split in scores:
         for score_type in scores[split]:
             scores[split][score_type] = np.convolve(scores[split][score_type], np.ones(window)/window, mode='same')
 
-    np.savez(f"{eval_results_folder}/smooth_scores.npz", scores=scores)
+    return scores

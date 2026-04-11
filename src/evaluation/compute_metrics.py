@@ -2,7 +2,6 @@ import numpy as np
 import os
 import yaml
 import numpy as np
-from scipy.stats import genpareto
 
 from src.utils.get_folders_utils import get_evaluation_results_main_folder
 
@@ -20,8 +19,6 @@ def compute_point_wise_metrics(config):
     data = np.load(scores_path, allow_pickle=True)
     scores = data["scores"].item()
 
-    threshold_percentile = config["evaluation"]["threshold_percentile"]
-
     # choose which score to use
     score_type = config["evaluation"].get("score_type", "combined")
 
@@ -29,8 +26,8 @@ def compute_point_wise_metrics(config):
     actor2_scores = scores["actor2_test"][score_type]
 
     # threshold from NORMAL data only
+    threshold_percentile = config["evaluation"]["threshold_percentile"]
     threshold = np.percentile(train_scores, threshold_percentile)
-    print(f"Using threshold percentile: {threshold_percentile} → threshold value: {threshold:.4f}")
     
     # metrics
     detection_rate = np.mean(actor2_scores > threshold)
@@ -38,11 +35,11 @@ def compute_point_wise_metrics(config):
 
     # save properly
     metrics = {
-        "threshold": float(threshold),
+        "threshold": threshold,
         "threshold_percentile": threshold_percentile,
         "score_type": score_type,
-        "detection_rate": float(detection_rate),
-        "false_positive_rate": float(false_positive_rate),
+        "detection_rate": detection_rate,
+        "false_positive_rate": false_positive_rate,
     }
     print(metrics)
 
