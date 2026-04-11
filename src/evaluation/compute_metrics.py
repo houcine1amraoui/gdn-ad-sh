@@ -15,7 +15,7 @@ def compute_point_wise_metrics(config):
     print("Computing point-wise metrics...")
 
     eval_results_folder = get_evaluation_results_main_folder(config)
-    scores_path = f"{eval_results_folder}/smooth_scores.npz"
+    scores_path = f"{eval_results_folder}/scores.npz"
 
     data = np.load(scores_path, allow_pickle=True)
     scores = data["scores"].item()
