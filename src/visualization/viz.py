@@ -2,89 +2,79 @@ import matplotlib.pyplot as plt
 import os
 import numpy as np
 
-def plot_bins(scores, config):
-    model_name = config["evaluation"]["model"]
+from src.utils.get_folders_utils import get_evaluation_results_main_folder
 
-    eval_results_folder = config["evaluation"]["eval_results_folder"]
+def plot_bins(config):
+    eval_results_folder = get_evaluation_results_main_folder(config)
+    scores_path = f"{eval_results_folder}/scores.npz"
+    data = np.load(scores_path, allow_pickle=True)
+    scores = data["scores"].item()
 
-    eval_results_per_model_folder = f"{eval_results_folder}/{model_name}"
-    # Create a folder if it doesn't exist
-    os.makedirs(eval_results_per_model_folder, exist_ok=True)
+    # choose which score to use
+    score_type = config["evaluation"].get("score_type", "combined")
+    train_scores = scores["train"][score_type]
+    actor2_scores = scores["actor2_test"][score_type]
+
+    plt.hist(train_scores, bins=100, alpha=0.5, label="actor1_w1")
+    plt.hist(actor2_scores, bins=100, alpha=0.5, label="actor2")
+    plt.legend()
 
     # plots folder
-    plots_folder = f"{eval_results_per_model_folder}/plots"
+    plots_folder = f"{eval_results_folder}/plots"
     # Create a folder if it doesn't exist
     os.makedirs(plots_folder, exist_ok=True)
+    plt.savefig(f"{plots_folder}/bins.png", dpi=300, bbox_inches="tight")
 
-    plt.hist(scores["train"], bins=100, alpha=0.5, label="actor1_w1")
-    plt.hist(scores["actor2_test"], bins=100, alpha=0.5, label="actor2")
-    plt.hist(scores["actor1_test"], bins=100, alpha=0.5, label="actor1_w2")
-    plt.legend()
     plt.show()
     
 
 
-def plot_anomaly_scores_distribution(scores, config):
-    model_name = config["evaluation"]["model"]
+def plot_anomaly_scores_distribution(config):
+    eval_results_folder = get_evaluation_results_main_folder(config)
+    scores_path = f"{eval_results_folder}/scores.npz"
+    data = np.load(scores_path, allow_pickle=True)
+    scores = data["scores"].item()
 
-    eval_results_folder = config["evaluation"]["eval_results_folder"]
+    # choose which score to use
+    score_type = config["evaluation"].get("score_type", "combined")
+    train_scores = scores["train"][score_type]
+    actor2_scores = scores["actor2_test"][score_type]
 
-    eval_results_per_model_folder = f"{eval_results_folder}/{model_name}"
-    # Create a folder if it doesn't exist
-    os.makedirs(eval_results_per_model_folder, exist_ok=True)
-
-    # plots folder
-    plots_folder = f"{eval_results_per_model_folder}/plots"
-    # Create a folder if it doesn't exist
-    os.makedirs(plots_folder, exist_ok=True)
-    
     # --- Threshold ---
     threshold_percentile = config["evaluation"]["threshold_percentile"]
-    threshold = np.percentile(scores["train"], threshold_percentile)
-    print("threshold", threshold)
-    threshold = 0.5
-    plt.figure(figsize=(15,5))
-
-    # lengths
-    n_train = len(scores["train"])
-    n_val = len(scores["val"])
-    n_actor2 = len(scores["actor2_test"])
-    n_actor1 = len(scores["actor1_test"])
-
-    # x ranges (shifted)
-    x_train = range(0, n_train)
-    x_val = range(n_train, n_train + n_val)
-    x_actor2 = range(n_train + n_val, n_train + n_val + n_actor2)
-    x_actor1 = range(n_train + n_val + n_actor2, n_train + n_val + n_actor2 + n_actor1)
-
-    # plot
-    plt.plot(x_train, scores["train"], label="Actor 1 (Train)")
-    plt.plot(x_val, scores["val"], label="Validation")
-    plt.plot(x_actor2, scores["actor2_test"], label="Actor 2 (Test)")
-    plt.plot(x_actor1, scores["actor1_test"], label="Actor 1 (Test)")
-
-    # optional: vertical separators
-    plt.axvline(n_train, linestyle="--")
-    plt.axvline(n_train + n_val, linestyle="--")
-    plt.axvline(n_train + n_val + n_actor2, linestyle="--")
+    threshold = np.percentile(train_scores, threshold_percentile)
+    
+    plt.plot(train_scores, label="Actor 1 (Train)")
+    plt.plot(actor2_scores, label="Actor 2 (Test)")
 
     plt.axhline(y=threshold, linestyle="--", label=f"Threshold = {threshold:.4f}")
     plt.legend()
     plt.title("Anomaly Scores (Concatenated Timeline)")
 
+    # plots folder
+    plots_folder = f"{eval_results_folder}/plots"
+    # Create a folder if it doesn't exist
+    os.makedirs(plots_folder, exist_ok=True)
     plt.savefig(f"{plots_folder}/anomlay_scores_distribution.png", dpi=300, bbox_inches="tight")
 
     plt.show()
 
-def plot_boxplot(scores, eval_results_folder):
+def plot_boxplot(config):
+    eval_results_folder = get_evaluation_results_main_folder(config)
+    scores_path = f"{eval_results_folder}/scores.npz"
+    data = np.load(scores_path, allow_pickle=True)
+    scores = data["scores"].item()
+
+    # choose which score to use
+    score_type = config["evaluation"].get("score_type", "combined")
+    train_scores = scores["train"][score_type]
+    actor2_scores = scores["actor2_test"][score_type]
 
     plt.figure(figsize=(8, 5))
 
     data = [
-        scores["train"],
-        scores["val"],
-        scores["actor2_test"],
-        scores["actor1_test"]
+        train_scores,
+        actor2_scores,
     ]
 
     plt.boxplot(data,
@@ -94,8 +84,11 @@ def plot_boxplot(scores, eval_results_folder):
     plt.ylabel("Score")
 
     #
-    os.makedirs(f"{eval_results_folder}/plots", exist_ok=True)
-    plt.savefig(f"{eval_results_folder}/plots/boxplot.png", dpi=300, bbox_inches="tight")
+    # plots folder
+    plots_folder = f"{eval_results_folder}/plots"
+    # Create a folder if it doesn't exist
+    os.makedirs(plots_folder, exist_ok=True)
+    plt.savefig(f"{plots_folder}/boxplot.png", dpi=300, bbox_inches="tight")
 
     plt.show()
 

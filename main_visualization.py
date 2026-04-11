@@ -9,9 +9,9 @@ def main_visualization():
         config = yaml.safe_load(f)
     set_seed(config["seed"])
     
-    # plot_anomaly_scores_distribution(scores, config)
-    # plot_boxplot(scores, eval_results_folder)
-    # plot_bins(scores, config)
+    plot_anomaly_scores_distribution(config)
+    plot_boxplot(config)
+    plot_bins(config)
 
 if __name__ == "__main__":
     main_visualization()

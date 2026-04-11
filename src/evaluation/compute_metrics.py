@@ -58,15 +58,14 @@ def compute_segment_wise_metrics(config):
     data = np.load(scores_path, allow_pickle=True)
     scores = data["scores"].item()
 
-    threshold_percentile = config["evaluation"]["threshold_percentile"]
-
-    # 🔹 choose which score to use
+    # choose which score to use
     score_type = config["evaluation"].get("score_type", "combined")
 
     train_scores = scores["train"][score_type]
     actor2_scores = scores["actor2_test"][score_type]
 
-    # 🔹 threshold from NORMAL data only
+    # threshold from NORMAL data only
+    threshold_percentile = config["evaluation"]["threshold_percentile"]
     threshold = np.percentile(train_scores, threshold_percentile)
 
     def extract_segments(binary_seq):
@@ -88,8 +87,11 @@ def compute_segment_wise_metrics(config):
     # --- Actor2 (anomalous) ---
     pred_actor2 = actor2_scores > threshold
     seg_actor2 = extract_segments(pred_actor2)
+    print("Anomalous segments detected in Actor2 test set:", seg_actor2)
+    print(len(seg_actor2), "anomalous segments detected in Actor2 test set.")
 
     detection_rate = 1.0 if len(seg_actor2) > 0 else 0.0
+    
     coverage = np.mean(pred_actor2)
     detection_delay = np.argmax(pred_actor2) if np.any(pred_actor2) else -1
 
