@@ -28,7 +28,7 @@ def main_evaluation():
     compute_errors(config)
     compute_scores(config)
     compute_point_wise_metrics(config)
-    compute_segment_wise_metrics(config)
+    # compute_segment_wise_metrics(config)
 
 if __name__ == "__main__":
     main_evaluation()
