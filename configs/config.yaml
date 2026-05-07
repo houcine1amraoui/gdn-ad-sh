@@ -46,7 +46,7 @@ training:
 evaluation:
   model: mtad_gat
   batch_size: 32
-  score_type: combined
+  score_type: combined # combined, reconstruction, prediction
   score_aggregation: max # mean or max
   score_smoothing_enabled: true
   score_smoothing_window: 5
