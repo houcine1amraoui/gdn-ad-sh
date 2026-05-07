@@ -11,7 +11,7 @@ def compute_point_wise_metrics(config):
     False positive rate (Actor 1 train) → expect LOW
     """
 
-    print("Computing point-wise metrics...")
+    print(f"Computing point-wise metrics for {config['evaluation'].get('model', 'unknown')}...")
 
     eval_results_folder = get_evaluation_results_main_folder(config)
     scores_path = f"{eval_results_folder}/scores.npz"
