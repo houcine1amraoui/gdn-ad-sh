@@ -50,7 +50,7 @@ def compute_point_wise_metrics(config):
 
 def compute_segment_wise_metrics(config):
     
-    print("Computing segment-wise metrics...")
+    print(f"Computing segment-wise metrics for {config['evaluation'].get('model', 'unknown')}...")
 
     eval_results_folder = get_evaluation_results_main_folder(config)
     scores_path = f"{eval_results_folder}/scores.npz"
