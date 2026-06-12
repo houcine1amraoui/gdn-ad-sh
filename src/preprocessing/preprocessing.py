@@ -284,7 +284,7 @@ def preprocessing_pipeline(config):
     # 2. Filter data (if enabled): keep selected columns only
     apply_filtering = config["preprocessing"]["apply_filtering"]
     if apply_filtering:
-        if merge_bre_cu: df = filter_columns_merged_data(df, config)
+        if merge_bre_cu: df = filter_columns_merged_data(df)
         else: df = filter_columns_one_data(df, config)
 
     # 2. Clean CU data if loaded alone (otherwise it will cleaned in merging function)

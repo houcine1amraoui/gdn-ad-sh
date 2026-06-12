@@ -27,6 +27,7 @@ def compute_point_wise_metrics(config):
 
     # threshold from NORMAL data only
     threshold_percentile = config["evaluation"]["threshold_percentile"]
+
     threshold = np.percentile(train_scores, threshold_percentile)
     
     # metrics
