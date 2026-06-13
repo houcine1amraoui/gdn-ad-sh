@@ -20,7 +20,7 @@ def create_evaluation_dataloaders(config):
     arrays = np.load(f"{processed_data_folder}/arrays.npz")
 
     print(arrays["train"].shape)
-    
+    return
     train_dataset = TimeSeriesDataset(arrays["train"], window_size)
     val_dataset = TimeSeriesDataset(arrays["val"], window_size)
     actor2_test_dataset = TimeSeriesDataset(arrays["actor2_test"], window_size)
@@ -88,9 +88,10 @@ def compute_raw_errors_all_splits(config):
     """Compute raw errors for all splits and save them in eval results folder"""
     print("Computing raw errors for all splits...")
 
-    model = load_best_checkpoint(config)
+    # model = load_best_checkpoint(config)
 
     data_loaders = create_evaluation_dataloaders(config)
+    return
 
     train_errors = compute_errors_per_loader(model, data_loaders["train_loader"])
     val_errors = compute_errors_per_loader(model, data_loaders["val_loader"])
