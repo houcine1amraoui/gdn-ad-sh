@@ -23,6 +23,13 @@ def train_one_epoch(model, train_loader, device, optimizer):
         print("y inf:", torch.isinf(y).any().item())
 
         output = model(x)
+
+        if isinstance(output, torch.Tensor):
+            print("output nan:", torch.isnan(output).any().item())
+            print("output inf:", torch.isinf(output).any().item())
+        else:
+            print(output)
+            
         loss = model.loss(batch, output)
 
         optimizer.zero_grad()
