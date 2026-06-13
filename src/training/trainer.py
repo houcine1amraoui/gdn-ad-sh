@@ -12,14 +12,6 @@ def train_one_epoch(model, train_loader, device, optimizer):
 
     for x, y in train_loader:
 
-        print("x shape:", x.shape)
-        print("y shape:", y.shape)
-
-        print("Number of NaNs in x:", torch.isnan(x).sum().item())
-        print("Number of NaNs in y:", torch.isnan(y).sum().item())
-
-        break
-
         x = x.to(device)
         y = y.to(device)
 

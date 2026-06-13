@@ -237,7 +237,7 @@ def load_and_merge_bre_cu(config):
     print("Loading CU dataset...")
     cu_df = pd.read_csv(cu_data_path)
 
-    clean_cu_data(cu_df)
+    cu_df = clean_cu_data(cu_df)
     # Convert timestamp
     bre_df["Timestamp"] = pd.to_datetime(bre_df["Timestamp"])
     cu_df["Timestamp"] = pd.to_datetime(cu_df["Timestamp"])
