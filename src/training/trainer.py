@@ -12,32 +12,23 @@ def train_one_epoch(model, train_loader, device, optimizer):
 
     for x, y in train_loader:
 
+        print("x shape:", x.shape)
+        print("y shape:", y.shape)
+
+        print("Number of NaNs in x:", torch.isnan(x).sum().item())
+        print("Number of NaNs in y:", torch.isnan(y).sum().item())
+
+        break
+
         x = x.to(device)
         y = y.to(device)
 
         batch = {"x": x, "y": y}
 
-        print("x nan:", torch.isnan(x).any().item())
-        print("x inf:", torch.isinf(x).any().item())
-        print("y nan:", torch.isnan(y).any().item())
-        print("y inf:", torch.isinf(y).any().item())
-
         output = model(x)
-
-        if isinstance(output, torch.Tensor):
-            print("output nan:", torch.isnan(output).any().item())
-            print("output inf:", torch.isinf(output).any().item())
-        else:
-            print(output)
-
         loss = model.loss(batch, output)
 
         optimizer.zero_grad()
-
-        print(loss)
-        print(torch.isnan(loss))
-        print(torch.isinf(loss))
-
         loss.backward()
         optimizer.step()
 
