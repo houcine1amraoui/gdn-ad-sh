@@ -17,6 +17,11 @@ def train_one_epoch(model, train_loader, device, optimizer):
 
         batch = {"x": x, "y": y}
 
+        print("x nan:", torch.isnan(x).any().item())
+        print("x inf:", torch.isinf(x).any().item())
+        print("y nan:", torch.isnan(y).any().item())
+        print("y inf:", torch.isinf(y).any().item())
+
         output = model(x)
         loss = model.loss(batch, output)
 
