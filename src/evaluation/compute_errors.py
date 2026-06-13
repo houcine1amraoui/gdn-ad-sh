@@ -19,6 +19,8 @@ def create_evaluation_dataloaders(config):
 
     arrays = np.load(f"{processed_data_folder}/arrays.npz")
 
+    print(arrays["train"].shape)
+    
     train_dataset = TimeSeriesDataset(arrays["train"], window_size)
     val_dataset = TimeSeriesDataset(arrays["val"], window_size)
     actor2_test_dataset = TimeSeriesDataset(arrays["actor2_test"], window_size)
