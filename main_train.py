@@ -28,6 +28,9 @@ def main_train():
     # 2. Dataset/DataLoader creation
     train_loader, val_loader = create_train_val_loaders(config)
 
+    print(f"Number of training batches: {len(train_loader)}")
+    print(f"Number of validation batches: {len(val_loader)}")
+    
     # 3. Model Initialization
     model = build_model(config)
 
