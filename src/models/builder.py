@@ -13,6 +13,8 @@ def build_model(config):
     with open(f"{processed_data_folder}/devices.json") as f:
         devices = json.load(f)
 
+    print(len(devices))
+    
     device = get_device()
     model = None
 
