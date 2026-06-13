@@ -29,10 +29,15 @@ def train_one_epoch(model, train_loader, device, optimizer):
             print("output inf:", torch.isinf(output).any().item())
         else:
             print(output)
-            
+
         loss = model.loss(batch, output)
 
         optimizer.zero_grad()
+
+        print(loss)
+        print(torch.isnan(loss))
+        print(torch.isinf(loss))
+
         loss.backward()
         optimizer.step()
 
