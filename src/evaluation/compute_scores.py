@@ -46,13 +46,13 @@ def compute_scores(config, combine_errors=True, alpha=0.5):
             combined = split_scores["forecast"]
 
         scores[split] = {
-            "forecast": split_scores.get("forecast"),
-            "reconstruction": split_scores.get("reconstruction"),
+            "forecast": split_scores["forecast"],
             "combined": combined,
         }
 
-    for score_type in scores[split]:
-        print("hhhh ", split, score_type, type(scores[split][score_type]))
+        if "reconstruction" in split_scores:
+            scores[split]["reconstruction"] = split_scores["reconstruction"]
+
 
     # optionally smooth scores
     score_smoothing_enabled = config["evaluation"].get("score_smoothing_enabled", False)
