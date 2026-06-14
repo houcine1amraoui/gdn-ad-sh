@@ -24,8 +24,7 @@ def compute_scores(config, combine_errors=True, alpha=0.5):
     for split in ["train", "val", "actor2_test", "actor1_test"]:
         split_scores = {}
 
-        for score_type in scores[split]:
-            print(split, score_type, type(scores[split][score_type]))
+        
         
         for error_type in norm_errors[split].keys():
             e = norm_errors[split][error_type]  # (T, N)
@@ -51,6 +50,9 @@ def compute_scores(config, combine_errors=True, alpha=0.5):
             "reconstruction": split_scores.get("reconstruction"),
             "combined": combined,
         }
+
+    for score_type in scores[split]:
+        print(split, score_type, type(scores[split][score_type]))
 
     # optionally smooth scores
     score_smoothing_enabled = config["evaluation"].get("score_smoothing_enabled", False)
