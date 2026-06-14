@@ -52,7 +52,7 @@ def compute_scores(config, combine_errors=True, alpha=0.5):
         }
 
     for score_type in scores[split]:
-        print(split, score_type, type(scores[split][score_type]))
+        print("hhhh ", split, score_type, type(scores[split][score_type]))
 
     # optionally smooth scores
     score_smoothing_enabled = config["evaluation"].get("score_smoothing_enabled", False)
