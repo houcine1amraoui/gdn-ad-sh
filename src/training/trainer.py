@@ -72,7 +72,6 @@ def train(model, train_loader, val_loader, config):
         min_lr=1e-6
     )
 
-    best_val_loss = float("inf")
     patience_counter = 0
 
     model_name = config["training"]["model"]
