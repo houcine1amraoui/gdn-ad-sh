@@ -37,25 +37,50 @@ def plot_anomaly_scores_distribution(config):
 
     # choose which score to use
     score_type = config["evaluation"].get("score_type", "combined")
-    train_scores = scores["train"][score_type]
+    actor1_scores = scores["train"][score_type]
     actor2_scores = scores["actor2_test"][score_type]
 
     # --- Threshold ---
     threshold_percentile = config["evaluation"]["threshold_percentile"]
-    threshold = np.percentile(train_scores, threshold_percentile)
-    
-    plt.plot(train_scores, label="Actor 1 (Train)")
-    plt.plot(actor2_scores, label="Actor 2 (Test)")
+    threshold = np.percentile(actor1_scores, threshold_percentile)
 
-    plt.axhline(y=threshold, linestyle="--", label=f"Threshold = {threshold:.4f}")
+    # Concatenate: Actor 1 first, then Actor 2
+    all_scores = np.concatenate([actor1_scores, actor2_scores])
+
+    plt.figure(figsize=(12, 5))
+
+    plt.plot(all_scores, label="Anomaly Score")
+
+    # Mark transition between actors
+    transition_idx = len(actor1_scores)
+    plt.axvline(
+        x=transition_idx,
+        color="black",
+        linestyle=":",
+        label="Actor 1 → Actor 2"
+    )
+
+    plt.axhline(
+        y=threshold,
+        linestyle="--",
+        color="red",
+        label=f"Threshold = {threshold:.4f}"
+    )
+
+    plt.xlabel("Time Step")
+    plt.ylabel("Anomaly Score")
+    plt.title("Anomaly Scores (Actor 1 followed by Actor 2)")
     plt.legend()
-    plt.title("Anomaly Scores (Concatenated Timeline)")
 
     # plots folder
     plots_folder = f"{eval_results_folder}/plots"
-    # Create a folder if it doesn't exist
     os.makedirs(plots_folder, exist_ok=True)
-    plt.savefig(f"{plots_folder}/anomlay_scores_distribution.png", dpi=300, bbox_inches="tight")
+
+    plt.savefig(
+        f"{plots_folder}/anomaly_scores_distribution.png",
+        dpi=300,
+        bbox_inches="tight"
+    )
 
     plt.show()
 
