@@ -43,6 +43,7 @@ def compute_errors_per_loader(model, dataloader):
 
     forecast_errors = []
     recon_errors = []
+    combined_errors = []
 
     with torch.no_grad():
         for x, y in tqdm(dataloader):
@@ -70,6 +71,11 @@ def compute_errors_per_loader(model, dataloader):
                 r_err_last = r_err[:, -1, :]  # align with forcast to become (B, N)
                 recon_errors.append(r_err_last.cpu().numpy())
 
+            # --- combine errors (if recon exists) ---
+            if recon is not None:
+                combined_err = f_err + r_err_last
+                combined_errors.append(combined_err.cpu().numpy())
+
     forecast_errors = np.concatenate(forecast_errors, axis=0)
 
     if len(recon_errors) > 0:
@@ -77,9 +83,15 @@ def compute_errors_per_loader(model, dataloader):
     else:
         recon_errors = None
 
+    if len(combined_errors) > 0:
+        combined_errors = np.concatenate(combined_errors, axis=0)
+    else:
+        combined_errors = None
+
     return {
         "forecast": forecast_errors,   # shape [T, N]
-        "reconstruction": recon_errors # shape [T, N] or None
+        "reconstruction": recon_errors, # shape [T, N] or None
+        "combined": combined_errors     # shape [T, N] or None
     }
 
 def compute_raw_errors_all_splits(config):
@@ -100,13 +112,17 @@ def compute_raw_errors_all_splits(config):
 
     if has_recon:
         train = {"forecast": train_errors["forecast"], 
-                 "reconstruction": train_errors["reconstruction"]}
+                 "reconstruction": train_errors["reconstruction"], 
+                 "combined": train_errors["combined"]}
         val = {"forecast": val_errors["forecast"], 
-                 "reconstruction": val_errors["reconstruction"]}
+                 "reconstruction": val_errors["reconstruction"], 
+                 "combined": val_errors["combined"]}
         actor2_test = {"forecast": actor2_test_errors["forecast"], 
-                 "reconstruction": actor2_test_errors["reconstruction"]}
+                 "reconstruction": actor2_test_errors["reconstruction"], 
+                 "combined": actor2_test_errors["combined"]}
         actor1_test = {"forecast": actor1_test_errors["forecast"], 
-                 "reconstruction": actor1_test_errors["reconstruction"]}
+                 "reconstruction": actor1_test_errors["reconstruction"], 
+                 "combined": actor1_test_errors["combined"]}
     else:
         train = {"forecast": train_errors["forecast"]}
         val = {"forecast": val_errors["forecast"]}

@@ -11,7 +11,10 @@ def compute_point_wise_metrics(config):
     False positive rate (Actor 1 train) → expect LOW
     """
 
-    print(f"Computing point-wise metrics for {config['evaluation'].get('model', 'unknown')}...")
+    # choose which score to use
+    score_type = config["evaluation"].get("score_type", "combined")
+
+    print(f"Computing point-wise metrics for {config['evaluation'].get('model', 'unknown')} with {score_type} errors...")
 
     eval_results_folder = get_evaluation_results_main_folder(config)
     scores_path = f"{eval_results_folder}/scores.npz"
@@ -19,8 +22,7 @@ def compute_point_wise_metrics(config):
     data = np.load(scores_path, allow_pickle=True)
     scores = data["scores"].item()
 
-    # choose which score to use
-    score_type = config["evaluation"].get("score_type", "combined")
+    
 
     train_scores = scores["train"][score_type]
     actor2_scores = scores["actor2_test"][score_type]
