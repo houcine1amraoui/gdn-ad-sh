@@ -3,7 +3,7 @@ import os
 import yaml
 import numpy as np
 
-from src.utils.get_folders_utils import get_evaluation_results_main_folder
+from src.utils.get_folders_utils import get_dataset_name, get_evaluation_results_main_folder
 
 def compute_point_wise_metrics(config):
     """
@@ -13,8 +13,10 @@ def compute_point_wise_metrics(config):
 
     # choose which score to use
     score_type = config["evaluation"].get("score_type", "combined")
+    dataset_name = get_dataset_name(config)
 
-    print(f"Computing point-wise metrics for {config['evaluation'].get('model', 'unknown')} with {score_type} errors...")
+    
+    print(f"Computing point-wise metrics for {config['evaluation'].get('model', 'unknown')} on {dataset_name} with {score_type} errors...")
 
     eval_results_folder = get_evaluation_results_main_folder(config)
     scores_path = f"{eval_results_folder}/scores.npz"
